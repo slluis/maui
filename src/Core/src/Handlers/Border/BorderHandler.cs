@@ -1,5 +1,5 @@
 ﻿#nullable enable
-#if __IOS__ || MACCATALYST
+#if __IOS__ || MACCATALYST || __MACOS__
 using NativeView = Microsoft.Maui.Handlers.ContentView;
 #elif __ANDROID__
 using NativeView = Microsoft.Maui.Handlers.ContentViewGroup;

@@ -7,6 +7,8 @@ using NativeView = Android.Views.View;
 using NativeView = Microsoft.UI.Xaml.FrameworkElement;
 #elif NETSTANDARD
 using NativeView = System.Object;
+#elif __MACOS__
+using NativeView = AppKit.NSView;
 #endif
 
 namespace Microsoft.Maui.Handlers
