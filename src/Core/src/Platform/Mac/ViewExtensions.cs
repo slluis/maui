@@ -89,7 +89,7 @@ namespace Microsoft.Maui
 				if (backgroundLayer != null)
 				{
 					backgroundLayer.Name = BackgroundLayerName;
-					nativeView.BackgroundColor = UIColor.Clear;
+					nativeView.BackgroundColor = NSColor.Clear;
 					nativeView.InsertBackgroundLayer(backgroundLayer, 0);
 				}
 			}

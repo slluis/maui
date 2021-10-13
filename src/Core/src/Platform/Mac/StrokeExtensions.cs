@@ -116,7 +116,7 @@ namespace Microsoft.Maui
 						Name = ViewExtensions.BackgroundLayerName
 					};
 
-					nativeView.BackgroundColor = UIColor.Clear;
+					nativeView.BackgroundColor = NSColor.Clear;
 					nativeView.InsertBackgroundLayer(backgroundLayer, 0);
 				}
 			}

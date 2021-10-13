@@ -143,7 +143,7 @@ namespace Microsoft.Maui
 		public void SetBorderBrush(SolidPaint solidPaint)
 		{
 			_strokeColor = solidPaint.Color == null
-				? UIColor.Clear
+				? NSColor.Clear
 				: solidPaint.Color.ToNative();
 
 			_stroke = null;
@@ -283,7 +283,7 @@ namespace Microsoft.Maui
 
 		void SetDefaultBackgroundColor()
 		{
-			_backgroundColor = UIColor.Clear;
+			_backgroundColor = NSColor.Clear;
 		}
 
 		void DrawBackground(CGContext ctx)

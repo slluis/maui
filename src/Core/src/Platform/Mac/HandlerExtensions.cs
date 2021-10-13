@@ -40,7 +40,7 @@ namespace Microsoft.Maui
 
 			if (((INativeViewHandler)handler).NativeView is not NSView result)
 			{
-				throw new InvalidOperationException($"Unable to convert {view} to {typeof(UIView)}");
+				throw new InvalidOperationException($"Unable to convert {view} to {typeof(NSView)}");
 			}
 
 			return result;

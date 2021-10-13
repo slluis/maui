@@ -61,7 +61,7 @@ namespace Microsoft.Maui
 			}
 		}
 
-		bool TryOffsetRefresh(UIView view, bool refreshing)
+		bool TryOffsetRefresh(NSView view, bool refreshing)
 		{
 			if (view is UIScrollView scrollView)
 			{
@@ -94,7 +94,7 @@ namespace Microsoft.Maui
 			return false;
 		}
 
-		bool TryRemoveRefresh(UIView view, int index = 0)
+		bool TryRemoveRefresh(NSView view, int index = 0)
 		{
 			_refreshControlParent = view;
 
@@ -122,7 +122,7 @@ namespace Microsoft.Maui
 			return false;
 		}
 
-		bool TryInsertRefresh(UIView view, int index = 0)
+		bool TryInsertRefresh(NSView view, int index = 0)
 		{
 			_refreshControlParent = view;
 

@@ -23,8 +23,8 @@ namespace Microsoft.Maui
 			try
 			{
 				var image = File.Exists(filename)
-					? NSImage.FromFile(filename)
-					: NSImage.FromBundle(filename);
+					? new NSImage(filename, true)
+					: throw new NotImplementedException();// NSImage.FromBundle(filename);
 
 				if (image == null)
 					throw new InvalidOperationException("Unable to load image file.");

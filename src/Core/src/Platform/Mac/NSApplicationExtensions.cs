@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using AppKit;
 
 namespace Microsoft.Maui
@@ -27,7 +27,7 @@ namespace Microsoft.Maui
 			var nativeWindow = application.GetKeyWindow();
 			foreach (var window in MauiUIApplicationDelegate.Current.Application.Windows)
 			{
-				if (window?.Handler?.NativeView is UIWindow win && win == nativeWindow)
+				if (window?.Handler?.NativeView is NSWindow win && win == nativeWindow)
 					return window;
 			}
 

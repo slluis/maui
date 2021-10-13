@@ -98,7 +98,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				return _checkBoxTintUIColor ?? UIColor.White;
+				return _checkBoxTintUIColor ?? NSColor.White;
 			}
 			set
 			{
@@ -220,7 +220,7 @@ namespace Microsoft.Maui
 			context.TranslateCTM(hPadding + (nfloat)(0.05 * diameter), vPadding + (nfloat)(0.1 * diameter));
 			context.ScaleCTM(diameter, diameter);
 			DrawCheckMark(checkPath);
-			UIColor.White.SetStroke();
+			NSColor.White.SetStroke();
 			checkPath.Stroke();
 
 			context.RestoreState();
@@ -267,8 +267,8 @@ namespace Microsoft.Maui
 
 		// TODO COCOA
 
-		static UIKit.UIAccessibilityTrait? s_switchAccessibilityTraits;
-		UIKit.UIAccessibilityTrait SwitchAccessibilityTraits
+		static AppKit.UIAccessibilityTrait? s_switchAccessibilityTraits;
+		AppKit.UIAccessibilityTrait SwitchAccessibilityTraits
 		{
 			get
 			{
@@ -278,12 +278,12 @@ namespace Microsoft.Maui
 					return UIAccessibilityTrait.None;
 
 				if (s_switchAccessibilityTraits == null ||
-					s_switchAccessibilityTraits == UIKit.UIAccessibilityTrait.None)
+					s_switchAccessibilityTraits == AppKit.UIAccessibilityTrait.None)
 				{
-					s_switchAccessibilityTraits = new UIKit.UISwitch().AccessibilityTraits;
+					s_switchAccessibilityTraits = new AppKit.NSSwitch().AccessibilityTraits;
 				}
 
-				return s_switchAccessibilityTraits ?? UIKit.UIAccessibilityTrait.None;
+				return s_switchAccessibilityTraits ?? AppKit.UIAccessibilityTrait.None;
 			}
 		}
 

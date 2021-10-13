@@ -25,7 +25,7 @@ namespace Microsoft.Maui
 				if (CTFontManager.RegisterGraphicsFont(cgFont, out var error))
 					return name;
 
-				var uiFont = NSFont.FromName(name, 10);
+				var uiFont = NSFont.FromFontName(name, 10);
 				if (uiFont != null)
 					return name;
 

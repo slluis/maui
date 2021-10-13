@@ -9,7 +9,7 @@ namespace Microsoft.Maui.Platform.Mac
 	{
 		NSTextView PlaceholderLabel { get; } = new NSTextView
 		{
-			BackgroundColor = UIColor.Clear,
+			BackgroundColor = NSColor.Clear,
 			Lines = 0
 		};
 
