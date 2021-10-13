@@ -9,7 +9,7 @@ namespace Microsoft.Maui.Handlers
 {
 	public partial class ButtonHandler : ViewHandler<IButton, NSButton>
 	{
-		static readonly NSControlState[] ControlStates = { NSControlState.Normal, NSControlState.Highlighted, NSControlState.Disabled };
+//		static readonly NSControlState[] ControlStates = { NSControlState.Normal, NSControlState.Highlighted, NSControlState.Disabled };
 
 		static NSColor? ButtonTextColorDefaultDisabled;
 		static NSColor? ButtonTextColorDefaultHighlighted;
@@ -17,41 +17,44 @@ namespace Microsoft.Maui.Handlers
 
 		protected override NSButton CreateNativeView()
 		{
-			var button = new UIButton(UIButtonType.System);
+			var button = new NSButton();
 			SetControlPropertiesFromProxy(button);
 			return button;
 		}
 
 		protected override void ConnectHandler(NSButton nativeView)
 		{
-			nativeView.TouchUpInside += OnButtonTouchUpInside;
+/*			nativeView.TouchUpInside += OnButtonTouchUpInside;
 			nativeView.TouchUpOutside += OnButtonTouchUpOutside;
 			nativeView.TouchDown += OnButtonTouchDown;
-
+*/
 			base.ConnectHandler(nativeView);
 		}
 
 		protected override void DisconnectHandler(NSButton nativeView)
 		{
-			nativeView.TouchUpInside -= OnButtonTouchUpInside;
+/*			nativeView.TouchUpInside -= OnButtonTouchUpInside;
 			nativeView.TouchUpOutside -= OnButtonTouchUpOutside;
 			nativeView.TouchDown -= OnButtonTouchDown;
+*/
 			base.DisconnectHandler(nativeView);
 		}
 
 		void SetupDefaults(NSButton nativeView)
 		{
-			ButtonTextColorDefaultNormal = nativeView.TitleColor(UIControlState.Normal);
+/*			ButtonTextColorDefaultNormal = nativeView.TitleColor(UIControlState.Normal);
 			ButtonTextColorDefaultHighlighted = nativeView.TitleColor(UIControlState.Highlighted);
 			ButtonTextColorDefaultDisabled = nativeView.TitleColor(UIControlState.Disabled);
+*/
 		}
 
 		public static void MapText(IButtonHandler handler, IText button)
 		{
-			handler.TypedNativeView?.UpdateText(button);
+/*			handler.TypedNativeView?.UpdateText(button);
 
 			// Any text update requires that we update any attributed string formatting
 			MapFormatting(handler, button);
+*/
 		}
 
 		public static void MapTextColor(IButtonHandler handler, ITextStyle button)

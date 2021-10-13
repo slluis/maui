@@ -7,7 +7,7 @@ namespace Microsoft.Maui.Platform.Mac
 {
 	public class MauiTextView : NSTextView
 	{
-		NSLabel PlaceholderLabel { get; } = new UILabel
+		NSTextView PlaceholderLabel { get; } = new NSTextView
 		{
 			BackgroundColor = UIColor.Clear,
 			Lines = 0
@@ -65,7 +65,8 @@ namespace Microsoft.Maui.Platform.Mac
 			AddConstraints(vConstraints);
 		}
 
-		public override string? Text
+		// TODO COCOA
+/*		public override string? Text
 		{
 			get => base.Text;
 			set
@@ -93,6 +94,6 @@ namespace Microsoft.Maui.Platform.Mac
 			}
 		}
 
-		public event EventHandler? TextPropertySet;
+		public event EventHandler? TextPropertySet;*/
 	}
 }

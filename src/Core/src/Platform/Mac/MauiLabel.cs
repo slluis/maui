@@ -7,7 +7,8 @@ namespace Microsoft.Maui
 {
 	public class MauiLabel : NSTextField
 	{
-		public UIEdgeInsets TextInsets { get; set; }
+		// TODO COCOA
+		// public UIEdgeInsets TextInsets { get; set; }
 
 		public MauiLabel(CGRect frame) : base(frame)
 		{
@@ -17,8 +18,8 @@ namespace Microsoft.Maui
 		{
 		}
 
-		public override void DrawText(CGRect rect) =>
-			base.DrawText(TextInsets.InsetRect(rect));
+/*		public override void DrawText(CGRect rect) =>
+			base.DrawText(TextInsets.InsetRect(rect));*/
 
 		public override void InvalidateIntrinsicContentSize()
 		{

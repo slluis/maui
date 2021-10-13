@@ -1,6 +1,7 @@
 ﻿using CoreGraphics;
 using ObjCRuntime;
 using AppKit;
+using System;
 
 namespace Microsoft.Maui
 {
@@ -25,6 +26,19 @@ namespace Microsoft.Maui
 			}
 
 			return SafeAreaInsets.InsetRect(bounds);
+		}
+
+		// TODO COCOA
+		// Call this from FittingSize?
+		public virtual CGSize SizeThatFits(CGSize size)
+		{
+			throw new NotImplementedException();
+		}
+
+		// TODO COCOA
+		// Call this from where?
+		public virtual void LayoutSubviews()
+		{
 		}
 	}
 }

@@ -10,7 +10,8 @@ namespace Microsoft.Maui
 		public MauiActivityIndicator(CGRect rect, IActivityIndicator? virtualView) : base(rect)
 			=> _virtualView = virtualView;
 
-		public override void Draw(CGRect rect)
+		// TODO COCOA
+/*		public override void Draw(CGRect rect)
 		{
 			base.Draw(rect);
 
@@ -24,7 +25,7 @@ namespace Microsoft.Maui
 
 			if (_virtualView?.IsRunning == true)
 				StartAnimating();
-		}
+		}*/
 
 		protected override void Dispose(bool disposing)
 		{

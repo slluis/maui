@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 #if __IOS__ || MACCATALYST
 using NativeView = UIKit.UIApplicationDelegate;
+#elif __MACOS__
+using NativeView = AppKit.NSApplicationDelegate;
 #elif MONOANDROID
 using NativeView = Android.App.Application;
 #elif WINDOWS
