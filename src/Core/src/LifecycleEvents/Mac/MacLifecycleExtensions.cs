@@ -4,7 +4,7 @@ namespace Microsoft.Maui.LifecycleEvents
 {
 	public static class MacLifecycleExtensions
 	{
-		public static ILifecycleBuilder AddiOS(this ILifecycleBuilder builder, Action<IMacLifecycleBuilder> configureDelegate)
+		public static ILifecycleBuilder AddMac(this ILifecycleBuilder builder, Action<IMacLifecycleBuilder> configureDelegate)
 		{
 			var lifecycle = new LifecycleBuilder(builder);
 

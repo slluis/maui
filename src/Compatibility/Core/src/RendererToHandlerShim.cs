@@ -12,6 +12,9 @@ using static Microsoft.Maui.Controls.Compatibility.Platform.iOS.Platform;
 using NativeView = UIKit.UIView;
 using Microsoft.Maui.Controls.Compatibility.Platform.iOS;
 using ViewHandler = Microsoft.Maui.Handlers.ViewHandler<Microsoft.Maui.IView, UIKit.UIView>;
+#elif __MACOS__
+using NativeView = AppKit.NSView;
+using ViewHandler = Microsoft.Maui.Handlers.ViewHandler<Microsoft.Maui.IView, AppKit.NSView>;
 #elif NETSTANDARD
 using NativeView = System.Object;
 using ViewHandler = Microsoft.Maui.Handlers.ViewHandler<Microsoft.Maui.IView, System.Object>;

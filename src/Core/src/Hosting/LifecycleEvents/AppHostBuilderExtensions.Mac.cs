@@ -7,7 +7,7 @@ namespace Microsoft.Maui.LifecycleEvents
 	public static partial class AppHostBuilderExtensions
 	{
 		internal static MauiAppBuilder ConfigureCrossPlatformLifecycleEvents(this MauiAppBuilder builder) =>
-			builder.ConfigureLifecycleEvents(events => events.AddiOS(OnConfigureLifeCycle));
+			builder.ConfigureLifecycleEvents(events => events.AddMac(OnConfigureLifeCycle));
 
 		static void OnConfigureLifeCycle(IMacLifecycleBuilder macos)
 		{
