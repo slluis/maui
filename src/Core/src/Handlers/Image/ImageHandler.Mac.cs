@@ -7,11 +7,11 @@ using AppKit;
 
 namespace Microsoft.Maui.Handlers
 {
-	public partial class ImageHandler : ViewHandler<IImage, UIImageView>
+	public partial class ImageHandler : ViewHandler<IImage, NSImageView>
 	{
 		protected override NSImageView CreateNativeView() => new MauiImageView();
 
-		protected override void ConnectHandler(UIImageView nativeView)
+		protected override void ConnectHandler(NSImageView nativeView)
 		{
 			base.ConnectHandler(nativeView);
 
@@ -19,7 +19,7 @@ namespace Microsoft.Maui.Handlers
 				imageView.WindowChanged += OnWindowChanged;
 		}
 
-		protected override void DisconnectHandler(UIImageView nativeView)
+		protected override void DisconnectHandler(NSImageView nativeView)
 		{
 			base.DisconnectHandler(nativeView);
 

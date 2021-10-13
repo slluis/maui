@@ -12,14 +12,14 @@ namespace Microsoft.Maui.Handlers
 			return new UIButton(UIButtonType.System);
 		}
 
-		void OnSetImageSource(UIImage? obj)
+		void OnSetImageSource(NSImage? obj)
 		{
 			NativeView.SetImage(obj?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal), UIControlState.Normal);
 			NativeView.HorizontalAlignment = UIControlContentHorizontalAlignment.Fill;
 			NativeView.VerticalAlignment = UIControlContentVerticalAlignment.Fill;
 		}
 
-		protected override void ConnectHandler(UIButton nativeView)
+		protected override void ConnectHandler(NSButton nativeView)
 		{
 			nativeView.TouchUpInside += OnButtonTouchUpInside;
 			nativeView.TouchUpOutside += OnButtonTouchUpOutside;
@@ -27,7 +27,7 @@ namespace Microsoft.Maui.Handlers
 			base.ConnectHandler(nativeView);
 		}
 
-		protected override void DisconnectHandler(UIButton nativeView)
+		protected override void DisconnectHandler(NSButton nativeView)
 		{
 			nativeView.TouchUpInside -= OnButtonTouchUpInside;
 			nativeView.TouchUpOutside -= OnButtonTouchUpOutside;
