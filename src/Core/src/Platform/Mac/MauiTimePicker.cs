@@ -7,6 +7,8 @@ namespace Microsoft.Maui
 {
 	public class MauiTimePicker : NoCaretField
 	{
+		public event EventHandler ValueChanged;
+
 		readonly Action _dateSelected;
 		readonly NSDatePicker _picker;
 
@@ -44,6 +46,31 @@ namespace Microsoft.Maui
 			InputAssistantItem.TrailingBarButtonGroups = null;
 
 			AccessibilityTraits = UIAccessibilityTrait.Button;*/
+		}
+
+		internal void UpdateCharacterSpacing(ITimePicker timePicker)
+		{
+			throw new NotImplementedException();
+		}
+
+		internal void UpdateTime(ITimePicker timePicker)
+		{
+			throw new NotImplementedException();
+		}
+
+		internal void UpdateFormat(ITimePicker timePicker)
+		{
+			throw new NotImplementedException();
+		}
+
+		internal void UpdateTextColor(ITimePicker timePicker, NSColor? defaultTextColor)
+		{
+			throw new NotImplementedException();
+		}
+
+		internal void UpdateFont(ITimePicker timePicker, IFontManager fontManager)
+		{
+			throw new NotImplementedException();
 		}
 
 		public NSDate Date => _picker.DateValue;
