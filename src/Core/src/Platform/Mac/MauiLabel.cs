@@ -39,10 +39,40 @@ namespace Microsoft.Maui
 			}*/
 		}
 
-//		public override CGSize SizeThatFits(CGSize size) => AddInsets(base.SizeThatFits(size));
+		internal void UpdatePadding(ILabel label)
+		{
+			throw new NotImplementedException();
+		}
 
-	/*	CGSize AddInsets(CGSize size) => new CGSize(
-			width: size.Width + TextInsets.Left + TextInsets.Right,
-			height: size.Height + TextInsets.Top + TextInsets.Bottom);*/
+		internal void UpdateTextPlainText(ILabel label)
+		{
+			StringValue = label.Text ?? string.Empty;
+		}
+
+		internal void UpdateLineBreakMode(ILabel label)
+		{
+			throw new NotImplementedException();
+		}
+
+		internal void UpdateMaxLines(ILabel label)
+		{
+			MaximumNumberOfLines = label.MaxLines;
+		}
+
+		internal void UpdateTextDecorations(ILabel label)
+		{
+			throw new NotImplementedException();
+		}
+
+		internal void UpdateLineHeight(ILabel label)
+		{
+			throw new NotImplementedException();
+		}
+
+		//		public override CGSize SizeThatFits(CGSize size) => AddInsets(base.SizeThatFits(size));
+
+		/*	CGSize AddInsets(CGSize size) => new CGSize(
+				width: size.Width + TextInsets.Left + TextInsets.Right,
+				height: size.Height + TextInsets.Top + TextInsets.Bottom);*/
 	}
 }
