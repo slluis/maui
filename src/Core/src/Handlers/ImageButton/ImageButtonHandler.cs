@@ -4,6 +4,9 @@ using System.Text;
 #if __IOS__ || MACCATALYST
 using NativeImage = UIKit.UIImage;
 using NativeView = UIKit.UIButton;
+#elif __MACOS__
+using NativeImage = AppKit.NSImage;
+using NativeView = AppKit.NSButton;
 #elif MONOANDROID
 using NativeImage = Android.Graphics.Drawables.Drawable;
 using NativeView = AndroidX.AppCompat.Widget.AppCompatImageButton;
