@@ -1,5 +1,6 @@
 ﻿using CoreGraphics;
 using AppKit;
+using System;
 
 namespace Microsoft.Maui
 {
@@ -7,25 +8,38 @@ namespace Microsoft.Maui
 	{
 		IActivityIndicator? _virtualView;
 
+		// TODO
+		public NSColor? Color { get; internal set; }
+
 		public MauiActivityIndicator(CGRect rect, IActivityIndicator? virtualView) : base(rect)
 			=> _virtualView = virtualView;
 
-		// TODO COCOA
-/*		public override void Draw(CGRect rect)
+		internal void StartAnimating()
 		{
-			base.Draw(rect);
-
-			if (_virtualView?.IsRunning == true)
-				StartAnimating();
+			throw new NotImplementedException();
 		}
 
-		public override void LayoutSubviews()
+		internal void StopAnimating()
 		{
-			base.LayoutSubviews();
+			throw new NotImplementedException();
+		}
 
-			if (_virtualView?.IsRunning == true)
-				StartAnimating();
-		}*/
+		// TODO COCOA
+		/*		public override void Draw(CGRect rect)
+				{
+					base.Draw(rect);
+
+					if (_virtualView?.IsRunning == true)
+						StartAnimating();
+				}
+
+				public override void LayoutSubviews()
+				{
+					base.LayoutSubviews();
+
+					if (_virtualView?.IsRunning == true)
+						StartAnimating();
+				}*/
 
 		protected override void Dispose(bool disposing)
 		{

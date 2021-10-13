@@ -5,6 +5,9 @@ using Microsoft.Maui.Handlers;
 #if __IOS__ || MACCATALYST
 using NativeImage = UIKit.UIImage;
 using NativeView = UIKit.UIView;
+#elif __MACOS__
+using NativeImage = AppKit.NSImage;
+using NativeView = AppKit.NSView;
 #elif MONOANDROID
 using NativeImage = Android.Graphics.Drawables.Drawable;
 using NativeView = Android.Views.View;

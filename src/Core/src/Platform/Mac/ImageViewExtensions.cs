@@ -15,20 +15,20 @@ namespace Microsoft.Maui
 
 		public static void UpdateAspect(this NSImageView imageView, IImage image)
 		{
-			imageView.ContentMode = image.Aspect.ToUIViewContentMode();
+//			imageView.ContentMode = image.Aspect.ToUIViewContentMode();
 		}
 
 		public static void UpdateIsAnimationPlaying(this NSImageView imageView, IImageSourcePart image)
 		{
 			if (image.IsAnimationPlaying)
 			{
-				if (!imageView.IsAnimating)
-					imageView.StartAnimating();
+//				if (!imageView.IsAnimating)
+//					imageView.StartAnimating();
 			}
 			else
 			{
-				if (imageView.IsAnimating)
-					imageView.StopAnimating();
+//				if (imageView.IsAnimating)
+//					imageView.StopAnimating();
 			}
 		}
 
@@ -59,7 +59,8 @@ namespace Microsoft.Maui
 			Action<NSImage?> setImage,
 			CancellationToken cancellationToken = default)
 		{
-			image.UpdateIsLoading(false);
+			throw new NotSupportedException();
+/*			image.UpdateIsLoading(false);
 
 			var imageSource = image.Source;
 			if (imageSource == null)
@@ -111,7 +112,7 @@ namespace Microsoft.Maui
 				}
 			}
 
-			return null;
+			return null;*/
 		}
 	}
 }

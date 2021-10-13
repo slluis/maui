@@ -35,21 +35,21 @@ namespace Microsoft.Maui
 
 		public static void UpdateCharacterSpacing(this NSButton nativeButton, ITextStyle textStyle)
 		{
-			nativeButton.TitleLabel.UpdateCharacterSpacing(textStyle);
+	//		nativeButton.TitleLabel.UpdateCharacterSpacing(textStyle);
 		}
 
 		public static void UpdateFont(this NSButton nativeButton, ITextStyle textStyle, IFontManager fontManager)
 		{
-			nativeButton.TitleLabel.UpdateFont(textStyle, fontManager, UIFont.ButtonFontSize);
+	//		nativeButton.TitleLabel.UpdateFont(textStyle, fontManager, UIFont.ButtonFontSize);
 		}
 
 		public static void UpdatePadding(this NSButton nativeButton, IButton button)
 		{
-			nativeButton.ContentEdgeInsets = new UIEdgeInsets(
+	/*		nativeButton.ContentEdgeInsets = new UIEdgeInsets(
 				(float)(button.Padding.Top),
 				(float)(button.Padding.Left),
 				(float)(button.Padding.Bottom),
 				(float)(button.Padding.Right));
-		}
+	*/	}
 	}
 }

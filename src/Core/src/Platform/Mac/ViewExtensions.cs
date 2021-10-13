@@ -79,7 +79,7 @@ namespace Microsoft.Maui
 			if (paint.IsNullOrEmpty())
 				return;
 
-			if (paint is SolidPaint solidPaint)
+/*			if (paint is SolidPaint solidPaint)
 			{
 				Color backgroundColor = solidPaint.Color;
 

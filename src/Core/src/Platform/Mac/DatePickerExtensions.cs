@@ -24,7 +24,7 @@ namespace Microsoft.Maui
 			var textColor = datePicker.TextColor;
 
 			if (textColor == null)
-				nativeDatePicker.TextColor = defaultTextColor;
+				nativeDatePicker.TextColor = defaultTextColor ?? NSColor.Text;
 			else
 				nativeDatePicker.TextColor = textColor.ToNative();
 
@@ -34,10 +34,10 @@ namespace Microsoft.Maui
 
 		public static void UpdateDate(this MauiDatePicker nativeDatePicker, IDatePicker datePicker, NSDatePicker? picker)
 		{
-			if (picker != null && picker.Date.ToDateTime().Date != datePicker.Date.Date)
-				picker.SetDate(datePicker.Date.ToNSDate(), false);
+			if (picker != null && picker.DateValue.ToDateTime().Date != datePicker.Date.Date)
+				picker.DateValue = datePicker.Date.ToNSDate();
 
-			nativeDatePicker.Text = datePicker.Date.ToString(datePicker.Format);
+//			nativeDatePicker.Text = datePicker.Date.ToString(datePicker.Format);
 
 			nativeDatePicker.UpdateCharacterSpacing(datePicker);
 		}
@@ -51,7 +51,7 @@ namespace Microsoft.Maui
 		{
 			if (picker != null)
 			{
-				picker.MinimumDate = datePicker.MinimumDate.ToNSDate();
+				picker.MinDate = datePicker.MinimumDate.ToNSDate();
 			}
 		}
 
@@ -64,7 +64,7 @@ namespace Microsoft.Maui
 		{
 			if (picker != null)
 			{
-				picker.MaximumDate = datePicker.MaximumDate.ToNSDate();
+				picker.MaxDate = datePicker.MaximumDate.ToNSDate();
 			}
 		}
 	}

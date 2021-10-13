@@ -9,7 +9,7 @@ namespace Microsoft.Maui
 	public static class ColorExtensions
 	{
 		internal static readonly NSColor Black = NSColor.Black;
-		internal static readonly NSColor SeventyPercentGrey = new NSColor(0.7f, 0.7f, 0.7f, 1);
+		internal static readonly NSColor SeventyPercentGrey = NSColor.FromRgba(0.7f, 0.7f, 0.7f, 1);
 
 		internal static NSColor LabelColor
 		{
@@ -26,11 +26,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-
-				if (NativeVersion.IsAtLeast(13))
-					return NSColor.PlaceholderTextColor;
-
-				return SeventyPercentGrey;
+				return NSColor.PlaceholderTextColor;
 			}
 		}
 
@@ -50,11 +46,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-
-				if (NativeVersion.IsAtLeast(13))
-					return NSColor.SystemBackgroundColor;
-
-				return NSColor.White;
+				return NSColor.ControlBackground;
 			}
 		}
 
@@ -62,10 +54,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				if (NativeVersion.IsAtLeast(13))
-					return NSColor.SeparatorColor;
-
-				return NSColor.Gray;
+				return NSColor.SeparatorColor;
 			}
 		}
 
@@ -73,10 +62,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				if (NativeVersion.IsAtLeast(13))
-					return NSColor.OpaqueSeparatorColor;
-
-				return NSColor.Black;
+				return NSColor.SeparatorColor;
 			}
 		}
 
@@ -84,10 +70,12 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				if (NativeVersion.IsAtLeast(13))
+				return NSColor.FromRgba(247f / 255f, 247f / 255f, 247f / 255f, 1);
+/*				if (NativeVersion.IsAtLeast(13))
 					return NSColor.SystemGroupedBackgroundColor;
 
 				return new NSColor(247f / 255f, 247f / 255f, 247f / 255f, 1);
+*/
 			}
 		}
 
@@ -95,10 +83,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				if (NativeVersion.IsAtLeast(13))
-					return NSColor.SystemBlueColor;
-
-				return Color.FromRgba(50, 79, 133, 255).ToNative();
+				return NSColor.SystemBlueColor;
 			}
 		}
 
@@ -106,10 +91,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				if (NativeVersion.IsAtLeast(13))
-					return NSColor.SystemRedColor;
-
-				return NSColor.FromRGBA(255, 0, 0, 255);
+				return NSColor.SystemRedColor;
 			}
 		}
 
@@ -117,10 +99,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				if (NativeVersion.IsAtLeast(13))
-					return NSColor.SystemGrayColor;
-
-				return NSColor.Gray;
+				return NSColor.SystemGrayColor;
 			}
 		}
 
@@ -128,10 +107,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				if (NativeVersion.IsAtLeast(13))
-					return NSColor.SystemGray2Color;
-
-				return NSColor.LightGray;
+				return NSColor.SystemGrayColor;
 			}
 		}
 
@@ -142,7 +118,7 @@ namespace Microsoft.Maui
 
 		public static NSColor FromPatternImageFromBundle(string bgImage)
 		{
-			var image = UIImage.FromBundle(bgImage);
+			var image = NSImage.ImageNamed(bgImage);
 			if (image == null)
 				return NSColor.White;
 
@@ -154,14 +130,14 @@ namespace Microsoft.Maui
 			if (color == null)
 				return null;
 
-			color.GetRGBA(out nfloat red, out nfloat green, out nfloat blue, out nfloat alpha);
+			color.GetRgba(out nfloat red, out nfloat green, out nfloat blue, out nfloat alpha);
 
 			return new Color((float)red, (float)green, (float)blue, (float)alpha);
 		}
 
 		public static NSColor ToNative(this Color color)
 		{
-			return new NSColor(color.Red, color.Green, color.Blue, color.Alpha);
+			return NSColor.FromRgba(color.Red, color.Green, color.Blue, color.Alpha);
 		}
 
 		public static NSColor? ToNative(this Color? color, Color? defaultColor)

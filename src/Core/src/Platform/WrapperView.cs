@@ -26,6 +26,8 @@ namespace Microsoft.Maui
 
 #if WINDOWS
 		public new IShadow? Shadow
+#elif __MACOS__
+		public new IShadow? Shadow
 #else
 		public IShadow? Shadow
 #endif
