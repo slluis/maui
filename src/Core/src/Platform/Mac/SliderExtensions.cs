@@ -5,65 +5,65 @@ namespace Microsoft.Maui
 {
 	public static class SliderExtensions
 	{
-		public static void UpdateMinimum(this NSSlider NSSlider, ISlider slider)
+		public static void UpdateMinimum(this NSSlider uiSlider, ISlider slider)
 		{
-			NSSlider.MaxValue = (float)slider.Maximum;
+			uiSlider.MaxValue = (float)slider.Maximum;
 		}
 
-		public static void UpdateMaximum(this NSSlider NSSlider, ISlider slider)
+		public static void UpdateMaximum(this NSSlider uiSlider, ISlider slider)
 		{
-			NSSlider.MinValue = (float)slider.Minimum;
+			uiSlider.MinValue = (float)slider.Minimum;
 		}
 
-		public static void UpdateValue(this NSSlider NSSlider, ISlider slider)
+		public static void UpdateValue(this NSSlider uiSlider, ISlider slider)
 		{
-			if ((float)slider.Value != NSSlider.Value)
-				NSSlider.Value = (float)slider.Value;
+			if ((float)slider.Value != uiSlider.Value)
+				uiSlider.Value = (float)slider.Value;
 		}
 
-		public static void UpdateMinimumTrackColor(this NSSlider NSSlider, ISlider slider)
+		public static void UpdateMinimumTrackColor(this NSSlider uiSlider, ISlider slider)
 		{
-			UpdateMinimumTrackColor(NSSlider, slider, null);
+			UpdateMinimumTrackColor(uiSlider, slider, null);
 		}
 
-		public static void UpdateMinimumTrackColor(this NSSlider NSSlider, ISlider slider, NSColor? defaultMinTrackColor)
+		public static void UpdateMinimumTrackColor(this NSSlider uiSlider, ISlider slider, NSColor? defaultMinTrackColor)
 		{
 			if (slider.MinimumTrackColor == null)
 			{
 				if (defaultMinTrackColor != null)
-					NSSlider.MinimumTrackTintColor = defaultMinTrackColor;
+					uiSlider.MinimumTrackTintColor = defaultMinTrackColor;
 			}
 			else
-				NSSlider.MinimumTrackTintColor = slider.MinimumTrackColor.ToNative();
+				uiSlider.MinimumTrackTintColor = slider.MinimumTrackColor.ToNative();
 		}
 
-		public static void UpdateMaximumTrackColor(this NSSlider NSSlider, ISlider slider)
+		public static void UpdateMaximumTrackColor(this NSSlider uiSlider, ISlider slider)
 		{
-			UpdateMaximumTrackColor(NSSlider, slider, null);
+			UpdateMaximumTrackColor(uiSlider, slider, null);
 		}
 
-		public static void UpdateMaximumTrackColor(this NSSlider NSSlider, ISlider slider, NSColor? defaultMaxTrackColor)
+		public static void UpdateMaximumTrackColor(this NSSlider uiSlider, ISlider slider, NSColor? defaultMaxTrackColor)
 		{
 			if (slider.MaximumTrackColor == null)
-				NSSlider.MaximumTrackTintColor = defaultMaxTrackColor;
+				uiSlider.MaximumTrackTintColor = defaultMaxTrackColor;
 			else
-				NSSlider.MaximumTrackTintColor = slider.MaximumTrackColor.ToNative();
+				uiSlider.MaximumTrackTintColor = slider.MaximumTrackColor.ToNative();
 		}
 
-		public static void UpdateThumbColor(this NSSlider NSSlider, ISlider slider)
+		public static void UpdateThumbColor(this NSSlider uiSlider, ISlider slider)
 		{
-			UpdateThumbColor(NSSlider, slider, null);
+			UpdateThumbColor(uiSlider, slider, null);
 		}
 
-		public static void UpdateThumbColor(this NSSlider NSSlider, ISlider slider, NSColor? defaultThumbColor)
+		public static void UpdateThumbColor(this NSSlider uiSlider, ISlider slider, NSColor? defaultThumbColor)
 		{
 			if (slider.ThumbColor == null)
-				NSSlider.ThumbTintColor = defaultThumbColor;
+				uiSlider.ThumbTintColor = defaultThumbColor;
 			else
-				NSSlider.ThumbTintColor = slider.ThumbColor.ToNative();
+				uiSlider.ThumbTintColor = slider.ThumbColor.ToNative();
 		}
 
-		public static async Task UpdateThumbImageSourceAsync(this NSSlider NSSlider, ISlider slider, IImageSourceServiceProvider provider)
+		public static async Task UpdateThumbImageSourceAsync(this NSSlider uiSlider, ISlider slider, IImageSourceServiceProvider provider)
 		{
 			var thumbImageSource = slider.ThumbImageSource;
 
@@ -73,7 +73,7 @@ namespace Microsoft.Maui
 				var result = await service.GetImageAsync(thumbImageSource);
 				var thumbImage = result?.Value;
 
-				NSSlider.SetThumbImage(thumbImage, UIControlState.Normal);
+				uiSlider.SetThumbImage(thumbImage, UIControlState.Normal);
 			}
 		}
 	}
