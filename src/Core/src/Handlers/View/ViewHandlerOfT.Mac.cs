@@ -1,6 +1,7 @@
 using Microsoft.Maui.Graphics;
 using AppKit;
 using static Microsoft.Maui.Primitives.Dimension;
+using System;
 
 namespace Microsoft.Maui.Handlers
 {
@@ -24,9 +25,11 @@ namespace Microsoft.Maui.Handlers
 			if (nativeView == null)
 				return;
 
+			//FIXME_NATIVE: To implement
+
 			// We set Center and Bounds rather than Frame because Frame is undefined if the CALayer's transform is 
 			// anything other than the identity (https://developer.apple.com/documentation/uikit/uiview/1622459-transform)
-			nativeView.Center = new CoreGraphics.CGPoint(rect.Center.X, rect.Center.Y);
+			//nativeView.Center = new CoreGraphics.CGPoint(rect.Center.X, rect.Center.Y);
 
 			// The position of Bounds is usually (0,0), but in some cases (e.g., UIScrollView) it's the content offset.
 			// So just leave it a whatever value iOS thinks it should be.
@@ -44,22 +47,24 @@ namespace Microsoft.Maui.Handlers
 				return new Size(widthConstraint, heightConstraint);
 			}
 
-			var sizeThatFits = nativeView.SizeThatFits(new CoreGraphics.CGSize((float)widthConstraint, (float)heightConstraint));
+			throw new NotImplementedException();
+			//var sizeThatFits = nativeView.SizeThatFits(new CoreGraphics.CGSize((float)widthConstraint, (float)heightConstraint));
 
-			var size = new Size(
-				sizeThatFits.Width == float.PositiveInfinity ? double.PositiveInfinity : sizeThatFits.Width,
-				sizeThatFits.Height == float.PositiveInfinity ? double.PositiveInfinity : sizeThatFits.Height);
+			//var size = new Size(
+			//	sizeThatFits.Width == float.PositiveInfinity ? double.PositiveInfinity : sizeThatFits.Width,
+			//	sizeThatFits.Height == float.PositiveInfinity ? double.PositiveInfinity : sizeThatFits.Height);
 
-			if (double.IsInfinity(size.Width) || double.IsInfinity(size.Height))
-			{
-				nativeView.SizeToFit();
-				size = new Size(nativeView.Frame.Width, nativeView.Frame.Height);
-			}
+			//if (double.IsInfinity(size.Width) || double.IsInfinity(size.Height))
+			//{
+			//	
+			//	nativeView.SizeToFit();
+			//	size = new Size(nativeView.Frame.Width, nativeView.Frame.Height);
+			//}
 
-			var finalWidth = ResolveConstraints(size.Width, VirtualView.Width, VirtualView.MinimumWidth, VirtualView.MaximumWidth);
-			var finalHeight = ResolveConstraints(size.Height, VirtualView.Height, VirtualView.MinimumHeight, VirtualView.MaximumHeight);
+			//var finalWidth = ResolveConstraints(size.Width, VirtualView.Width, VirtualView.MinimumWidth, VirtualView.MaximumWidth);
+			//var finalHeight = ResolveConstraints(size.Height, VirtualView.Height, VirtualView.MinimumHeight, VirtualView.MaximumHeight);
 
-			return new Size(finalWidth, finalHeight);
+			//return new Size(finalWidth, finalHeight);
 		}
 
 		double ResolveConstraints(double measured, double exact, double min, double max)
@@ -94,7 +99,7 @@ namespace Microsoft.Maui.Handlers
 			if (NativeView == null || ContainerView != null)
 				return;
 
-			var oldParent = (UIView?)NativeView.Superview;
+			var oldParent = NativeView.Superview;
 
 			var oldIndex = oldParent?.IndexOfSubview(NativeView);
 			NativeView.RemoveFromSuperview();
@@ -102,10 +107,13 @@ namespace Microsoft.Maui.Handlers
 			ContainerView ??= new WrapperView(NativeView.Bounds);
 			ContainerView.AddSubview(NativeView);
 
-			if (oldIndex is int idx && idx >= 0)
-				oldParent?.InsertSubview(ContainerView, idx);
-			else
-				oldParent?.AddSubview(ContainerView);
+			if (oldParent != null)
+			{
+				if (oldIndex is int idx && idx >= 0)
+					oldParent.Subviews.Insert(idx, ContainerView);
+				else
+					oldParent.AddSubview(ContainerView);
+			}
 		}
 
 		protected override void RemoveContainer()
@@ -113,17 +121,20 @@ namespace Microsoft.Maui.Handlers
 			if (NativeView == null || ContainerView == null || NativeView.Superview != ContainerView)
 				return;
 
-			var oldParent = (UIView?)ContainerView.Superview;
+			var oldParent = ContainerView.Superview;
 
 			var oldIndex = oldParent?.IndexOfSubview(ContainerView);
 			ContainerView.RemoveFromSuperview();
 
 			ContainerView = null;
 
-			if (oldIndex is int idx && idx >= 0)
-				oldParent?.InsertSubview(NativeView, idx);
-			else
-				oldParent?.AddSubview(NativeView);
+			if (oldParent != null)
+			{
+				if (oldIndex is int idx && idx >= 0)
+					oldParent.Subviews.Insert(idx, NativeView);
+				else
+					oldParent.AddSubview(NativeView);
+			}
 		}
 	}
 }
