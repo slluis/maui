@@ -8,6 +8,8 @@ namespace Microsoft.Maui.Handlers
 	// TODO COCOA
 	public partial class ImageButtonHandler : ViewHandler<IImageButton, NSButton>
 	{
+		AppKit.NSImageView dummy = new NSImageView();
+
 		protected override NSButton CreateNativeView()
 		{
 			throw new NotImplementedException();
@@ -53,5 +55,8 @@ namespace Microsoft.Maui.Handlers
 		{
 			VirtualView?.Pressed();
 		}
+
+		// TODO COCOA
+		AppKit.NSImageView IImageHandler.TypedNativeView => dummy;
 	}
 }
