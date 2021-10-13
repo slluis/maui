@@ -74,7 +74,7 @@ namespace Microsoft.Maui.Handlers
 			_ = VirtualView ?? throw new InvalidOperationException($"{nameof(VirtualView)} should have been set by base class.");
 			_ = MauiContext ?? throw new InvalidOperationException($"{nameof(MauiContext)} should have been set by base class.");
 
-			NativeView.InsertSubview(child.ToNative(MauiContext), index);
+			NativeView.Subviews.Insert(index, child.ToNative(MauiContext));
 		}
 
 		public void Update(int index, IView child)
@@ -85,8 +85,8 @@ namespace Microsoft.Maui.Handlers
 
 			var existing = NativeView.Subviews[index];
 			existing.RemoveFromSuperview();
-			NativeView.InsertSubview(child.ToNative(MauiContext), index);
-			NativeView.SetNeedsLayout();
+			NativeView.Subviews.Insert (index, child.ToNative(MauiContext));
+			NativeView.NeedsLayout = true;
 		}
 
 		protected override void DisconnectHandler(LayoutView nativeView)

@@ -10,8 +10,12 @@ using AppKit;
 
 namespace Microsoft.Maui
 {
-	internal class ControlsNavigationController : NSView
+	internal class ControlsNavigationController : NSViewController
 	{
-
+		NavigationViewHandler viewHandler;
+		public ControlsNavigationController(NavigationViewHandler viewHandler)
+		{
+			this.viewHandler = viewHandler;
+		}
 	}
 }

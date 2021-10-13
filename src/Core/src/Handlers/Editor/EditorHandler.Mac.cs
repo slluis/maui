@@ -127,6 +127,8 @@ namespace Microsoft.Maui.Handlers
 			var newLength = currLength + addLength - remLength;
 
 			return newLength <= VirtualView.MaxLength;*/
+
+			throw new NotImplementedException();
 		}
 
 		void OnEnded(object? sender, EventArgs eventArgs)
