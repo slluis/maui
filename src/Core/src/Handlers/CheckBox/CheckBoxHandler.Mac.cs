@@ -11,7 +11,8 @@ namespace Microsoft.Maui.Handlers
 		{
 			return new MauiCheckBox
 			{
-				MinimumViewSize = MinimumSize
+				// TODO COCOA
+//				MinimumViewSize = MinimumSize
 			};
 		}
 
@@ -19,14 +20,16 @@ namespace Microsoft.Maui.Handlers
 		{
 			base.ConnectHandler(nativeView);
 
-			nativeView.CheckedChanged += OnCheckedChanged;
+			// TODO COCOA
+//			nativeView.CheckedChanged += OnCheckedChanged;
 		}
 
 		protected override void DisconnectHandler(MauiCheckBox nativeView)
 		{
 			base.DisconnectHandler(nativeView);
 
-			nativeView.CheckedChanged -= OnCheckedChanged;
+			// TODO COCOA
+//			nativeView.CheckedChanged -= OnCheckedChanged;
 		}
 
 		public static void MapIsChecked(CheckBoxHandler handler, ICheckBox check)
@@ -78,7 +81,8 @@ namespace Microsoft.Maui.Handlers
 		{
 			if (sender is MauiCheckBox nativeView && VirtualView != null)
 			{
-				VirtualView.IsChecked = nativeView.IsChecked;
+				// TODO COCOA
+//				VirtualView.IsChecked = nativeView.IsChecked;
 			}
 		}
 	}

@@ -13,8 +13,11 @@ namespace Microsoft.Maui
 		public static void UpdateTitleColor(this MauiPicker nativePicker, IPicker picker) =>
  			nativePicker.SetTitleColor(picker);
 
-		public static void UpdateTextColor(this MauiPicker nativePicker, IPicker picker) =>
-			nativePicker.TextColor = picker.TextColor?.ToNative();
+		public static void UpdateTextColor(this MauiPicker nativePicker, IPicker picker)
+		{
+			if (picker.TextColor != null)
+				nativePicker.TextColor = picker.TextColor.ToNative();
+		}
 
 		public static void UpdateSelectedIndex(this MauiPicker nativePicker, IPicker picker) =>
 			nativePicker.SetSelectedIndex(picker, picker.SelectedIndex);
@@ -36,17 +39,16 @@ namespace Microsoft.Maui
 
 		internal static void UpdateAttributedPlaceholder(this MauiPicker nativePicker, NSAttributedString nsAttributedString)
 		{
-			nativePicker.AttributedPlaceholder = nsAttributedString;
+//			nativePicker.AttributedPlaceholder = nsAttributedString;
 		}
 
 		internal static void UpdatePicker(this MauiPicker nativePicker, IPicker picker)
 		{
 			var selectedIndex = picker.SelectedIndex;
 
-			nativePicker.Text = selectedIndex == -1 ? "" : picker.GetItem(selectedIndex);
+			nativePicker.StringValue = selectedIndex == -1 ? "" : picker.GetItem(selectedIndex);
 
-			var pickerView = nativePicker.UIPickerView;
-			pickerView?.ReloadAllComponents();
+			nativePicker.ReloadAllComponents();
 
 			if (picker.GetCount() == 0)
 				return;
@@ -56,7 +58,7 @@ namespace Microsoft.Maui
 
 		internal static void SetSelectedIndex(this MauiPicker nativePicker, IPicker picker, int selectedIndex = 0)
 		{
-			picker.SelectedIndex = selectedIndex;
+/*			picker.SelectedIndex = selectedIndex;
 
 			var pickerView = nativePicker.UIPickerView;
 
@@ -65,7 +67,7 @@ namespace Microsoft.Maui
 				source.SelectedIndex = selectedIndex;
 			}
 
-			pickerView?.Select(Math.Max(selectedIndex, 0), 0, true);
+			pickerView?.Select(Math.Max(selectedIndex, 0), 0, true);*/
 		}
 	}
 }

@@ -15,8 +15,8 @@ namespace Microsoft.Maui.Handlers
 		{
 			var nativeEntry = new MauiTextField
 			{
-				BorderStyle = NSTextBorderStyle.RoundedRect,
-				ClipsToBounds = true
+//				BorderStyle = NSTextBorderStyle.RoundedRect,
+//				ClipsToBounds = true
 			};
 
 			_defaultTextColor = nativeEntry.TextColor;
@@ -32,21 +32,21 @@ namespace Microsoft.Maui.Handlers
 		{
 			base.ConnectHandler(nativeView);
 
-			nativeView.ShouldReturn = OnShouldReturn;
+	/*		nativeView.ShouldReturn = OnShouldReturn;
 			nativeView.EditingChanged += OnEditingChanged;
 			nativeView.EditingDidEnd += OnEditingEnded;
 			nativeView.TextPropertySet += OnTextPropertySet;
-			nativeView.ShouldChangeCharacters += OnShouldChangeCharacters;
+			nativeView.ShouldChangeCharacters += OnShouldChangeCharacters;*/
 		}
 
 		protected override void DisconnectHandler(MauiTextField nativeView)
 		{
 			base.DisconnectHandler(nativeView);
 
-			nativeView.EditingChanged -= OnEditingChanged;
+/*			nativeView.EditingChanged -= OnEditingChanged;
 			nativeView.EditingDidEnd -= OnEditingEnded;
 			nativeView.TextPropertySet -= OnTextPropertySet;
-			nativeView.ShouldChangeCharacters -= OnShouldChangeCharacters;
+			nativeView.ShouldChangeCharacters -= OnShouldChangeCharacters;*/
 		}
 
 		public static void MapText(EntryHandler handler, IEntry entry)
@@ -173,12 +173,12 @@ namespace Microsoft.Maui.Handlers
 			if (VirtualView == null || NativeView == null)
 				return;
 
-			VirtualView.UpdateText(NativeView.Text);
+			VirtualView.UpdateText(NativeView.StringValue);
 		}
 
 		bool OnShouldChangeCharacters(NSTextField textField, NSRange range, string replacementString)
 		{
-			var currLength = textField?.Text?.Length ?? 0;
+			var currLength = textField?.StringValue?.Length ?? 0;
 
 			// fix a crash on undo
 			if (range.Length + range.Location > currLength)

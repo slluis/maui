@@ -2,6 +2,8 @@
 using System.Threading;
 #if __IOS__ || MACCATALYST
 using NativeView = UIKit.UIImageView;
+#elif __MACOS__
+using NativeView = AppKit.NSImageView;
 #elif MONOANDROID
 using NativeView = Android.Widget.ImageView;
 #elif WINDOWS

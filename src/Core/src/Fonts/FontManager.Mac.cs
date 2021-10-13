@@ -106,20 +106,20 @@ namespace Microsoft.Maui
 				{
 					NSFont? result = null;
 
-					if (Array.IndexOf(NSFont.FamilyNames, family) != -1)
+					// TODO COCOA
+/*					if (Array.IndexOf(NSFont.FamilyNames, family) != -1)
 					{
 						var descriptor = new NSFontDescriptor().CreateWithFamily(family);
 						if (hasAttributes)
-							throw new NotImplementedException();
-							//descriptor = descriptor.CreateWithAttributes(GetFontAttributes(font));
+							descriptor = descriptor.CreateWithAttributes(GetFontAttributes(font));
 
 						result = NSFont.FromDescriptor(descriptor, size);
 						if (result != null)
 							return ApplyScaling(font, result);
-					}
+					}*/
 
 					var cleansedFont = CleanseFontName(family);
-					result = NSFont.FromName(cleansedFont, size);
+					result = NSFont.FromFontName(cleansedFont, size);
 					if (result != null)
 						return ApplyScaling(font, result);
 
@@ -130,19 +130,20 @@ namespace Microsoft.Maui
 							? null
 							: weights[weights.Length - 1];
 
-						if (!string.IsNullOrWhiteSpace(fontWeight) && Enum.TryParse<NSFontWeight>(fontWeight, true, out var NSFontWeight))
+						// TODO COCOA
+/*						if (!string.IsNullOrWhiteSpace(fontWeight) && Enum.TryParse<NSFontWeight>(fontWeight, true, out var NSFontWeight))
 						{
 							result = NSFont.SystemFontOfSize(size, NSFontWeight);
 							if (result != null)
 								return ApplyScaling(font, result);
-						}
+						}*/
 
 						result = NSFont.SystemFontOfSize(size, NSFontWeight.Regular);
 						if (result != null)
 							return ApplyScaling(font, result);
 					}
 
-					result = NSFont.FromName(family, size);
+					result = NSFont.FromFontName(family, size);
 					if (result != null)
 						return ApplyScaling(font, result);
 				}
@@ -154,17 +155,19 @@ namespace Microsoft.Maui
 
 			if (hasAttributes)
 			{
-				var defaultFont = NSFont.SystemFontOfSize(size);
+				// TODO COCOA
+/*				var defaultFont = NSFont.SystemFontOfSize(size);
 				var descriptor = defaultFont.FontDescriptor.CreateWithAttributes(GetFontAttributes(font));
-				return ApplyScaling(font, NSFont.FromDescriptor(descriptor, size));
+				return ApplyScaling(font, NSFont.FromDescriptor(descriptor, size));*/
 			}
 
 			return ApplyScaling(font, NSFont.SystemFontOfSize(size));
 
 			NSFont ApplyScaling(Font font, NSFont NSFont)
 			{
-				if (font.AutoScalingEnabled)
-					return NSFontMetrics.DefaultMetrics.GetScaledFont(NSFont);
+				// TODO COCOA
+/*				if (font.AutoScalingEnabled)
+					return NSFontMetrics.DefaultMetrics.GetScaledFont(NSFont);*/
 
 				return NSFont;
 			}
