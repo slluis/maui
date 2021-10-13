@@ -44,7 +44,8 @@ namespace Microsoft.Maui.Handlers
 #if __IOS__
 		UIKit.UIImageView IImageHandler.TypedNativeView => NativeView.ImageView;
 #elif __MACOS__
-		AppKit.NSImageView IImageHandler.TypedNativeView => NativeView.ImageView;
+// TODO COCOA
+		AppKit.NSImageView IImageHandler.TypedNativeView => null;
 #elif WINDOWS
 		UI.Xaml.Controls.Image IImageHandler.TypedNativeView => (UI.Xaml.Controls.Image)NativeView.Content;
 #elif __ANDROID__

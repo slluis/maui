@@ -102,7 +102,7 @@ namespace Microsoft.Maui
 				//	nativeView.BackgroundColor = NSColor.Clear;
 				//	nativeView.InsertBackgroundLayer(backgroundLayer, 0);
 				//}
-			}
+			}*/
 		}
 
 		public static void UpdateFlowDirection(this NSView nativeView, IView view)

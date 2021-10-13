@@ -188,7 +188,8 @@ namespace Microsoft.Maui.Handlers
 
 		public static void MapFlowDirection(IViewHandler handler, IView view)
 		{
-			((NativeView?)handler.NativeView)?.UpdateFlowDirection(view);
+			// TODO COCOA
+			//((NativeView?)handler.NativeView)?.UpdateFlowDirection(view);
 		}
 
 		public static void MapOpacity(IViewHandler handler, IView view)
