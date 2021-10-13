@@ -9,9 +9,9 @@ namespace Microsoft.Maui.Handlers
 		static NSColor? DefaultMaxTrackColor;
 		static NSColor? DefaultThumbColor;
 
-		protected override UISlider CreateNativeView() => new NSSlider { Continuous = true };
+		protected override NSSlider CreateNativeView() => new NSSlider { Continuous = true };
 
-		protected override void ConnectHandler(UISlider nativeView)
+		protected override void ConnectHandler(NSSlider nativeView)
 		{
 			base.ConnectHandler(nativeView);
 
@@ -29,7 +29,7 @@ namespace Microsoft.Maui.Handlers
 			nativeView.RemoveTarget(OnTouchUpControlEvent, UIControlEvent.TouchUpInside | UIControlEvent.TouchUpOutside);
 		}
 
-		void SetupDefaults(UISlider nativeView)
+		void SetupDefaults(NSSlider nativeView)
 		{
 			DefaultMinTrackColor = nativeView.MinimumTrackTintColor;
 			DefaultMaxTrackColor = nativeView.MaximumTrackTintColor;

@@ -32,7 +32,7 @@ namespace Microsoft.Maui.Handlers
 
 		static EntryHandler()
 		{
-#if __IOS__
+#if __IOS__ || __MACOS__
 			EntryMapper.PrependToMapping(nameof(IView.FlowDirection), (h, __) => h.UpdateValue(nameof(ITextAlignment.HorizontalTextAlignment)));
 #endif
 		}

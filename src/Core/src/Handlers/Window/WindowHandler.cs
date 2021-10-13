@@ -2,6 +2,8 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 #if __IOS__ || MACCATALYST
 using NativeView = UIKit.UIWindow;
+#elif __MACOS__
+using NativeView = AppKit.NSWindow;
 #elif MONOANDROID
 using NativeView = Android.App.Activity;
 #elif WINDOWS

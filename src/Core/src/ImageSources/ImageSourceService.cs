@@ -24,6 +24,11 @@ namespace Microsoft.Maui
 			IImageSource imageSource,
 			float scale = 1,
 			CancellationToken cancellationToken = default);
+#elif __MACÇOS__
+		public abstract Task<IImageSourceServiceResult<AppKit.NSImage>?> GetImageAsync(
+			IImageSource imageSource,
+			float scale = 1,
+			CancellationToken cancellationToken = default);
 #elif WINDOWS
 		public abstract Task<IImageSourceServiceResult<UI.Xaml.Media.ImageSource>?> GetImageSourceAsync(
 			IImageSource imageSource,

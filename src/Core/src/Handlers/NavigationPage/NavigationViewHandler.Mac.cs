@@ -14,13 +14,13 @@ namespace Microsoft.Maui.Handlers
 		ViewHandler<INavigationView, NSView>, INativeViewHandler
 	{
 		ControlsNavigationController? _controlsNavigationController;
-		UIViewController? INativeViewHandler.ViewController => _controlsNavigationController;
+		NSViewController? INativeViewHandler.ViewController => _controlsNavigationController;
 
 		public INavigationView NavigationView => ((INavigationView)VirtualView);
 
 		public IReadOnlyList<IView> NavigationStack { get; private set; } = new List<IView>();
 
-		protected override UIView CreateNativeView()
+		protected override NSView CreateNativeView()
 		{
 			_controlsNavigationController = new ControlsNavigationController(this);
 

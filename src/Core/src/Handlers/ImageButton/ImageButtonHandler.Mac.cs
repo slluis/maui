@@ -7,7 +7,7 @@ namespace Microsoft.Maui.Handlers
 {
 	public partial class ImageButtonHandler : ViewHandler<IImageButton, NSButton>
 	{
-		protected override UIButton CreateNativeView()
+		protected override NSButton CreateNativeView()
 		{
 			return new UIButton(UIButtonType.System);
 		}

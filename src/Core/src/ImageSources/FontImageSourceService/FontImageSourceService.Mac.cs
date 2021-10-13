@@ -42,7 +42,7 @@ namespace Microsoft.Maui
 		static Task<IImageSourceServiceResult<NSImage>?> FromResult(IImageSourceServiceResult<NSImage>? result) =>
 			Task.FromResult(result);
 
-		internal UIImage RenderImage(IFontImageSource imageSource, float scale)
+		internal NSImage RenderImage(IFontImageSource imageSource, float scale)
 		{
 			var font = FontManager.GetFont(imageSource.Font);
 			var color = (imageSource.Color ?? Colors.White).ToNative();
@@ -61,8 +61,8 @@ namespace Microsoft.Maui
 				imagesize.Width,
 				imagesize.Height));
 
-			var image = UIGraphics.GetImageFromCurrentImageContext();
-			UIGraphics.EndImageContext();
+			var image = NSGraphics.GetImageFromCurrentImageContext();
+			NSGraphics.EndImageContext();
 
 			return image.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal);
 		}

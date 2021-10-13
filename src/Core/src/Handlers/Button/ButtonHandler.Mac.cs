@@ -15,7 +15,7 @@ namespace Microsoft.Maui.Handlers
 		static NSColor? ButtonTextColorDefaultHighlighted;
 		static NSColor? ButtonTextColorDefaultNormal;
 
-		protected override UIButton CreateNativeView()
+		protected override NSButton CreateNativeView()
 		{
 			var button = new UIButton(UIButtonType.System);
 			SetControlPropertiesFromProxy(button);
@@ -82,7 +82,7 @@ namespace Microsoft.Maui.Handlers
 			handler.TypedNativeView?.UpdateCharacterSpacing(button);
 		}
 
-		void OnSetImageSource(UIImage? image)
+		void OnSetImageSource(NSImage? image)
 		{
 			if (image != null)
 			{
@@ -109,7 +109,7 @@ namespace Microsoft.Maui.Handlers
 			return handler.ImageSourceLoader.UpdateImageSourceAsync();
 		}
 
-		static void SetControlPropertiesFromProxy(UIButton nativeView)
+		static void SetControlPropertiesFromProxy(NSButton nativeView)
 		{
 			foreach (UIControlState uiControlState in ControlStates)
 			{
