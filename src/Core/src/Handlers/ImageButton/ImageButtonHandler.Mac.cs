@@ -5,33 +5,35 @@ using AppKit;
 
 namespace Microsoft.Maui.Handlers
 {
+	// TODO COCOA
 	public partial class ImageButtonHandler : ViewHandler<IImageButton, NSButton>
 	{
 		protected override NSButton CreateNativeView()
 		{
-			return new UIButton(UIButtonType.System);
+			throw new NotImplementedException();
+//			return new UIButton(UIButtonType.System);
 		}
 
 		void OnSetImageSource(NSImage? obj)
 		{
-			NativeView.SetImage(obj?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal), UIControlState.Normal);
+/*			NativeView.SetImage(obj?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal), UIControlState.Normal);
 			NativeView.HorizontalAlignment = UIControlContentHorizontalAlignment.Fill;
-			NativeView.VerticalAlignment = UIControlContentVerticalAlignment.Fill;
+			NativeView.VerticalAlignment = UIControlContentVerticalAlignment.Fill;*/
 		}
 
 		protected override void ConnectHandler(NSButton nativeView)
 		{
-			nativeView.TouchUpInside += OnButtonTouchUpInside;
+/*			nativeView.TouchUpInside += OnButtonTouchUpInside;
 			nativeView.TouchUpOutside += OnButtonTouchUpOutside;
-			nativeView.TouchDown += OnButtonTouchDown;
+			nativeView.TouchDown += OnButtonTouchDown;*/
 			base.ConnectHandler(nativeView);
 		}
 
 		protected override void DisconnectHandler(NSButton nativeView)
 		{
-			nativeView.TouchUpInside -= OnButtonTouchUpInside;
+/*			nativeView.TouchUpInside -= OnButtonTouchUpInside;
 			nativeView.TouchUpOutside -= OnButtonTouchUpOutside;
-			nativeView.TouchDown -= OnButtonTouchDown;
+			nativeView.TouchDown -= OnButtonTouchDown;*/
 			base.DisconnectHandler(nativeView);
 			SourceLoader.Reset();
 		}

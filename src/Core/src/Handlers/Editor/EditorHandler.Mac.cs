@@ -2,6 +2,7 @@
 using CoreGraphics;
 using Foundation;
 using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Platform;
 using Microsoft.Maui.Platform.Mac;
 using AppKit;
 
@@ -22,20 +23,20 @@ namespace Microsoft.Maui.Handlers
 		{
 			base.ConnectHandler(nativeView);
 
-			nativeView.Changed += OnChanged;
+/*			nativeView.Changed += OnChanged;
 			nativeView.ShouldChangeText += OnShouldChangeText;
 			nativeView.Ended += OnEnded;
-			nativeView.TextPropertySet += OnTextPropertySet;
+			nativeView.TextPropertySet += OnTextPropertySet;*/
 		}
 
 		protected override void DisconnectHandler(MauiTextView nativeView)
 		{
 			base.DisconnectHandler(nativeView);
 
-			nativeView.Changed -= OnChanged;
+/*			nativeView.Changed -= OnChanged;
 			nativeView.ShouldChangeText -= OnShouldChangeText;
 			nativeView.Ended -= OnEnded;
-			nativeView.TextPropertySet -= OnTextPropertySet;
+			nativeView.TextPropertySet -= OnTextPropertySet;*/
 		}
 
 		public override Size GetDesiredSize(double widthConstraint, double heightConstraint) =>
@@ -43,7 +44,7 @@ namespace Microsoft.Maui.Handlers
 
 		public static void MapText(EditorHandler handler, IEditor editor)
 		{
-			handler.NativeView?.UpdateText(editor);
+//			handler.NativeView?.UpdateText(editor);
 
 			// Any text update requires that we update any attributed string formatting
 			MapFormatting(handler, editor);
@@ -51,52 +52,52 @@ namespace Microsoft.Maui.Handlers
 
 		public static void MapTextColor(EditorHandler handler, IEditor editor)
 		{
-			handler.NativeView?.UpdateTextColor(editor);
+//			handler.NativeView?.UpdateTextColor(editor);
 		}
 
 		public static void MapPlaceholder(EditorHandler handler, IEditor editor)
 		{
-			handler.NativeView?.UpdatePlaceholder(editor);
+//			handler.NativeView?.UpdatePlaceholder(editor);
 		}
 
 		public static void MapPlaceholderColor(EditorHandler handler, IEditor editor)
 		{
-			handler.NativeView?.UpdatePlaceholderColor(editor, DefaultPlaceholderColor);
+//			handler.NativeView?.UpdatePlaceholderColor(editor, DefaultPlaceholderColor);
 		}
 
 		public static void MapCharacterSpacing(EditorHandler handler, IEditor editor)
 		{
-			handler.NativeView?.UpdateCharacterSpacing(editor);
+//			handler.NativeView?.UpdateCharacterSpacing(editor);
 		}
 
 		public static void MapMaxLength(EditorHandler handler, IEditor editor)
 		{
-			handler.NativeView?.UpdateMaxLength(editor);
+			//			handler.NativeView?.UpdateMaxLength(editor);
 		}
 
 		public static void MapIsReadOnly(EditorHandler handler, IEditor editor)
 		{
-			handler.NativeView?.UpdateIsReadOnly(editor);
+			//			handler.NativeView?.UpdateIsReadOnly(editor);
 		}
 
 		public static void MapIsTextPredictionEnabled(EditorHandler handler, IEditor editor)
 		{
-			handler.NativeView?.UpdateIsTextPredictionEnabled(editor);
+			//			handler.NativeView?.UpdateIsTextPredictionEnabled(editor);
 		}
 
 		public static void MapFormatting(EditorHandler handler, IEditor editor)
 		{
-			handler.NativeView?.UpdateMaxLength(editor);
+			//			handler.NativeView?.UpdateMaxLength(editor);
 
 			// Update all of the attributed text formatting properties
-			handler.NativeView?.UpdateCharacterSpacing(editor);
+			//			handler.NativeView?.UpdateCharacterSpacing(editor);
 		}
 
 		public static void MapFont(EditorHandler handler, IEditor editor)
 		{
 			var fontManager = handler.GetRequiredService<IFontManager>();
 
-			handler.NativeView?.UpdateFont(editor, fontManager);
+			//			handler.NativeView?.UpdateFont(editor, fontManager);
 		}
 
 		void OnChanged(object? sender, EventArgs e) => OnTextChanged();
@@ -106,12 +107,12 @@ namespace Microsoft.Maui.Handlers
 			if (NativeView == null)
 				return;
 
-			NativeView.HidePlaceholder(!string.IsNullOrEmpty(NativeView.Text));
+			//			NativeView.HidePlaceholder(!string.IsNullOrEmpty(NativeView.Text));
 		}
 
 		bool OnShouldChangeText(NSTextView textView, NSRange range, string replacementString)
 		{
-			var currLength = textView?.Text?.Length ?? 0;
+/*			var currLength = textView?.Text?.Length ?? 0;
 
 			// Fix a crash on undo
 			if (range.Length + range.Location > currLength)
@@ -125,7 +126,7 @@ namespace Microsoft.Maui.Handlers
 
 			var newLength = currLength + addLength - remLength;
 
-			return newLength <= VirtualView.MaxLength;
+			return newLength <= VirtualView.MaxLength;*/
 		}
 
 		void OnEnded(object? sender, EventArgs eventArgs)
@@ -136,17 +137,17 @@ namespace Microsoft.Maui.Handlers
 
 		public static void MapHorizontalTextAlignment(EditorHandler handler, IEditor editor)
 		{
-			handler.NativeView?.UpdateHorizontalTextAlignment(editor);
+			//			handler.NativeView?.UpdateHorizontalTextAlignment(editor);
 		}
 
 		void OnTextPropertySet(object? sender, EventArgs e)
 		{
-			VirtualView.UpdateText(NativeView.Text);
+			//	VirtualView.UpdateText(NativeView.Text);
 		}
 
 		public static void MapKeyboard(EditorHandler handler, IEditor editor)
 		{
-			handler.NativeView?.UpdateKeyboard(editor);
+			//			handler.NativeView?.UpdateKeyboard(editor);
 		}
 	}
 }

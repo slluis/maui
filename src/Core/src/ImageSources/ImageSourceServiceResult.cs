@@ -2,6 +2,8 @@
 using System;
 #if __IOS__ || MACCATALYST
 using NativeView = UIKit.UIImage;
+#elif __MACOS__
+using NativeView = AppKit.NSImage;
 #elif MONOANDROID
 using NativeView = Android.Graphics.Drawables.Drawable;
 #elif WINDOWS
