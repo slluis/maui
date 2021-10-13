@@ -20,32 +20,35 @@ namespace Microsoft.Maui.Handlers
 
 		protected override MauiSearchBar CreateNativeView()
 		{
-			var searchBar = new MauiSearchBar() { ShowsCancelButton = true, BarStyle = UIBarStyle.Default };
+			var searchBar = new MauiSearchBar() {
+				ShowsCancelButton = true,
+				//BarStyle = UIBarStyle.Default
+			};
 
 			if (NativeVersion.IsAtLeast(13))
 				_editor = searchBar.SearchTextField;
 			else
-				_editor = searchBar.FindDescendantView<UITextField>();
+				_editor = searchBar.FindDescendantView<NSTextField>();
 
 			return searchBar;
 		}
 
 		protected override void ConnectHandler(MauiSearchBar nativeView)
 		{
-			nativeView.CancelButtonClicked += OnCancelClicked;
-			nativeView.SearchButtonClicked += OnSearchButtonClicked;
-			nativeView.TextPropertySet += OnTextPropertySet;
-			nativeView.ShouldChangeTextInRange += ShouldChangeText;
+			//nativeView.CancelButtonClicked += OnCancelClicked;
+			//nativeView.SearchButtonClicked += OnSearchButtonClicked;
+			//nativeView.TextPropertySet += OnTextPropertySet;
+			//nativeView.ShouldChangeTextInRange += ShouldChangeText;
 			base.ConnectHandler(nativeView);
 			SetupDefaults(nativeView);
 		}
 
 		protected override void DisconnectHandler(MauiSearchBar nativeView)
 		{
-			nativeView.CancelButtonClicked -= OnCancelClicked;
-			nativeView.SearchButtonClicked -= OnSearchButtonClicked;
-			nativeView.TextPropertySet -= OnTextPropertySet;
-			nativeView.ShouldChangeTextInRange -= ShouldChangeText;
+			//nativeView.CancelButtonClicked -= OnCancelClicked;
+			//nativeView.SearchButtonClicked -= OnSearchButtonClicked;
+			//nativeView.TextPropertySet -= OnTextPropertySet;
+			//nativeView.ShouldChangeTextInRange -= ShouldChangeText;
 			base.DisconnectHandler(nativeView);
 		}
 
@@ -53,21 +56,21 @@ namespace Microsoft.Maui.Handlers
 		{
 			_defaultTextColor = QueryEditor?.TextColor;
 
-			var cancelButton = nativeView.FindDescendantView<UIButton>();
+			var cancelButton = nativeView.FindDescendantView<NSButton>();
 
-			if (cancelButton != null)
-			{
-				_cancelButtonTextColorDefaultNormal = cancelButton.TitleColor(UIControlState.Normal);
-				_cancelButtonTextColorDefaultHighlighted = cancelButton.TitleColor(UIControlState.Highlighted);
-				_cancelButtonTextColorDefaultDisabled = cancelButton.TitleColor(UIControlState.Disabled);
-			}
+			//if (cancelButton != null)
+			//{
+			//	_cancelButtonTextColorDefaultNormal = cancelButton.TitleColor(UIControlState.Normal);
+			//	_cancelButtonTextColorDefaultHighlighted = cancelButton.TitleColor(UIControlState.Highlighted);
+			//	_cancelButtonTextColorDefaultDisabled = cancelButton.TitleColor(UIControlState.Disabled);
+			//}
 
 
 		}
 
 		public static void MapText(SearchBarHandler handler, ISearchBar searchBar)
 		{
-			handler.NativeView?.UpdateText(searchBar);
+			//handler.NativeView?.UpdateText(searchBar);
 
 			// Any text update requires that we update any attributed string formatting
 			MapFormatting(handler, searchBar);
@@ -75,12 +78,12 @@ namespace Microsoft.Maui.Handlers
 
 		public static void MapPlaceholder(SearchBarHandler handler, ISearchBar searchBar)
 		{
-			handler.NativeView?.UpdatePlaceholder(searchBar, handler._editor);
+			//handler.NativeView?.UpdatePlaceholder(searchBar, handler._editor);
 		}
 
 		public static void MapPlaceholderColor(SearchBarHandler handler, ISearchBar searchBar)
 		{
-			handler.NativeView?.UpdatePlaceholder(searchBar, handler._editor);
+			//handler.NativeView?.UpdatePlaceholder(searchBar, handler._editor);
 		}
 
 		public static void MapFont(SearchBarHandler handler, ISearchBar searchBar)
@@ -97,7 +100,7 @@ namespace Microsoft.Maui.Handlers
 
 		public static void MapVerticalTextAlignment(SearchBarHandler handler, ISearchBar searchBar)
 		{
-			handler.NativeView?.UpdateVerticalTextAlignment(searchBar, handler?._editor);
+			//handler.NativeView?.UpdateVerticalTextAlignment(searchBar, handler?._editor);
 		}
 
 		public static void MapCharacterSpacing(SearchBarHandler handler, ISearchBar searchBar)
@@ -115,7 +118,7 @@ namespace Microsoft.Maui.Handlers
 			handler.QueryEditor?.UpdateHorizontalTextAlignment(searchBar);
 
 			// We also update MaxLength which depends on the text
-			handler.NativeView?.UpdateMaxLength(searchBar);
+			//handler.NativeView?.UpdateMaxLength(searchBar);
 		}
 
 		public static void MapTextColor(SearchBarHandler handler, ISearchBar searchBar)

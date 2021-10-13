@@ -44,27 +44,29 @@ namespace Microsoft.Maui
 
 		internal NSImage RenderImage(IFontImageSource imageSource, float scale)
 		{
-			var font = FontManager.GetFont(imageSource.Font);
-			var color = (imageSource.Color ?? Colors.White).ToNative();
-			var glyph = (NSString)imageSource.Glyph;
+			throw new NotImplementedException();
 
-			var attString = new NSAttributedString(glyph, font, color);
-			var imagesize = glyph.GetSizeUsingAttributes(attString.GetUIKitAttributes(0, out _));
+			//var font = FontManager.GetFont(imageSource.Font);
+			//var color = (imageSource.Color ?? Colors.White).ToNative();
+			//var glyph = (NSString)imageSource.Glyph;
 
-			UIGraphics.BeginImageContextWithOptions(imagesize, false, scale);
-			var ctx = new NSStringDrawingContext();
+			//var attString = new NSAttributedString(glyph, font, color);
+			//var imagesize = glyph.GetSizeUsingAttributes(attString.GetUIKitAttributes(0, out _));
 
-			var boundingRect = attString.GetBoundingRect(imagesize, 0, ctx);
-			attString.DrawString(new CGRect(
-				imagesize.Width / 2 - boundingRect.Size.Width / 2,
-				imagesize.Height / 2 - boundingRect.Size.Height / 2,
-				imagesize.Width,
-				imagesize.Height));
+			//UIGraphics.BeginImageContextWithOptions(imagesize, false, scale);
+			//var ctx = new NSStringDrawingContext();
 
-			var image = NSGraphics.GetImageFromCurrentImageContext();
-			NSGraphics.EndImageContext();
+			//var boundingRect = attString.GetBoundingRect(imagesize, 0, ctx);
+			//attString.DrawString(new CGRect(
+			//	imagesize.Width / 2 - boundingRect.Size.Width / 2,
+			//	imagesize.Height / 2 - boundingRect.Size.Height / 2,
+			//	imagesize.Width,
+			//	imagesize.Height));
 
-			return image.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal);
+			//var image = NSGraphics.GetImageFromCurrentImageContext();
+			//NSGraphics.EndImageContext();
+
+			//return image.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal);
 		}
 	}
 }

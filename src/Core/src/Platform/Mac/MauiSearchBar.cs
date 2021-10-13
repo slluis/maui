@@ -8,8 +8,27 @@ namespace Microsoft.Maui.Handlers
 {
 	public class MauiSearchBar : NSView
 	{
+		public bool ShowsCancelButton { get; set; }
+
+		internal NSSearchField? SearchTextField;
+
+		public string Text
+		{
+			get
+			{
+				return SearchTextField?.StringValue ?? string.Empty;
+			}
+
+			set
+			{
+				if (SearchTextField != null)
+					SearchTextField.StringValue = value;
+			}
+		}
+
 		public MauiSearchBar() : this(RectangleF.Empty)
 		{
+
 		}
 
 		public MauiSearchBar(NSCoder coder) : base(coder)
@@ -24,13 +43,18 @@ namespace Microsoft.Maui.Handlers
 		{
 		}
 
+		internal void UpdateMaxLength(ISearchBar bar)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected internal MauiSearchBar(IntPtr handle) : base(handle)
 		{
 		}
 
 /*		public override string? Text
 		{
-			get => base.Text;
+		r	get => base.Text;
 			set
 			{
 				var old = base.Text;
@@ -43,5 +67,10 @@ namespace Microsoft.Maui.Handlers
 		}*/
 
 		public event EventHandler? TextPropertySet;
+
+		internal void UpdateCancelButton(ISearchBar searchBar, NSColor? cancelButtonTextColorDefaultNormal, NSColor? cancelButtonTextColorDefaultHighlighted, NSColor? cancelButtonTextColorDefaultDisabled)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
