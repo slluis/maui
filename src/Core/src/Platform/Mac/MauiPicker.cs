@@ -9,6 +9,11 @@ namespace Microsoft.Maui
 {
 	public class MauiPicker : NoCaretField
 	{
+		public string Text {
+			get;
+			set;
+		}
+
 		readonly HashSet<string> _enableActions;
 
 		public MauiPicker(/*UIPickerView? uIPickerView*/)

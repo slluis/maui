@@ -6,9 +6,9 @@ namespace Microsoft.Maui.Handlers
 {
 	public partial class SwitchHandler : ViewHandler<ISwitch, NSView>
 	{
-		static NSColor? DefaultOnTrackColor;
-		static NSColor? DefaultOffTrackColor;
-		static NSColor? DefaultThumbColor;
+		//static NSColor? DefaultOnTrackColor;
+		//static NSColor? DefaultOffTrackColor;
+		//static NSColor? DefaultThumbColor;
 
 		protected override NSView CreateNativeView()
 		{

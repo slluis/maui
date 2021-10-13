@@ -51,7 +51,7 @@ namespace Microsoft.Maui.Handlers
 		protected override void ConnectHandler(MauiDatePicker nativeView)
 		{
 			if (_picker != null)
-				_picker.ValueChanged += OnValueChanged;
+				_picker.Activated += OnValueChanged;
 
 			base.ConnectHandler(nativeView);
 		}
@@ -59,7 +59,7 @@ namespace Microsoft.Maui.Handlers
 		protected override void DisconnectHandler(MauiDatePicker nativeView)
 		{
 			if (_picker != null)
-				_picker.ValueChanged -= OnValueChanged;
+				_picker.Activated -= OnValueChanged;
 
 			base.DisconnectHandler(nativeView);
 		}
@@ -116,7 +116,7 @@ namespace Microsoft.Maui.Handlers
 			if (VirtualView == null || _picker == null)
 				return;
 
-			VirtualView.Date = _picker.Date.ToDateTime().Date;
+			VirtualView.Date = _picker.DateValue.ToDateTime().Date;
 		}
 	}
 }

@@ -60,15 +60,15 @@ namespace Microsoft.Maui.Handlers
 
 		protected override void ConnectHandler(MauiPicker nativeView)
 		{
-			nativeView.EditingDidEnd += OnEnded;
-			nativeView.EditingChanged += OnEditing;
+			//nativeView.EditingDidEnd += OnEnded;
+			//nativeView.EditingChanged += OnEditing;
 			base.ConnectHandler(nativeView);
 		}
 
 		protected override void DisconnectHandler(MauiPicker nativeView)
 		{
-			nativeView.EditingDidEnd -= OnEnded;
-			nativeView.EditingChanged -= OnEditing;
+			//nativeView.EditingDidEnd -= OnEnded;
+			//nativeView.EditingChanged -= OnEditing;
 
 /*			if (_pickerView != null)
 			{
@@ -160,8 +160,10 @@ namespace Microsoft.Maui.Handlers
 
 			NativeView.Text = VirtualView.GetItem(selectedIndex);
 
+			throw new NotImplementedException();
 			// Also clears the undo stack (undo/redo possible on iPads)
-			NativeView.UndoManager.RemoveAllActions();
+			//NativeView.UndoManager.RemoveAllActions();
+			
 		}
 
 /*		void UpdatePickerFromPickerSource(PickerSource pickerSource)
