@@ -7,15 +7,15 @@ namespace Microsoft.Maui
 {
 	public static class ButtonExtensions
 	{
-		public static void UpdateText(this NSButton nativeButton, IText button) =>
-			nativeButton.SetTitle(button.Text, UIControlState.Normal);
+		public static void UpdateText(this NSButton nativeButton, IText button) {}
+			//nativeButton.SetTitle(button.Text, UIControlState.Normal);
 
 		public static void UpdateTextColor(this NSButton nativeButton, ITextStyle button) =>
 			nativeButton.UpdateTextColor(button);
 
 		public static void UpdateTextColor(this NSButton nativeButton, ITextStyle button, NSColor? buttonTextColorDefaultNormal, NSColor? buttonTextColorDefaultHighlighted, NSColor? buttonTextColorDefaultDisabled)
 		{
-			if (button.TextColor == null)
+/*			if (button.TextColor == null)
 			{
 				nativeButton.SetTitleColor(buttonTextColorDefaultNormal, UIControlState.Normal);
 				nativeButton.SetTitleColor(buttonTextColorDefaultHighlighted, UIControlState.Highlighted);
@@ -30,7 +30,7 @@ namespace Microsoft.Maui
 				nativeButton.SetTitleColor(color, UIControlState.Disabled);
 
 				nativeButton.TintColor = color;
-			}
+			}*/
 		}
 
 		public static void UpdateCharacterSpacing(this NSButton nativeButton, ITextStyle textStyle)

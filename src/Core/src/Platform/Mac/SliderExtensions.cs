@@ -57,10 +57,12 @@ namespace Microsoft.Maui
 
 		public static void UpdateThumbColor(this NSSlider uiSlider, ISlider slider, NSColor? defaultThumbColor)
 		{
-			if (slider.ThumbColor == null)
+			// TODO COCOA
+/*			if (slider.ThumbColor == null)
 				uiSlider.ThumbTintColor = defaultThumbColor;
 			else
 				uiSlider.ThumbTintColor = slider.ThumbColor.ToNative();
+*/
 		}
 
 		public static async Task UpdateThumbImageSourceAsync(this NSSlider uiSlider, ISlider slider, IImageSourceServiceProvider provider)

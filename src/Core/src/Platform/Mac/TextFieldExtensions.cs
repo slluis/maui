@@ -9,7 +9,7 @@ namespace Microsoft.Maui
 	{
 		public static void UpdateText(this NSTextField textField, IEntry entry)
 		{
-			textField.Text = entry.Text;
+		//	textField.Text = entry.Text;
 		}
 
 		public static void UpdateTextColor(this NSTextField textField, ITextStyle textStyle, NSColor? defaultTextColor = null)
@@ -22,7 +22,7 @@ namespace Microsoft.Maui
 
 		public static void UpdateIsPassword(this NSTextField textField, IEntry entry)
 		{
-			if (entry.IsPassword && textField.IsFirstResponder)
+/*			if (entry.IsPassword && textField.IsFirstResponder)
 			{
 				textField.Enabled = false;
 				textField.SecureTextEntry = true;
@@ -30,40 +30,40 @@ namespace Microsoft.Maui
 				textField.BecomeFirstResponder();
 			}
 			else
-				textField.SecureTextEntry = entry.IsPassword;
+				textField.SecureTextEntry = entry.IsPassword;*/
 		}
 
 		public static void UpdateHorizontalTextAlignment(this NSTextField textField, ITextAlignment textAlignment)
 		{
-			bool isLtr;
+/*			bool isLtr;
 
 			if (textAlignment is IView v && v.FlowDirection == FlowDirection.LeftToRight)
 				isLtr = true;
 			else
 				isLtr = false;
 
-			textField.TextAlignment = textAlignment.HorizontalTextAlignment.ToNative(isLtr);
+			textField.TextAlignment = textAlignment.HorizontalTextAlignment.ToNative(isLtr);*/
 		}
 
 		public static void UpdateVerticalTextAlignment(this NSTextField textField, ITextAlignment textAlignment)
 		{
-			textField.VerticalAlignment = textAlignment.VerticalTextAlignment.ToNative();
+	//		textField.VerticalAlignment = textAlignment.VerticalTextAlignment.ToNative();
 		}
 
 		public static void UpdateIsTextPredictionEnabled(this NSTextField textField, IEntry entry)
 		{
-			if (entry.IsTextPredictionEnabled)
+	/*		if (entry.IsTextPredictionEnabled)
 				textField.AutocorrectionType = UITextAutocorrectionType.Yes;
 			else
 				textField.AutocorrectionType = UITextAutocorrectionType.No;
-		}
+		*/}
 
 		public static void UpdateMaxLength(this NSTextField textField, IEntry entry)
 		{
-			var newText = textField.AttributedText.TrimToMaxLength(entry.MaxLength);
+/*			var newText = textField.AttributedText.TrimToMaxLength(entry.MaxLength);
 			if (newText != null && textField.AttributedText != newText)
 				textField.AttributedText = newText;
-		}
+	*/	}
 
 		public static void UpdatePlaceholder(this NSTextField textField, IEntry entry)
 		{
@@ -72,7 +72,7 @@ namespace Microsoft.Maui
 
 		public static void UpdatePlaceholder(this NSTextField textField, IEntry entry, Color? defaultPlaceholderColor)
 		{
-			var placeholder = entry.Placeholder;
+/*			var placeholder = entry.Placeholder;
 
 			if (placeholder == null)
 				return;
@@ -85,34 +85,34 @@ namespace Microsoft.Maui
  				: new NSAttributedString(str: placeholder, foregroundColor: foregroundColor.ToNative());
 
 			textField.AttributedPlaceholder.WithCharacterSpacing(entry.CharacterSpacing);
-		}
+	*/	}
 
 		public static void UpdateIsReadOnly(this NSTextField textField, IEntry entry)
 		{
-			textField.UserInteractionEnabled = !entry.IsReadOnly;
+//			textField.UserInteractionEnabled = !entry.IsReadOnly;
 		}
 
 		public static void UpdateFont(this NSTextField textField, ITextStyle textStyle, IFontManager fontManager)
 		{
-			var uiFont = fontManager.GetFont(textStyle.Font, UIFont.LabelFontSize);
+			var uiFont = fontManager.GetFont(textStyle.Font, NSFont.LabelFontSize);
 			textField.Font = uiFont;
 		}
 
 		public static void UpdateReturnType(this NSTextField textField, IEntry entry)
 		{
-			textField.ReturnKeyType = entry.ReturnType.ToNative();
+//			textField.ReturnKeyType = entry.ReturnType.ToNative();
 		}
 
 		public static void UpdateCharacterSpacing(this NSTextField textField, ITextStyle textStyle)
 		{
-			var textAttr = textField.AttributedText?.WithCharacterSpacing(textStyle.CharacterSpacing);
-			if (textAttr != null)
-				textField.AttributedText = textAttr;
+//			var textAttr = textField.AttributedText?.WithCharacterSpacing(textStyle.CharacterSpacing);
+//			if (textAttr != null)
+//				textField.AttributedText = textAttr;
 		}
 
 		public static void UpdateKeyboard(this NSTextField textField, IEntry entry)
 		{
-			var keyboard = entry.Keyboard;
+/*			var keyboard = entry.Keyboard;
 
 			textField.ApplyKeyboard(keyboard);
 
@@ -120,27 +120,28 @@ namespace Microsoft.Maui
 				textField.UpdateIsTextPredictionEnabled(entry);
 
 			textField.ReloadInputViews();
-		}
+	*/	}
 
 		[PortHandler]
 		public static void UpdateCursorPosition(this NSTextField textField, IEntry entry)
 		{
-			var selectedTextRange = textField.SelectedTextRange;
+/*			var selectedTextRange = textField.SelectedTextRange;
 			if (selectedTextRange == null)
 				return;
 			if (textField.GetOffsetFromPosition(textField.BeginningOfDocument, selectedTextRange.Start) != entry.CursorPosition)
 				UpdateCursorSelection(textField, entry);
+*/
 		}
 
 		[PortHandler]
 		public static void UpdateSelectionLength(this NSTextField textField, IEntry entry)
 		{
-			var selectedTextRange = textField.SelectedTextRange;
+	/*		var selectedTextRange = textField.SelectedTextRange;
 			if (selectedTextRange == null)
 				return;
 			if (textField.GetOffsetFromPosition(selectedTextRange.Start, selectedTextRange.End) != entry.SelectionLength)
 				UpdateCursorSelection(textField, entry);
-		}
+	*/	}
 
 		/* Updates both the IEntry.CursorPosition and IEntry.SelectionLength properties. */
 		static void UpdateCursorSelection(this NSTextField textField, IEntry entry)
@@ -186,7 +187,7 @@ namespace Microsoft.Maui
 
 		public static void UpdateClearButtonVisibility(this NSTextField textField, IEntry entry)
 		{
-			textField.ClearButtonMode = entry.ClearButtonVisibility == ClearButtonVisibility.WhileEditing ? UITextFieldViewMode.WhileEditing : UITextFieldViewMode.Never;
+	//		textField.ClearButtonMode = entry.ClearButtonVisibility == ClearButtonVisibility.WhileEditing ? UITextFieldViewMode.WhileEditing : UITextFieldViewMode.Never;
 		}
 	}
 }

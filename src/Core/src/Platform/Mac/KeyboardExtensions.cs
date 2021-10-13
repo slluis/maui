@@ -2,17 +2,18 @@
 
 namespace Microsoft.Maui
 {
+	// TODO COCOA
 	public static class KeyboardExtensions
 	{
 		public static void ApplyKeyboard(this INSTextInput textInput, Keyboard keyboard)
 		{
-			if (textInput is IUITextInputTraits traits)
+/*			if (textInput is IUITextInputTraits traits)
 				ApplyKeyboard(traits, keyboard);
-		}
+*/		}
 
 		public static void ApplyKeyboard(this INSTextInputTraits textInput, Keyboard keyboard)
 		{
-			textInput.AutocapitalizationType = UITextAutocapitalizationType.None;
+/*			textInput.AutocapitalizationType = UITextAutocapitalizationType.None;
 			textInput.AutocorrectionType = UITextAutocorrectionType.No;
 			textInput.SpellCheckingType = UITextSpellCheckingType.No;
 			textInput.KeyboardType = UIKeyboardType.Default;
@@ -70,10 +71,9 @@ namespace Microsoft.Maui
 				textInput.AutocapitalizationType = capSettings;
 				textInput.AutocorrectionType = suggestionsEnabled ? UITextAutocorrectionType.Yes : UITextAutocorrectionType.No;
 				textInput.SpellCheckingType = spellcheckEnabled ? UITextSpellCheckingType.Yes : UITextSpellCheckingType.No;
-			}
+			}*/
 		}
 
-		// TODO COCOA
 /*		public static UIReturnKeyType ToUIReturnKeyType(this ReturnType returnType)
 		{
 			switch (returnType)

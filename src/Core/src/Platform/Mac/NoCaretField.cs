@@ -7,10 +7,10 @@ namespace Microsoft.Maui
 	{
 		public NoCaretField() : base(new RectangleF())
 		{
-			SpellCheckingType = NSTextSpellCheckingType.No;
+		/*	SpellCheckingType = NSTextSpellCheckingType.No;
 			AutocorrectionType = NSTextAutocorrectionType.No;
 			AutocapitalizationType = NSTextAutocapitalizationType.None;
-		}
+	*/	}
 
 		// TODO COCOA
 /*		public override RectangleF GetCaretRectForPosition(NSTextPosition? position)

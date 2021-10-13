@@ -11,7 +11,7 @@ namespace Microsoft.Maui
 			if (attributedString == null || attributedString.Length == 0)
 				return null;
 
-			var attribute = attributedString.GetAttribute(UIStringAttributeKey.KerningAdjustment, 0, out _);
+			var attribute = attributedString.GetAttribute(NSStringAttributeKey.KerningAdjustment, 0, out _);
 
 			// if we are going to un-set, but there is no adjustment, then bail out
 			if (characterSpacing == 0 && attribute == null)
@@ -20,7 +20,7 @@ namespace Microsoft.Maui
 			var mutableAttributedString = new NSMutableAttributedString(attributedString);
 			mutableAttributedString.AddAttribute
 			(
-				UIStringAttributeKey.KerningAdjustment,
+				NSStringAttributeKey.KerningAdjustment,
 				NSObject.FromObject(characterSpacing),
 				new NSRange(0, mutableAttributedString.Length)
 			);
@@ -32,7 +32,7 @@ namespace Microsoft.Maui
 			if (attributedString == null || attributedString.Length == 0)
 				return null;
 
-			var attribute = (NSParagraphStyle)attributedString.GetAttribute(UIStringAttributeKey.ParagraphStyle, 0, out _);
+			var attribute = (NSParagraphStyle)attributedString.GetAttribute(NSStringAttributeKey.ParagraphStyle, 0, out _);
 
 			// if we need to un-set the line height but there is no attribute to modify then we do nothing
 			if (lineHeight == -1 && attribute == null)
@@ -47,7 +47,7 @@ namespace Microsoft.Maui
 			var mutableAttributedString = new NSMutableAttributedString(attributedString);
 			mutableAttributedString.AddAttribute
 			(
-				UIStringAttributeKey.ParagraphStyle,
+				NSStringAttributeKey.ParagraphStyle,
 				mutableParagraphStyle,
 				new NSRange(0, mutableAttributedString.Length)
 			);
@@ -64,10 +64,10 @@ namespace Microsoft.Maui
 
 			var range = new NSRange(0, mutable.Length);
 
-			UpdateDecoration(mutable, UIStringAttributeKey.StrikethroughStyle, range,
+			UpdateDecoration(mutable, NSStringAttributeKey.StrikethroughStyle, range,
 				decorations & TextDecorations.Strikethrough);
 
-			UpdateDecoration(mutable, UIStringAttributeKey.UnderlineStyle, range,
+			UpdateDecoration(mutable, NSStringAttributeKey.UnderlineStyle, range,
 				decorations & TextDecorations.Underline);
 
 			return mutable;
