@@ -11,10 +11,15 @@ namespace Microsoft.Maui
 	public static partial class ViewExtensions
 	{
 		internal const string BackgroundLayerName = "MauiBackgroundLayer";
+		
+		public static NSViewController ToNSViewController (this IView view, IMauiContext? context)
+		{
+			throw new Exception("not implemented");
+		}
 
 		public static void UpdateIsEnabled(this NSView nativeView, IView view)
 		{
-			if (nativeView is not UIControl uiControl)
+			if (nativeView is not NSControl uiControl)
 				return;
 
 			uiControl.Enabled = view.IsEnabled;
@@ -47,7 +52,10 @@ namespace Microsoft.Maui
 
 			if (shouldLayout)
 			{
-				nativeView.Superview?.SetNeedsLayout();
+				if (nativeView.Superview != null)
+				{
+					nativeView.Superview.NeedsLayout = true;
+				}
 			}
 		}
 
@@ -75,23 +83,25 @@ namespace Microsoft.Maui
 			{
 				Color backgroundColor = solidPaint.Color;
 
-				if (backgroundColor == null)
-					nativeView.BackgroundColor = ColorExtensions.BackgroundColor;
-				else
-					nativeView.BackgroundColor = backgroundColor.ToNative();
+				//TODO: To implement
+				//if (backgroundColor == null)
+				//	nativeView.BackgroundColor = ColorExtensions.BackgroundColor;
+				//else
+				//	nativeView.BackgroundColor = backgroundColor.ToNative();
 
 				return;
 			}
 			else if (paint is GradientPaint gradientPaint)
 			{
-				var backgroundLayer = gradientPaint?.ToCALayer(nativeView.Bounds);
+				//TODO: To implement
+				//var backgroundLayer = gradientPaint?.ToCALayer(nativeView.Bounds);
 
-				if (backgroundLayer != null)
-				{
-					backgroundLayer.Name = BackgroundLayerName;
-					nativeView.BackgroundColor = NSColor.Clear;
-					nativeView.InsertBackgroundLayer(backgroundLayer, 0);
-				}
+				//if (backgroundLayer != null)
+				//{
+				//	backgroundLayer.Name = BackgroundLayerName;
+				//	nativeView.BackgroundColor = NSColor.Clear;
+				//	nativeView.InsertBackgroundLayer(backgroundLayer, 0);
+				//}
 			}
 		}
 
