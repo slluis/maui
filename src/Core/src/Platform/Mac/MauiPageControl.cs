@@ -9,7 +9,7 @@ namespace Microsoft.Maui.Platform.iOS
 		const int DefaultIndicatorSize = 6;
 
 		IIndicatorView? _indicatorView;
-		bool _updatingPosition;
+//		bool _updatingPosition;
 
 		public MauiPageControl()
 		{
@@ -19,7 +19,8 @@ namespace Microsoft.Maui.Platform.iOS
 		{
 			if (indicatorView == null)
 			{
-				ValueChanged -= MauiPageControlValueChanged;
+				// TODO COCOA
+//				ValueChanged -= MauiPageControlValueChanged;
 			}
 			_indicatorView = indicatorView;
 
@@ -31,8 +32,9 @@ namespace Microsoft.Maui.Platform.iOS
 
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing)
-				ValueChanged -= MauiPageControlValueChanged;
+			// TODO COCOA
+//			if (disposing)
+//				ValueChanged -= MauiPageControlValueChanged;
 
 			base.Dispose(disposing);
 		}

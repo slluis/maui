@@ -42,7 +42,8 @@ namespace Microsoft.Maui
 		public override void WillRemoveSubview(NSView? uiview)
 		{
 			base.WillRemoveSubview(uiview);
-			Superview?.SetNeedsLayout();
+			if (Superview != null)
+				Superview.NeedsLayout = true;
 		}
 
 		internal Func<double, double, Size>? CrossPlatformMeasure { get; set; }

@@ -19,6 +19,10 @@ namespace Microsoft.Maui
 //		public override void MovedToWindow() =>
 //			WindowChanged?.Invoke(this, EventArgs.Empty);
 
-		public event EventHandler? WindowChanged;
+		public event EventHandler? WindowChanged
+		{
+			add { }
+			remove { }
+		}
 	}
 }

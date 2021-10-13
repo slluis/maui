@@ -33,7 +33,7 @@ namespace Microsoft.Maui
 		{
 			_bounds = new CGRect();
 
-			ContentsScale = UIScreen.MainScreen.Scale;
+			ContentsScale = NSScreen.MainScreen.BackingScaleFactor;
 		}
 
 		public override void LayoutSublayers()

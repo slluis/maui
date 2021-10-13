@@ -11,7 +11,9 @@ namespace Microsoft.Maui
 			if (window == null)
 				return FlowDirection.LeftToRight;
 
-			return window.EffectiveUserInterfaceLayoutDirection.ToFlowDirection();
+			// TODO COCOA
+			return FlowDirection.LeftToRight;
+//			return window.EffectiveUserInterfaceLayoutDirection.ToFlowDirection();
 		}
 
 		public static NSWindow GetNativeWindow(this IMauiContext mauiContext) =>

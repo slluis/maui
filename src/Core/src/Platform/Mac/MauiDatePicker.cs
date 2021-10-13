@@ -6,7 +6,8 @@ namespace Microsoft.Maui
 	{
 		public MauiDatePicker()
 		{
-			BorderStyle = NSTextBorderStyle.RoundedRect;
+			// TODO COCOA
+//			BorderStyle = NSTextBorderStyle.RoundedRect;
 		}
 	}
 }

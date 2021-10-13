@@ -7,7 +7,7 @@ namespace Microsoft.Maui
 	{
 		public MauiShapeView()
 		{
-			BackgroundColor = NSColor.Clear;
+			// TODO COCOA
 		}
 	}
 }

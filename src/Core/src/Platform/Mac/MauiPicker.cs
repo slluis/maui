@@ -22,6 +22,7 @@ namespace Microsoft.Maui
 
 			string[] actions = { "copy:", "select:", "selectAll:" };
 			_enableActions = new HashSet<string>(actions);
+			Text = "";
 		}
 
 		internal void ReloadAllComponents()

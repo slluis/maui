@@ -44,6 +44,10 @@ namespace Microsoft.Maui.Platform.Mac
 			}
 		}*/
 
-		public event EventHandler? TextPropertySet;
+		public event EventHandler? TextPropertySet
+		{
+			add { }
+			remove { }
+		}
 	}
 }

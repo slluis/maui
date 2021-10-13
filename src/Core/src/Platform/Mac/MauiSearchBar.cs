@@ -66,7 +66,11 @@ namespace Microsoft.Maui.Handlers
 			}
 		}*/
 
-		public event EventHandler? TextPropertySet;
+		public event EventHandler? TextPropertySet
+		{
+			add { }
+			remove { }
+		}
 
 		internal void UpdateCancelButton(ISearchBar searchBar, NSColor? cancelButtonTextColorDefaultNormal, NSColor? cancelButtonTextColorDefaultHighlighted, NSColor? cancelButtonTextColorDefaultDisabled)
 		{
