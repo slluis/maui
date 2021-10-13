@@ -15,14 +15,14 @@ namespace Microsoft.Maui.Handlers
 		{
 			base.ConnectHandler(nativeView);
 
-			nativeView.ValueChanged += OnValueChanged;
+			nativeView.Activated += OnValueChanged;
 		}
 
 		protected override void DisconnectHandler(NSStepper nativeView)
 		{
 			base.DisconnectHandler(nativeView);
 
-			nativeView.ValueChanged -= OnValueChanged;
+			nativeView.Activated -= OnValueChanged;
 		}
 
 		public static void MapMinimum(StepperHandler handler, IStepper stepper)
@@ -50,7 +50,7 @@ namespace Microsoft.Maui.Handlers
 			if (NativeView == null || VirtualView == null)
 				return;
 
-			VirtualView.Value = NativeView.Value;
+			VirtualView.Value = NativeView.DoubleValue;
 		}
 	}
 }
