@@ -6,7 +6,8 @@ namespace Microsoft.Maui
 	{
 		public static bool IsAtLeast(int version)
 		{
-			return UIDevice.CurrentDevice.CheckSystemVersion(version, 0);
+			// TODO COCOA
+			return true;
 		}
 
 		private static bool? SetNeedsUpdateOfHomeIndicatorAutoHidden;
@@ -18,7 +19,7 @@ namespace Microsoft.Maui
 				case NativeApis.RespondsToSetNeedsUpdateOfHomeIndicatorAutoHidden:
 					if (!SetNeedsUpdateOfHomeIndicatorAutoHidden.HasValue)
 					{
-						SetNeedsUpdateOfHomeIndicatorAutoHidden = new UIViewController().RespondsToSelector(new ObjCRuntime.Selector("setNeedsUpdateOfHomeIndicatorAutoHidden"));
+						SetNeedsUpdateOfHomeIndicatorAutoHidden = new NSViewController().RespondsToSelector(new ObjCRuntime.Selector("setNeedsUpdateOfHomeIndicatorAutoHidden"));
 					}
 					return SetNeedsUpdateOfHomeIndicatorAutoHidden.Value;
 			}

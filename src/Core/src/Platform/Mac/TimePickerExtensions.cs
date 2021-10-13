@@ -25,7 +25,7 @@ namespace Microsoft.Maui
 		public static void UpdateTime(this MauiTimePicker mauiTimePicker, ITimePicker timePicker, NSDatePicker? picker)
 		{
 			if (picker != null)
-				picker.Date = new DateTime(1, 1, 1).Add(timePicker.Time).ToNSDate();
+				picker.DateValue = new DateTime(1, 1, 1).Add(timePicker.Time).ToNSDate();
 
 			var cultureInfo = Culture.CurrentCulture;
 
@@ -40,7 +40,7 @@ namespace Microsoft.Maui
 			var time = timePicker.Time;
 			var format = timePicker.Format;
 
-			mauiTimePicker.Text = time.ToFormattedString(format, cultureInfo);
+			mauiTimePicker.StringValue = time.ToFormattedString(format, cultureInfo);
 
 			if (timePicker.Format?.Contains('H') == true)
 			{

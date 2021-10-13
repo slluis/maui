@@ -33,7 +33,7 @@ namespace Microsoft.Maui
 			_view = view;
 
 			if (view is ITitledElement page)
-				Title = page.Title;
+				Title = page.Title ?? "";
 
 			if (_view is IHotReloadableView ihr)
 			{
@@ -43,8 +43,8 @@ namespace Microsoft.Maui
 
 			currentNativeView?.RemoveFromSuperview();
 			currentNativeView = null;
-
-			if (IsViewLoaded && _view != null)
+			
+			if (ViewLoaded && _view != null)
 				LoadNativeView(_view);
 		}
 
@@ -68,8 +68,9 @@ namespace Microsoft.Maui
 
 			View!.AddSubview(currentNativeView);
 
-			if (view is IView v && v.Background == null)
-				View.BackgroundColor = NSColor.SystemBackgroundColor;
+			// TODO COCOA
+//			if (view is IView v && v.Background == null)
+//				View.BackgroundColor = NSColor.SystemBackgroundColor;
 		}
 
 		protected virtual NSView CreateNativeView(IElement view)

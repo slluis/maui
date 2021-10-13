@@ -45,7 +45,7 @@ namespace Microsoft.Maui
 				_shadowLayer?.RemoveFromSuperLayer();
 				_shadowLayer = value;
 
-				if (_shadowLayer != null)
+				if (_shadowLayer != null && Layer != null)
 					Layer.InsertSublayer(_shadowLayer, 0);
 			}
 		}

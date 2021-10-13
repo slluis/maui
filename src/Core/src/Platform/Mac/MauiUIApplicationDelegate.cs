@@ -9,7 +9,7 @@ namespace Microsoft.Maui
 {
 	public abstract class MauiUIApplicationDelegate : NSApplicationDelegate, INSApplicationDelegate
 	{
-		MauiContext _applicationContext = null!;
+		//MauiContext _applicationContext = null!;
 		WeakReference<IWindow>? _virtualWindow;
 
 		internal IWindow? VirtualWindow

@@ -7,12 +7,14 @@ namespace Microsoft.Maui
 	{
 		public static void UpdateVerticalScrollBarVisibility(this NSScrollView scrollView, ScrollBarVisibility scrollBarVisibility)
 		{
-			scrollView.ShowsVerticalScrollIndicator = scrollBarVisibility == ScrollBarVisibility.Always || scrollBarVisibility == ScrollBarVisibility.Default;
+			// TODO COCOA
+			//scrollView.ShowsVerticalScrollIndicator = scrollBarVisibility == ScrollBarVisibility.Always || scrollBarVisibility == ScrollBarVisibility.Default;
 		}
 
 		public static void UpdateHorizontalScrollBarVisibility(this NSScrollView scrollView, ScrollBarVisibility scrollBarVisibility)
 		{
-			scrollView.ShowsHorizontalScrollIndicator = scrollBarVisibility == ScrollBarVisibility.Always || scrollBarVisibility == ScrollBarVisibility.Default;
+			// TODO COCOA
+//			scrollView.ShowsHorizontalScrollIndicator = scrollBarVisibility == ScrollBarVisibility.Always || scrollBarVisibility == ScrollBarVisibility.Default;
 		}
 
 		public static void UpdateContent(this NSScrollView scrollView, IView? content, IMauiContext context)
@@ -42,7 +44,8 @@ namespace Microsoft.Maui
 
 			if (nativeContentSize != scrollView.ContentSize)
 			{
-				scrollView.ContentSize = nativeContentSize;
+				// TODO COCOA
+//				scrollView.ContentSize = nativeContentSize;
 			}
 		}
 	}

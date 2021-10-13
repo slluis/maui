@@ -6,7 +6,8 @@ namespace Microsoft.Maui
 	{
 		public static void UpdateIsChecked(this MauiCheckBox nativeCheckBox, ICheckBox check)
 		{
-			nativeCheckBox.IsChecked = check.IsChecked;
+			// TODO COCOA
+			//nativeCheckBox.IsChecked = check.IsChecked;
 		}
 
 		public static void UpdateForeground(this MauiCheckBox nativeCheckBox, ICheckBox check)
@@ -14,7 +15,8 @@ namespace Microsoft.Maui
 			// For the moment, we're only supporting solid color Paint for the iOS Checkbox
 			if (check.Foreground is SolidPaint solid)
 			{
-				nativeCheckBox.CheckBoxTintColor = solid.Color;
+				// TODO COCOA
+//				nativeCheckBox.CheckBoxTintColor = solid.Color;
 			}
 		}
 	}

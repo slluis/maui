@@ -6,12 +6,12 @@ namespace Microsoft.Maui
 	{
 		public static void UpdateMinimum(this NSStepper nativeStepper, IStepper stepper)
 		{
-			nativeStepper.MinimumValue = stepper.Minimum;
+			nativeStepper.MinValue = stepper.Minimum;
 		}
 
 		public static void UpdateMaximum(this NSStepper nativeStepper, IStepper stepper)
 		{
-			nativeStepper.MaximumValue = stepper.Maximum;
+			nativeStepper.MaxValue = stepper.Maximum;
 		}
 
 		public static void UpdateIncrement(this NSStepper nativeStepper, IStepper stepper)
@@ -19,13 +19,13 @@ namespace Microsoft.Maui
 			var increment = stepper.Interval;
 
 			if (increment > 0)
-				nativeStepper.StepValue = stepper.Interval;
+				nativeStepper.Increment = stepper.Interval;
 		}
 
 		public static void UpdateValue(this NSStepper nativeStepper, IStepper stepper)
 		{
-			if (nativeStepper.Value != stepper.Value)
-				nativeStepper.Value = stepper.Value;
+			if (nativeStepper.DoubleValue != stepper.Value)
+				nativeStepper.DoubleValue = stepper.Value;
 		}
 	}
 }

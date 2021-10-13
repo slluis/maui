@@ -6,12 +6,13 @@ namespace Microsoft.Maui
 	{
 		public static void UpdateProgress(this NSProgressIndicator nativeProgressBar, IProgress progress)
 		{
-			nativeProgressBar.Progress = (float)progress.Progress;
+			nativeProgressBar.DoubleValue = (float)progress.Progress;
 		}
 
 		public static void UpdateProgressColor(this NSProgressIndicator nativeProgressBar, IProgress progress)
 		{
-			nativeProgressBar.ProgressTintColor = progress.ProgressColor?.ToNative();
+			// TODO COCOA
+//			nativeProgressBar.ProgressTintColor = progress.ProgressColor?.ToNative();
 		}
 	}
 }

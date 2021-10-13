@@ -14,8 +14,9 @@ namespace Microsoft.Maui
 		public MauiWKWebView(CGRect frame)
 			: base(frame, CreateConfiguration())
 		{
-			BackgroundColor = NSColor.Clear;
-			AutosizesSubviews = true;
+			// TODO COCOA
+/*			BackgroundColor = NSColor.Clear;
+			AutosizesSubviews = true;*/
 		}
 
 		public void LoadHtml(string? html, string? baseUrl)

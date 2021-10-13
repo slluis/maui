@@ -52,7 +52,7 @@ namespace Microsoft.Maui
 			}, cancellationToken);
 		}
 
-		internal static async Task<IImageSourceServiceResult<NSImage>?> UpdateSourceAsync(
+		internal static Task<IImageSourceServiceResult<NSImage>?> UpdateSourceAsync(
 			this IImageSourcePart image,
 			NSView destinationContext,
 			IImageSourceServiceProvider services,

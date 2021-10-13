@@ -25,7 +25,9 @@ namespace Microsoft.Maui
 				return bounds;
 			}
 
-			return SafeAreaInsets.InsetRect(bounds);
+			// TODO COCOA
+			return bounds;
+//			return SafeAreaInsets.InsetRect(bounds);
 		}
 
 		// TODO COCOA

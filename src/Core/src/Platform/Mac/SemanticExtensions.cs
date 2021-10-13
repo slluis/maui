@@ -14,12 +14,14 @@ namespace Microsoft.Maui
 			if (element.Handler.NativeView is not NSObject nativeView)
 				return;
 
-			UIAccessibility.PostNotification(UIAccessibilityPostNotification.LayoutChanged, nativeView);
+			// TODO COCOA
+//			UIAccessibility.PostNotification(UIAccessibilityPostNotification.LayoutChanged, nativeView);
 		}
 
 		public static void UpdateSemantics(this NSView nativeView, IView view)
 		{
-			var semantics = view.Semantics;
+			// TODO COCOA
+/*			var semantics = view.Semantics;
 
 			if (semantics == null)
 				return;
@@ -34,7 +36,7 @@ namespace Microsoft.Maui
 			if (semantics.IsHeading)
 				nativeView.AccessibilityTraits |= UIAccessibilityTrait.Header;
 			else
-				nativeView.AccessibilityTraits &= ~UIAccessibilityTrait.Header;
+				nativeView.AccessibilityTraits &= ~UIAccessibilityTrait.Header;*/
 		}
 	}
 }

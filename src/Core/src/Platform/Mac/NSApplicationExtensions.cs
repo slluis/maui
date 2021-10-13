@@ -7,16 +7,7 @@ namespace Microsoft.Maui
 	{
 		public static NSWindow? GetKeyWindow(this NSApplication application)
 		{
-			var windows = application.Windows;
-
-			for (int i = 0; i < windows.Length; i++)
-			{
-				var window = windows[i];
-				if (window.IsKeyWindow)
-					return window;
-			}
-
-			return null;
+			return application.KeyWindow;
 		}
 
 		public static IWindow? GetWindow(this NSApplication application)

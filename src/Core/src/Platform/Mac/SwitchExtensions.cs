@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AppKit;
+using Foundation;
 
 namespace Microsoft.Maui
 {
@@ -7,7 +9,8 @@ namespace Microsoft.Maui
 	{
 		public static void UpdateIsOn(this NSSwitch uiSwitch, ISwitch view)
 		{
-			uiSwitch.SetState(view.IsOn, true);
+			// TODO COCOA
+//			uiSwitch.SetState(view.IsOn, true);
 		}
 
 		public static void UpdateTrackColor(this NSSwitch uiSwitch, ISwitch view, NSColor? defaultOnTrackColor, NSColor? defaultOffTrackColor)
@@ -15,7 +18,8 @@ namespace Microsoft.Maui
 			if (view == null)
 				return;
 
-			if (view.TrackColor == null)
+			// TODO COCOA
+/*			if (view.TrackColor == null)
 				uiSwitch.OnTintColor = defaultOnTrackColor;
 			else
 				uiSwitch.OnTintColor = view.TrackColor.ToNative();
@@ -29,7 +33,7 @@ namespace Microsoft.Maui
 			if (view.TrackColor == null)
 				uIView.BackgroundColor = defaultOffTrackColor;
 			else
-				uIView.BackgroundColor = uiSwitch.OnTintColor;
+				uIView.BackgroundColor = uiSwitch.OnTintColor;*/
 		}
 
 		public static void UpdateThumbColor(this NSSwitch uiSwitch, ISwitch view, NSColor? defaultThumbColor)
@@ -38,7 +42,8 @@ namespace Microsoft.Maui
 				return;
 
 			Graphics.Color thumbColor = view.ThumbColor;
-			uiSwitch.ThumbTintColor = thumbColor?.ToNative() ?? defaultThumbColor;
+			// TODO COCOA
+//			uiSwitch.ThumbTintColor = thumbColor?.ToNative() ?? defaultThumbColor;
 		}
 
 		internal static NSView GetTrackSubview(this NSSwitch uISwitch)
@@ -54,7 +59,9 @@ namespace Microsoft.Maui
 
 		internal static NSColor? GetOffTrackColor(this NSSwitch uISwitch)
 		{
-			return uISwitch.GetTrackSubview().BackgroundColor;
+			// TODO COCOA
+			throw new NotImplementedException();
+//			return uISwitch.GetTrackSubview().BackgroundColor;
 		}
 	}
 }
