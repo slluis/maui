@@ -7,43 +7,48 @@ namespace Microsoft.Maui
 {
 	public class MauiTimePicker : NoCaretField
 	{
-		readonly Action _dateSelected;
-		readonly NSDatePicker _picker;
+		readonly Action? _dateSelected;
+		public event EventHandler ValueChanged;
+		NSDatePicker _picker;
 
 		public MauiTimePicker(Action dateSelected)
 		{
-			// TODO COCOA
-/*			BorderStyle = UITextBorderStyle.RoundedRect;
-
-			_picker = new UIDatePicker { Mode = NSDatePickerMode.Time, TimeZone = new NSTimeZone("UTC") };
 			_dateSelected = dateSelected;
 
-			if (NativeVersion.IsAtLeast(14))
-			{
-				_picker.PreferredDatePickerStyle = UIDatePickerStyle.Wheels;
-			}
+			_picker = new NSDatePicker();
 
-			var width = UIScreen.MainScreen.Bounds.Width;
-			var toolbar = new UIToolbar(new RectangleF(0, 0, width, 44)) { BarStyle = UIBarStyle.Default, Translucent = true };
-			var spacer = new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace);
+			// TODO COCOA
+			/*			BorderStyle = UITextBorderStyle.RoundedRect;
 
-			var doneButton = new UIBarButtonItem(UIBarButtonSystemItem.Done, (o, a) =>
-			{
-				_dateSelected?.Invoke();
-			});
+						_picker = new UIDatePicker { Mode = NSDatePickerMode.Time, TimeZone = new NSTimeZone("UTC") };
+						_dateSelected = dateSelected;
 
-			toolbar.SetItems(new[] { spacer, doneButton }, false);
+						if (NativeVersion.IsAtLeast(14))
+						{
+							_picker.PreferredDatePickerStyle = UIDatePickerStyle.Wheels;
+						}
 
-			InputView = _picker;
-			InputAccessoryView = toolbar;
+						var width = UIScreen.MainScreen.Bounds.Width;
+						var toolbar = new UIToolbar(new RectangleF(0, 0, width, 44)) { BarStyle = UIBarStyle.Default, Translucent = true };
+						var spacer = new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace);
 
-			InputView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
-			InputAccessoryView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
+						var doneButton = new UIBarButtonItem(UIBarButtonSystemItem.Done, (o, a) =>
+						{
+							_dateSelected?.Invoke();
+						});
 
-			InputAssistantItem.LeadingBarButtonGroups = null;
-			InputAssistantItem.TrailingBarButtonGroups = null;
+						toolbar.SetItems(new[] { spacer, doneButton }, false);
 
-			AccessibilityTraits = UIAccessibilityTrait.Button;*/
+						InputView = _picker;
+						InputAccessoryView = toolbar;
+
+						InputView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
+						InputAccessoryView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
+
+						InputAssistantItem.LeadingBarButtonGroups = null;
+						InputAssistantItem.TrailingBarButtonGroups = null;
+
+						AccessibilityTraits = UIAccessibilityTrait.Button;*/
 		}
 
 		public NSDate Date => _picker.DateValue;
