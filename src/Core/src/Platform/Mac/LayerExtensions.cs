@@ -13,10 +13,13 @@ namespace Microsoft.Maui
 			{
 				var layer = control.Layer;
 
-				if (index > -1)
-					layer.InsertSublayer(backgroundLayer, index);
-				else
-					layer.AddSublayer(backgroundLayer);
+				if (layer != null)
+				{
+					if (index > -1)
+						layer.InsertSublayer(backgroundLayer, index);
+					else
+						layer.AddSublayer(backgroundLayer);
+				}
 			}
 		}
 

@@ -8,7 +8,7 @@ namespace Microsoft.Maui
 	public class MauiTimePicker : NoCaretField
 	{
 		readonly Action? _dateSelected;
-		public event EventHandler ValueChanged;
+		//public event EventHandler ValueChanged;
 		NSDatePicker _picker;
 
 		public MauiTimePicker(Action dateSelected)

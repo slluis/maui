@@ -10,7 +10,8 @@ namespace Microsoft.Maui.Platform.Mac
 		NSTextView PlaceholderLabel { get; } = new NSTextView
 		{
 			BackgroundColor = NSColor.Clear,
-			Lines = 0
+			// TODO COCOA
+//			Lines = 0
 		};
 
 		public MauiTextView(CGRect frame) : base(frame)
@@ -20,10 +21,10 @@ namespace Microsoft.Maui.Platform.Mac
 
 		public string? PlaceholderText
 		{
-			get => PlaceholderLabel.Text;
+			get => PlaceholderLabel.Value;
 			set
 			{
-				PlaceholderLabel.Text = value;
+				PlaceholderLabel.Value = value ?? "";
 				PlaceholderLabel.SizeToFit();
 			}
 		}
@@ -31,7 +32,7 @@ namespace Microsoft.Maui.Platform.Mac
 		public NSColor? PlaceholderTextColor
 		{
 			get => PlaceholderLabel.TextColor;
-			set => PlaceholderLabel.TextColor = value;
+			set => PlaceholderLabel.TextColor = value ?? NSColor.Black;
 		}
 
 		public void HidePlaceholder(bool hide)
@@ -43,7 +44,7 @@ namespace Microsoft.Maui.Platform.Mac
 		{
 			AddSubview(PlaceholderLabel);
 
-			var edgeInsets = TextContainerInset;
+			var edgeInsets = new CGRect(TextContainerOrigin, TextContainerInset);
 			var lineFragmentPadding = TextContainer.LineFragmentPadding;
 
 			var vConstraints = NSLayoutConstraint.FromVisualFormat(
@@ -65,35 +66,35 @@ namespace Microsoft.Maui.Platform.Mac
 			AddConstraints(vConstraints);
 		}
 
-		// TODO COCOA
-/*		public override string? Text
+		public override string Value
 		{
-			get => base.Text;
+			get => base.Value;
 			set
 			{
-				var old = base.Text;
+				var old = base.Value;
 
-				base.Text = value;
+				base.Value = value;
 
 				if (old != value)
 					TextPropertySet?.Invoke(this, EventArgs.Empty);
 			}
 		}
 
-		public override NSAttributedString AttributedText
+		// TODO COCOA
+/*		public override NSAttributedString AttributedString
 		{
-			get => base.AttributedText;
+			get => base.AttributedString;
 			set
 			{
-				var old = base.AttributedText;
+				var old = base.AttributedString;
 
-				base.AttributedText = value;
+				base.AttributedString = value;
 
 				if (old?.Value != value?.Value)
 					TextPropertySet?.Invoke(this, EventArgs.Empty);
 			}
-		}
+		}*/
 
-		public event EventHandler? TextPropertySet;*/
+		public event EventHandler? TextPropertySet;
 	}
 }

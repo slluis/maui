@@ -39,7 +39,7 @@ namespace Microsoft.Maui
 			}*/
 		}
 
-		public override CGSize SizeThatFits(CGSize size) => AddInsets(base.SizeThatFits(size));
+//		public override CGSize SizeThatFits(CGSize size) => AddInsets(base.SizeThatFits(size));
 
 	/*	CGSize AddInsets(CGSize size) => new CGSize(
 			width: size.Width + TextInsets.Left + TextInsets.Right,
