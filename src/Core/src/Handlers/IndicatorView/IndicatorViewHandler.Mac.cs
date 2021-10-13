@@ -5,7 +5,7 @@ namespace Microsoft.Maui.Handlers
 {
 	public partial class IndicatorViewHandler : ViewHandler<IIndicatorView, MauiPageControl>
 	{
-		//MauiPageControl? UIPager => NativeView as MauiPageControl;
+		MauiPageControl? UIPager => NativeView;
 
 		protected override MauiPageControl CreateNativeView() => new MauiPageControl();
 
@@ -67,7 +67,7 @@ namespace Microsoft.Maui.Handlers
 			if (VirtualView is ITemplatedIndicatorView iTemplatedIndicatorView)
 			{
 				var indicatorsLayoutOverride = iTemplatedIndicatorView.IndicatorsLayoutOverride;
-				UIView? handler;
+				NSView? handler;
 				if (MauiContext != null && indicatorsLayoutOverride != null)
 				{
 					ClearIndicators();

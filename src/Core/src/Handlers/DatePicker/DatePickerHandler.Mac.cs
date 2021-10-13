@@ -14,7 +14,7 @@ namespace Microsoft.Maui.Handlers
 		{
 			MauiDatePicker nativeDatePicker = new MauiDatePicker();
 
-			_picker = new NSDatePicker { Mode = NSDatePickerMode.Date, TimeZone = new NSTimeZone("UTC") };
+/*			_picker = new NSDatePicker { Mode = NSDatePickerMode.Date, TimeZone = new NSTimeZone("UTC") };
 
 			if (NativeVersion.IsAtLeast(14))
 			{
@@ -42,7 +42,7 @@ namespace Microsoft.Maui.Handlers
 			nativeDatePicker.InputAssistantItem.TrailingBarButtonGroups = null;
 
 			nativeDatePicker.AccessibilityTraits = UIAccessibilityTrait.Button;
-
+*/
 			return nativeDatePicker;
 		}
 

@@ -12,7 +12,8 @@ namespace Microsoft.Maui
 
 		public MauiTimePicker(Action dateSelected)
 		{
-			BorderStyle = UITextBorderStyle.RoundedRect;
+			// TODO COCOA
+/*			BorderStyle = UITextBorderStyle.RoundedRect;
 
 			_picker = new UIDatePicker { Mode = NSDatePickerMode.Time, TimeZone = new NSTimeZone("UTC") };
 			_dateSelected = dateSelected;
@@ -42,9 +43,9 @@ namespace Microsoft.Maui
 			InputAssistantItem.LeadingBarButtonGroups = null;
 			InputAssistantItem.TrailingBarButtonGroups = null;
 
-			AccessibilityTraits = UIAccessibilityTrait.Button;
+			AccessibilityTraits = UIAccessibilityTrait.Button;*/
 		}
 
-		public NSDate Date => _picker.Date;
+		public NSDate Date => _picker.DateValue;
 	}
 }

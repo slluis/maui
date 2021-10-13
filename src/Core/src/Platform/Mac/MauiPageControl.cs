@@ -64,6 +64,11 @@ namespace Microsoft.Maui.Platform.iOS
 			Transform = newTransform;*/
 		}
 
+		internal void UpdateHideSingle(IIndicatorView indicator)
+		{
+			throw new NotImplementedException();
+		}
+
 		public void UpdatePosition()
 		{
 /*			_updatingPosition = true;
@@ -80,6 +85,26 @@ namespace Microsoft.Maui.Platform.iOS
 				var index = position >= maxVisible ? maxVisible - 1 : position;
 				return index;
 			}*/
+		}
+
+		internal void UpdateCurrentPagesIndicatorTintColor(IIndicatorView indicator)
+		{
+			throw new NotImplementedException();
+		}
+
+		internal void UpdateIndicatorShape(IIndicatorView indicator)
+		{
+			throw new NotImplementedException();
+		}
+
+		internal void UpdatePagesIndicatorTintColor(IIndicatorView indicator)
+		{
+			throw new NotImplementedException();
+		}
+
+		internal void UpdateIndicatorSize(IIndicatorView indicator)
+		{
+			throw new NotImplementedException();
 		}
 
 		public void UpdateIndicatorCount()

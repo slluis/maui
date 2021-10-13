@@ -7,6 +7,7 @@ using AppKit;
 
 namespace Microsoft.Maui.Handlers
 {
+	// TODO COCOA
 	public partial class ScrollViewHandler : ViewHandler<IScrollView, NSScrollView>
 	{
 		protected override NSScrollView CreateNativeView()
@@ -18,16 +19,16 @@ namespace Microsoft.Maui.Handlers
 		{
 			base.ConnectHandler(nativeView);
 
-			nativeView.Scrolled += Scrolled;
-			nativeView.ScrollAnimationEnded += ScrollAnimationEnded;
+	//		nativeView.Scrolled += Scrolled;
+	//		nativeView.ScrollAnimationEnded += ScrollAnimationEnded;
 		}
 
 		protected override void DisconnectHandler(NSScrollView nativeView)
 		{
 			base.DisconnectHandler(nativeView);
 
-			nativeView.Scrolled -= Scrolled;
-			nativeView.ScrollAnimationEnded -= ScrollAnimationEnded;
+	//		nativeView.Scrolled -= Scrolled;
+	//		nativeView.ScrollAnimationEnded -= ScrollAnimationEnded;
 		}
 
 		public override Size GetDesiredSize(double widthConstraint, double heightConstraint)
@@ -61,8 +62,8 @@ namespace Microsoft.Maui.Handlers
 
 		void Scrolled(object? sender, EventArgs e)
 		{
-			VirtualView.HorizontalOffset = NativeView.ContentOffset.X;
-			VirtualView.VerticalOffset = NativeView.ContentOffset.Y;
+//			VirtualView.HorizontalOffset = NativeView.ContentOffset.X;
+//			VirtualView.VerticalOffset = NativeView.ContentOffset.Y;
 		}
 
 		public static void MapContent(ScrollViewHandler handler, IScrollView scrollView)
@@ -70,22 +71,22 @@ namespace Microsoft.Maui.Handlers
 			if (handler.NativeView == null || handler.MauiContext == null)
 				return;
 
-			handler.NativeView.UpdateContent(scrollView.PresentedContent, handler.MauiContext);
+//			handler.NativeView.UpdateContent(scrollView.PresentedContent, handler.MauiContext);
 		}
 
 		public static void MapContentSize(ScrollViewHandler handler, IScrollView scrollView)
 		{
-			handler.NativeView.UpdateContentSize(scrollView.ContentSize);
+//			handler.NativeView.UpdateContentSize(scrollView.ContentSize);
 		}
 
 		public static void MapHorizontalScrollBarVisibility(ScrollViewHandler handler, IScrollView scrollView)
 		{
-			handler.NativeView?.UpdateHorizontalScrollBarVisibility(scrollView.HorizontalScrollBarVisibility);
+//			handler.NativeView?.UpdateHorizontalScrollBarVisibility(scrollView.HorizontalScrollBarVisibility);
 		}
 
 		public static void MapVerticalScrollBarVisibility(ScrollViewHandler handler, IScrollView scrollView)
 		{
-			handler.NativeView?.UpdateVerticalScrollBarVisibility(scrollView.VerticalScrollBarVisibility);
+//			handler.NativeView?.UpdateVerticalScrollBarVisibility(scrollView.VerticalScrollBarVisibility);
 		}
 
 		public static void MapOrientation(ScrollViewHandler handler, IScrollView scrollView)
@@ -97,7 +98,7 @@ namespace Microsoft.Maui.Handlers
 		{
 			if (args is ScrollToRequest request)
 			{
-				handler.NativeView.SetContentOffset(new CoreGraphics.CGPoint(request.HoriztonalOffset, request.VerticalOffset), !request.Instant);
+//				handler.NativeView.SetContentOffset(new CoreGraphics.CGPoint(request.HoriztonalOffset, request.VerticalOffset), !request.Instant);
 
 				if (request.Instant)
 				{

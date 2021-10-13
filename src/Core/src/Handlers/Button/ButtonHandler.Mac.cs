@@ -7,6 +7,7 @@ using AppKit;
 
 namespace Microsoft.Maui.Handlers
 {
+	// TODO COCOA
 	public partial class ButtonHandler : ViewHandler<IButton, NSButton>
 	{
 //		static readonly NSControlState[] ControlStates = { NSControlState.Normal, NSControlState.Highlighted, NSControlState.Disabled };
@@ -59,41 +60,41 @@ namespace Microsoft.Maui.Handlers
 
 		public static void MapTextColor(IButtonHandler handler, ITextStyle button)
 		{
-			handler.TypedNativeView?.UpdateTextColor(button, ButtonTextColorDefaultNormal, ButtonTextColorDefaultHighlighted, ButtonTextColorDefaultDisabled);
+//			handler.TypedNativeView?.UpdateTextColor(button, ButtonTextColorDefaultNormal, ButtonTextColorDefaultHighlighted, ButtonTextColorDefaultDisabled);
 		}
 
 		public static void MapCharacterSpacing(IButtonHandler handler, ITextStyle button)
 		{
-			handler.TypedNativeView?.UpdateCharacterSpacing(button);
+//			handler.TypedNativeView?.UpdateCharacterSpacing(button);
 		}
 
 		public static void MapPadding(IButtonHandler handler, IButton button)
 		{
-			handler.TypedNativeView?.UpdatePadding(button);
+			//			handler.TypedNativeView?.UpdatePadding(button);
 		}
 
 		public static void MapFont(IButtonHandler handler, ITextStyle button)
 		{
 			var fontManager = handler.GetRequiredService<IFontManager>();
 
-			handler.TypedNativeView?.UpdateFont(button, fontManager);
+			//handler.TypedNativeView?.UpdateFont(button, fontManager);
 		}
 
 		public static void MapFormatting(IButtonHandler handler, IText button)
 		{
 			// Update all of the attributed text formatting properties
-			handler.TypedNativeView?.UpdateCharacterSpacing(button);
+			//handler.TypedNativeView?.UpdateCharacterSpacing(button);
 		}
 
 		void OnSetImageSource(NSImage? image)
 		{
 			if (image != null)
 			{
-				NativeView.SetImage(image.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal), UIControlState.Normal);
+				//	NativeView.SetImage(image.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal), UIControlState.Normal);
 			}
 			else
 			{
-				NativeView.SetImage(null, UIControlState.Normal);
+				//	NativeView.SetImage(null, UIControlState.Normal);
 			}
 
 			VirtualView.ImageSourceLoaded();
@@ -114,12 +115,12 @@ namespace Microsoft.Maui.Handlers
 
 		static void SetControlPropertiesFromProxy(NSButton nativeView)
 		{
-			foreach (UIControlState uiControlState in ControlStates)
+/*			foreach (UIControlState uiControlState in ControlStates)
 			{
 				nativeView.SetTitleColor(NSButton.Appearance.TitleColor(uiControlState), uiControlState); // If new values are null, old values are preserved.
 				nativeView.SetTitleShadowColor(NSButton.Appearance.TitleShadowColor(uiControlState), uiControlState);
 				nativeView.SetBackgroundImage(NSButton.Appearance.BackgroundImageForState(uiControlState), uiControlState);
-			}
+			}*/
 		}
 
 		void OnButtonTouchUpInside(object? sender, EventArgs e)

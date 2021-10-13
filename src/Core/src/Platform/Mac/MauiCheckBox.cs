@@ -7,7 +7,7 @@ namespace Microsoft.Maui
 {
 	public class MauiCheckBox : NSButton
 	{
-		// All these values were chosen to just match the android drawables that are used
+/*		// All these values were chosen to just match the android drawables that are used
 		const float DefaultSize = 18.0f;
 		const float LineWidth = 2.0f;
 
@@ -241,11 +241,11 @@ namespace Microsoft.Maui
 		}
 
 		// TODO COCOA
-/*		public override void LayoutSubviews()
+		public override void LayoutSubviews()
 		{
 			base.LayoutSubviews();
 			UpdateDisplay();
-		}*/
+		}
 
 		protected override void Dispose(bool disposing)
 		{
@@ -267,7 +267,7 @@ namespace Microsoft.Maui
 
 		// TODO COCOA
 
-/*		static UIKit.UIAccessibilityTrait? s_switchAccessibilityTraits;
+		static UIKit.UIAccessibilityTrait? s_switchAccessibilityTraits;
 		UIKit.UIAccessibilityTrait SwitchAccessibilityTraits
 		{
 			get
