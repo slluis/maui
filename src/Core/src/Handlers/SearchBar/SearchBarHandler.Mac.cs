@@ -139,7 +139,10 @@ namespace Microsoft.Maui.Handlers
 
 		public static void MapCancelButtonColor(SearchBarHandler handler, ISearchBar searchBar)
 		{
-			handler.NativeView?.UpdateCancelButton(searchBar, handler._cancelButtonTextColorDefaultNormal, handler._cancelButtonTextColorDefaultHighlighted, handler._cancelButtonTextColorDefaultDisabled);
+			//handler.NativeView?.UpdateCancelButton(searchBar,
+			//	handler._cancelButtonTextColorDefaultNormal,
+			//	handler._cancelButtonTextColorDefaultHighlighted,
+			//	handler._cancelButtonTextColorDefaultDisabled);
 		}
 
 		void OnCancelClicked(object? sender, EventArgs args)
