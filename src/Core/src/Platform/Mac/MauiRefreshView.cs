@@ -9,176 +9,197 @@ namespace Microsoft.Maui
 {
 	public class MauiRefreshView : NSView
 	{
-/*		bool _isRefreshing;
-		nfloat _originalY;
-		nfloat _refreshControlHeight;
-		NSView _refreshControlParent;
-		NSView? _contentView;
-		UIRefreshControl _refreshControl;
-		public UIRefreshControl RefreshControl => _refreshControl;
+		public bool IsRefreshing { get; set; }
+		public bool IsEnabled { get; set; }
 
-		public MauiRefreshView()
-		{
-			_refreshControl = new UIRefreshControl();
-			_refreshControlParent = this;
-		}
-
-		public bool IsRefreshing
-		{
-			get { return _isRefreshing; }
-			set
-			{
-				_isRefreshing = value;
-
-				if (_isRefreshing != _refreshControl.Refreshing)
-				{
-					if (_isRefreshing)
-					{
-						TryOffsetRefresh(this, IsRefreshing);
-						_refreshControl.BeginRefreshing();
-					}
-					else
-					{
-						_refreshControl.EndRefreshing();
-						TryOffsetRefresh(this, IsRefreshing);
-					}
-				}
-			}
-		}
 
 		public void UpdateContent(IView? content, IMauiContext? mauiContext)
 		{
-			if (_refreshControlParent != null)
-				TryRemoveRefresh(_refreshControlParent);
+			throw new NotImplementedException();
+			//if (_refreshControlParent != null)
+			//	TryRemoveRefresh(_refreshControlParent);
 
-			_contentView?.RemoveFromSuperview();
+			//_contentView?.RemoveFromSuperview();
 
-			if (content != null && mauiContext != null)
-			{
-				_contentView = content.ToNative(mauiContext);
-				this.AddSubview(_contentView);
-				TryInsertRefresh(_contentView);
-			}
+			//if (content != null && mauiContext != null)
+			//{
+			//	_contentView = content.ToNative(mauiContext);
+			//	this.AddSubview(_contentView);
+			//	TryInsertRefresh(_contentView);
+			//}
 		}
 
-		bool TryOffsetRefresh(NSView view, bool refreshing)
-		{
-			if (view is UIScrollView scrollView)
-			{
-				if (scrollView.ContentOffset.Y < 0)
-					return true;
 
-				if (refreshing)
-					scrollView.SetContentOffset(new CoreGraphics.CGPoint(0, _originalY - _refreshControlHeight), true);
-				else
-					scrollView.SetContentOffset(new CoreGraphics.CGPoint(0, _originalY), true);
+		/*		bool _isRefreshing;
+				nfloat _originalY;
+				nfloat _refreshControlHeight;
+				NSView _refreshControlParent;
+				NSView? _contentView;
+				UIRefreshControl _refreshControl;
+				public UIRefreshControl RefreshControl => _refreshControl;
 
-				return true;
-			}
+				public MauiRefreshView()
+				{
+					_refreshControl = new UIRefreshControl();
+					_refreshControlParent = this;
+				}
 
-			if (view is WKWebView)
-			{
-				return true;
-			}
+				public bool IsRefreshing
+				{
+					get { return _isRefreshing; }
+					set
+					{
+						_isRefreshing = value;
 
-			if (view.Subviews == null)
-				return false;
+						if (_isRefreshing != _refreshControl.Refreshing)
+						{
+							if (_isRefreshing)
+							{
+								TryOffsetRefresh(this, IsRefreshing);
+								_refreshControl.BeginRefreshing();
+							}
+							else
+							{
+								_refreshControl.EndRefreshing();
+								TryOffsetRefresh(this, IsRefreshing);
+							}
+						}
+					}
+				}
 
-			for (int i = 0; i < view.Subviews.Length; i++)
-			{
-				var control = view.Subviews[i];
-				if (TryOffsetRefresh(control, refreshing))
-					return true;
-			}
+				public void UpdateContent(IView? content, IMauiContext? mauiContext)
+				{
+					if (_refreshControlParent != null)
+						TryRemoveRefresh(_refreshControlParent);
 
-			return false;
-		}
+					_contentView?.RemoveFromSuperview();
 
-		bool TryRemoveRefresh(NSView view, int index = 0)
-		{
-			_refreshControlParent = view;
+					if (content != null && mauiContext != null)
+					{
+						_contentView = content.ToNative(mauiContext);
+						this.AddSubview(_contentView);
+						TryInsertRefresh(_contentView);
+					}
+				}
 
-			if (_refreshControl.Superview != null)
-				_refreshControl.RemoveFromSuperview();
+				bool TryOffsetRefresh(NSView view, bool refreshing)
+				{
+					if (view is UIScrollView scrollView)
+					{
+						if (scrollView.ContentOffset.Y < 0)
+							return true;
 
-			if (view is UIScrollView scrollView)
-			{
-				if (CanUseRefreshControlProperty())
-					scrollView.RefreshControl = null;
+						if (refreshing)
+							scrollView.SetContentOffset(new CoreGraphics.CGPoint(0, _originalY - _refreshControlHeight), true);
+						else
+							scrollView.SetContentOffset(new CoreGraphics.CGPoint(0, _originalY), true);
 
-				return true;
-			}
+						return true;
+					}
 
-			if (view.Subviews == null)
-				return false;
+					if (view is WKWebView)
+					{
+						return true;
+					}
 
-			for (int i = 0; i < view.Subviews.Length; i++)
-			{
-				var control = view.Subviews[i];
-				if (TryRemoveRefresh(control, i))
-					return true;
-			}
+					if (view.Subviews == null)
+						return false;
 
-			return false;
-		}
+					for (int i = 0; i < view.Subviews.Length; i++)
+					{
+						var control = view.Subviews[i];
+						if (TryOffsetRefresh(control, refreshing))
+							return true;
+					}
 
-		bool TryInsertRefresh(NSView view, int index = 0)
-		{
-			_refreshControlParent = view;
+					return false;
+				}
 
-			if (view is UIScrollView scrollView)
-			{
-				if (CanUseRefreshControlProperty())
-					scrollView.RefreshControl = _refreshControl;
-				else
-					scrollView.InsertSubview(_refreshControl, index);
+				bool TryRemoveRefresh(NSView view, int index = 0)
+				{
+					_refreshControlParent = view;
 
-				scrollView.AlwaysBounceVertical = true;
+					if (_refreshControl.Superview != null)
+						_refreshControl.RemoveFromSuperview();
 
-				_originalY = scrollView.ContentOffset.Y;
-				_refreshControlHeight = _refreshControl.Frame.Size.Height;
+					if (view is UIScrollView scrollView)
+					{
+						if (CanUseRefreshControlProperty())
+							scrollView.RefreshControl = null;
 
-				return true;
-			}
+						return true;
+					}
 
-			if (view is WKWebView webView)
-			{
-				webView.ScrollView.InsertSubview(_refreshControl, index);
-				return true;
-			}
+					if (view.Subviews == null)
+						return false;
 
-			if (view.Subviews == null)
-				return false;
+					for (int i = 0; i < view.Subviews.Length; i++)
+					{
+						var control = view.Subviews[i];
+						if (TryRemoveRefresh(control, i))
+							return true;
+					}
 
-			for (int i = 0; i < view.Subviews.Length; i++)
-			{
-				var control = view.Subviews[i];
-				if (TryInsertRefresh(control, i))
-					return true;
-			}
+					return false;
+				}
 
-			return false;
-		}
+				bool TryInsertRefresh(NSView view, int index = 0)
+				{
+					_refreshControlParent = view;
 
-		public void UpdateIsEnabled(bool isRefreshViewEnabled)
-		{
-			_refreshControl.Enabled = isRefreshViewEnabled;
+					if (view is UIScrollView scrollView)
+					{
+						if (CanUseRefreshControlProperty())
+							scrollView.RefreshControl = _refreshControl;
+						else
+							scrollView.InsertSubview(_refreshControl, index);
 
-			UserInteractionEnabled = true;
+						scrollView.AlwaysBounceVertical = true;
 
-			if (IsRefreshing)
-				return;
+						_originalY = scrollView.ContentOffset.Y;
+						_refreshControlHeight = _refreshControl.Frame.Size.Height;
 
-			if (isRefreshViewEnabled)
-				TryInsertRefresh(_refreshControlParent);
-			else
-				TryRemoveRefresh(_refreshControlParent);
+						return true;
+					}
 
-			UserInteractionEnabled = true;
-		}
+					if (view is WKWebView webView)
+					{
+						webView.ScrollView.InsertSubview(_refreshControl, index);
+						return true;
+					}
 
-		bool CanUseRefreshControlProperty() =>
-			this.GetNavigationController()?.NavigationBar?.PrefersLargeTitles ?? true;
-*/
+					if (view.Subviews == null)
+						return false;
+
+					for (int i = 0; i < view.Subviews.Length; i++)
+					{
+						var control = view.Subviews[i];
+						if (TryInsertRefresh(control, i))
+							return true;
+					}
+
+					return false;
+				}
+
+				public void UpdateIsEnabled(bool isRefreshViewEnabled)
+				{
+					_refreshControl.Enabled = isRefreshViewEnabled;
+
+					UserInteractionEnabled = true;
+
+					if (IsRefreshing)
+						return;
+
+					if (isRefreshViewEnabled)
+						TryInsertRefresh(_refreshControlParent);
+					else
+						TryRemoveRefresh(_refreshControlParent);
+
+					UserInteractionEnabled = true;
+				}
+
+				bool CanUseRefreshControlProperty() =>
+					this.GetNavigationController()?.NavigationBar?.PrefersLargeTitles ?? true;
+		*/
 	}
 }
