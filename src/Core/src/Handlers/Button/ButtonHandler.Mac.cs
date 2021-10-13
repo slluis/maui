@@ -12,9 +12,9 @@ namespace Microsoft.Maui.Handlers
 	{
 //		static readonly NSControlState[] ControlStates = { NSControlState.Normal, NSControlState.Highlighted, NSControlState.Disabled };
 
-		static NSColor? ButtonTextColorDefaultDisabled;
-		static NSColor? ButtonTextColorDefaultHighlighted;
-		static NSColor? ButtonTextColorDefaultNormal;
+		//static NSColor? ButtonTextColorDefaultDisabled;
+		//static NSColor? ButtonTextColorDefaultHighlighted;
+		//static NSColor? ButtonTextColorDefaultNormal;
 
 		protected override NSButton CreateNativeView()
 		{

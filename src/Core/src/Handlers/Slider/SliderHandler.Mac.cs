@@ -5,9 +5,9 @@ namespace Microsoft.Maui.Handlers
 {
 	public partial class SliderHandler : ViewHandler<ISlider, NSSlider>
 	{
-		static NSColor? DefaultMinTrackColor;
-		static NSColor? DefaultMaxTrackColor;
-		static NSColor? DefaultThumbColor;
+		//static NSColor? DefaultMinTrackColor;
+		//static NSColor? DefaultMaxTrackColor;
+		//static NSColor? DefaultThumbColor;
 
 		protected override NSSlider CreateNativeView() => new NSSlider { Continuous = true };
 

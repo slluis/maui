@@ -10,9 +10,9 @@ namespace Microsoft.Maui.Handlers
 	{
 		NSColor? _defaultTextColor;
 
-		NSColor? _cancelButtonTextColorDefaultDisabled;
-		NSColor? _cancelButtonTextColorDefaultHighlighted;
-		NSColor? _cancelButtonTextColorDefaultNormal;
+		//NSColor? _cancelButtonTextColorDefaultDisabled;
+		//NSColor? _cancelButtonTextColorDefaultHighlighted;
+		//NSColor? _cancelButtonTextColorDefaultNormal;
 
 		NSTextField? _editor;
 

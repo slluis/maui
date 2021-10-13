@@ -14,6 +14,7 @@ namespace Microsoft.Maui.Handlers
 		{
 			MauiDatePicker nativeDatePicker = new MauiDatePicker();
 
+			_picker = new NSDatePicker();
 /*			_picker = new NSDatePicker { Mode = NSDatePickerMode.Date, TimeZone = new NSTimeZone("UTC") };
 
 			if (NativeVersion.IsAtLeast(14))
