@@ -9,7 +9,7 @@ namespace Microsoft.Maui
 {
 	public abstract class MauiUIApplicationDelegate : NSApplicationDelegate, INSApplicationDelegate
 	{
-		//MauiContext _applicationContext = null!;
+		MauiContext _applicationContext = null!;
 		WeakReference<IWindow>? _virtualWindow = null;
 
 		internal IWindow? VirtualWindow
@@ -30,22 +30,7 @@ namespace Microsoft.Maui
 		protected abstract MauiApp CreateMauiApp();
 
 
-		// TODO COCOA
-		/*
-		public override bool WillFinishLaunching(NSApplication application, NSDictionary launchOptions)
-		{
-			var mauiApp = CreateMauiApp();
-
-			Services = mauiApp.Services;
-
-			_applicationContext = new MauiContext(Services, this);
-
-			Services?.InvokeLifecycleEvents<iOSLifecycle.WillFinishLaunching>(del => del(application, launchOptions));
-
-			return true;
-		}
-
-		public override bool FinishedLaunching(NSApplication application, NSDictionary launchOptions)
+		public override void WillFinishLaunching(NSNotification notification)
 		{
 			Application = Services.GetRequiredService<IApplication>();
 
@@ -55,11 +40,13 @@ namespace Microsoft.Maui
 
 			Window = uiWindow;
 
-			Window.MakeKeyAndVisible();
+			Window.MakeKeyAndOrderFront(Window);
 
-			Services?.InvokeLifecycleEvents<iOSLifecycle.FinishedLaunching>(del => del(application, launchOptions));
+			//Services?.InvokeLifecycleEvents<MacLifecycle.FinishedLaunching>(del => del(application, launchOptions));
 
-			return true;
+			//	return true;
+
+			base.WillFinishLaunching(notification);
 		}
 
 		NSWindow CreateNativeWindow()
@@ -68,7 +55,7 @@ namespace Microsoft.Maui
 
 			var mauiContext = _applicationContext.MakeScoped(uiWindow);
 
-			Services?.InvokeLifecycleEvents<iOSLifecycle.OnMauiContextCreated>(del => del(mauiContext));
+			Services?.InvokeLifecycleEvents<MacLifecycle.OnMauiContextCreated>(del => del(mauiContext));
 
 			var activationState = new ActivationState(mauiContext);
 			var window = Application.CreateWindow(activationState);
@@ -78,63 +65,79 @@ namespace Microsoft.Maui
 			return uiWindow;
 		}
 
-		public override void PerformActionForShortcutItem(NSApplication application, UIApplicationShortcutItem shortcutItem, UIOperationHandler completionHandler)
+		public override void OpenUrls(NSApplication application, NSUrl[] urls)
 		{
-			Services?.InvokeLifecycleEvents<iOSLifecycle.PerformActionForShortcutItem>(del => del(application, shortcutItem, completionHandler));
+			//var wasHandled = false;
+
+			//Services?.InvokeLifecycleEvents<MacLifecycle.OpenUrl>(del =>
+			//{
+			//	wasHandled = del(application, url, options) || wasHandled;
+			//});
+
+			//return wasHandled || base.OpenUrl(application, url, options);
 		}
 
-		public override bool OpenUrl(NSApplication application, NSUrl url, NSDictionary options)
+		public override void DidFinishLaunching(NSNotification notification)
 		{
-			var wasHandled = false;
+			Application = Services.GetRequiredService<IApplication>();
 
-			Services?.InvokeLifecycleEvents<iOSLifecycle.OpenUrl>(del =>
-			{
-				wasHandled = del(application, url, options) || wasHandled;
-			});
+			this.SetApplicationHandler(Application, _applicationContext);
 
-			return wasHandled || base.OpenUrl(application, url, options);
+			var uiWindow = CreateNativeWindow();
+
+			Window = uiWindow;
+
+			Window.MakeKeyAndOrderFront(Window);
+
+			//Services?.InvokeLifecycleEvents<iOSLifecycle.FinishedLaunching>(del => del(application, launchOptions));
+			base.DidFinishLaunching(notification);
 		}
 
-		public override bool ContinueUserActivity(NSApplication application, NSUserActivity userActivity, UIApplicationRestorationHandler completionHandler)
-		{
-			var wasHandled = false;
+		//public override void PerformActionForShortcutItem(NSApplication application, UIApplicationShortcutItem shortcutItem, UIOperationHandler completionHandler)
+		//{
+		//	Services?.InvokeLifecycleEvents<iOSLifecycle.PerformActionForShortcutItem>(del => del(application, shortcutItem, completionHandler));
+		//}
 
-			Services?.InvokeLifecycleEvents<iOSLifecycle.ContinueUserActivity>(del =>
-			{
-				wasHandled = del(application, userActivity, completionHandler) || wasHandled;
-			});
+		//public override bool ContinueUserActivity(NSApplication application, NSUserActivity userActivity, UIApplicationRestorationHandler completionHandler)
+		//{
+		//	var wasHandled = false;
 
-			return wasHandled || base.ContinueUserActivity(application, userActivity, completionHandler);
-		}
+		//	Services?.InvokeLifecycleEvents<iOSLifecycle.ContinueUserActivity>(del =>
+		//	{
+		//		wasHandled = del(application, userActivity, completionHandler) || wasHandled;
+		//	});
 
-		public override void OnActivated(NSApplication application)
-		{
-			Services?.InvokeLifecycleEvents<iOSLifecycle.OnActivated>(del => del(application));
-		}
+		//	return wasHandled || base.ContinueUserActivity(application, userActivity, completionHandler);
+		//}
 
-		public override void OnResignActivation(NSApplication application)
-		{
-			Services?.InvokeLifecycleEvents<iOSLifecycle.OnResignActivation>(del => del(application));
-		}
+		//public override void OnActivated(NSApplication application)
+		//{
+		//	Services?.InvokeLifecycleEvents<MacLifecycle.OnActivated>(del => del(application));
+		//}
 
-		public override void WillTerminate(NSApplication application)
-		{
-			Services?.InvokeLifecycleEvents<iOSLifecycle.WillTerminate>(del => del(application));
-		}
+		//public override void OnResignActivation(NSApplication application)
+		//{
+		//	Services?.InvokeLifecycleEvents<MacLifecycle.OnResignActivation>(del => del(application));
+		//}
 
-		public override void DidEnterBackground(NSApplication application)
-		{
-			Services?.InvokeLifecycleEvents<iOSLifecycle.DidEnterBackground>(del => del(application));
-		}
+		//public override void WillTerminate(NSApplication application)
+		//{
+		//	Services?.InvokeLifecycleEvents<MacLifecycle.WillTerminate>(del => del(application));
+		//}
 
-		public override void WillEnterForeground(NSApplication application)
-		{
-			Services?.InvokeLifecycleEvents<iOSLifecycle.WillEnterForeground>(del => del(application));
-		}*/
+		//public override void DidEnterBackground(NSApplication application)
+		//{
+		//	Services?.InvokeLifecycleEvents<MacLifecycle.DidEnterBackground>(del => del(application));
+		//}
+
+		//public override void WillEnterForeground(NSApplication application)
+		//{
+		//	Services?.InvokeLifecycleEvents<iOSLifecycle.WillEnterForeground>(del => del(application));
+		//}*/
 
 		public static MauiUIApplicationDelegate Current { get; private set; } = null!;
 
-		//public override NSWindow? Window { get; set; }
+		public NSWindow? Window { get; set; }
 
 		public IServiceProvider Services { get; protected set; } = null!;
 
