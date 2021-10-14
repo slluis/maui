@@ -6,6 +6,8 @@ namespace Microsoft.Maui.Handlers
 {
 	public class ContentView : MauiView
 	{
+		public override bool IsFlipped => true;
+
 		public override CGSize SizeThatFits(CGSize size)
 		{
 			if (CrossPlatformMeasure == null)

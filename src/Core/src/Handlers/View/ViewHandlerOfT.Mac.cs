@@ -33,7 +33,7 @@ namespace Microsoft.Maui.Handlers
 
 			// The position of Bounds is usually (0,0), but in some cases (e.g., UIScrollView) it's the content offset.
 			// So just leave it a whatever value iOS thinks it should be.
-			nativeView.Frame = new CoreGraphics.CGRect(nativeView.Frame.X, nativeView.Frame.Y, rect.Width, rect.Height);
+			nativeView.Frame = new CoreGraphics.CGRect(rect.X, rect.Y, rect.Width, rect.Height);
 			 
 			nativeView.UpdateBackgroundLayerFrame();
 		}

@@ -12,11 +12,42 @@ namespace Maui.Controls.Sample.Macos
 		{
 			var page = new ContentPage();
 			page.Title = "Hello!";
-			var label = new Label
+			StackLayout stack = new StackLayout();
+			stack.Orientation = StackOrientation.Vertical;
+			stack.Add(new Label { Text = "Hi Maui" });
+			stack.Add(new Label { Text = "Hi Maui 2" });
+			stack.Add(new Label { Text = "Hi Maui 3" });
+
+			var grid = new GridLayout
 			{
-				Text = "Hi Maui"
+				RowDefinitions = {
+					new RowDefinition (),
+					new RowDefinition ()
+				},
+				ColumnDefinitions = {
+					new ColumnDefinition (),
+					new ColumnDefinition ()
+				}
 			};
-			page.Content = label;
+			var cell = new Label { Text = "Cell 1" };
+			grid.Add(cell);
+
+			cell = new Label { Text = "Cell 2" };
+			grid.Add(cell);
+			grid.SetColumn(cell, 1);
+
+			cell = new Label { Text = "Cell 3" };
+			grid.Add(cell);
+			grid.SetRow(cell, 1);
+
+			cell = new Label { Text = "Cell 4" };
+			grid.Add(cell);
+			grid.SetRow(cell, 1);
+			grid.SetColumn(cell, 1);
+
+			stack.Add(grid);
+
+			page.Content = stack;
 			MainPage = page;
 		}
 	}

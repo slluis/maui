@@ -11,6 +11,8 @@ namespace Microsoft.Maui
 
 		public IView? View { get; set; }
 
+		public override bool IsFlipped => true;
+
 		bool RespondsToSafeArea()
 		{
 			if (_respondsToSafeArea.HasValue)
