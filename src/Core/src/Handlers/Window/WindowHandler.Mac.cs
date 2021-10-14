@@ -11,8 +11,12 @@ namespace Microsoft.Maui.Handlers
 		{
 			_ = handler.MauiContext ?? throw new InvalidOperationException($"{nameof(MauiContext)} should have been set by base class.");
 
+			var originalFrame = handler.NativeView.Frame;
+
 			var nativeContent = window.Content.ToNSViewController(handler.MauiContext);
 			handler.NativeView.ContentViewController = nativeContent;
+
+			handler.NativeView.SetFrame(originalFrame, true);
 		}
 	}
 }
