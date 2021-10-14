@@ -47,24 +47,22 @@ namespace Microsoft.Maui.Handlers
 				return new Size(widthConstraint, heightConstraint);
 			}
 
-			throw new NotImplementedException();
-			//var sizeThatFits = nativeView.SizeThatFits(new CoreGraphics.CGSize((float)widthConstraint, (float)heightConstraint));
+			var sizeThatFits = nativeView is MauiView mauiView ? mauiView.SizeThatFits(new CoreGraphics.CGSize((float)widthConstraint, (float)heightConstraint)) : nativeView.FittingSize;
 
-			//var size = new Size(
-			//	sizeThatFits.Width == float.PositiveInfinity ? double.PositiveInfinity : sizeThatFits.Width,
-			//	sizeThatFits.Height == float.PositiveInfinity ? double.PositiveInfinity : sizeThatFits.Height);
+			var size = new Size(
+				sizeThatFits.Width == float.PositiveInfinity ? double.PositiveInfinity : sizeThatFits.Width,
+				sizeThatFits.Height == float.PositiveInfinity ? double.PositiveInfinity : sizeThatFits.Height);
 
-			//if (double.IsInfinity(size.Width) || double.IsInfinity(size.Height))
-			//{
-			//	
-			//	nativeView.SizeToFit();
-			//	size = new Size(nativeView.Frame.Width, nativeView.Frame.Height);
-			//}
+			if (double.IsInfinity(size.Width) || double.IsInfinity(size.Height))
+			{
+				nativeView.SetFrameSize(nativeView.FittingSize);
+				size = new Size(nativeView.Frame.Width, nativeView.Frame.Height);
+			}
 
-			//var finalWidth = ResolveConstraints(size.Width, VirtualView.Width, VirtualView.MinimumWidth, VirtualView.MaximumWidth);
-			//var finalHeight = ResolveConstraints(size.Height, VirtualView.Height, VirtualView.MinimumHeight, VirtualView.MaximumHeight);
+			var finalWidth = ResolveConstraints(size.Width, VirtualView.Width, VirtualView.MinimumWidth, VirtualView.MaximumWidth);
+			var finalHeight = ResolveConstraints(size.Height, VirtualView.Height, VirtualView.MinimumHeight, VirtualView.MaximumHeight);
 
-			//return new Size(finalWidth, finalHeight);
+			return new Size(finalWidth, finalHeight);
 		}
 
 		double ResolveConstraints(double measured, double exact, double min, double max)

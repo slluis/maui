@@ -10,7 +10,14 @@ namespace Maui.Controls.Sample.Macos
 	{
 		public App()
 		{
-			MainPage = new ContentPage();
+			var page = new ContentPage();
+			page.Title = "Hello!";
+			var label = new Label
+			{
+				Text = "Hi Maui"
+			};
+			page.Content = label;
+			MainPage = page;
 		}
 	}
 }

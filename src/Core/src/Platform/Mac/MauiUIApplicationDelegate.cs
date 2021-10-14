@@ -78,14 +78,15 @@ namespace Microsoft.Maui
 
 		public override void OpenUrls(NSApplication application, NSUrl[] urls)
 		{
-			//var wasHandled = false;
+			var wasHandled = false;
 
-			//Services?.InvokeLifecycleEvents<MacLifecycle.OpenUrl>(del =>
-			//{
-			//	wasHandled = del(application, url, options) || wasHandled;
-			//});
+			Services?.InvokeLifecycleEvents<MacLifecycle.OpenUrls>(del =>
+			{
+				wasHandled = del(application, urls);
+			});
 
-			//return wasHandled || base.OpenUrl(application, url, options);
+			if (!wasHandled)
+				base.OpenUrls(application, urls);
 		}
 
 		//public override void PerformActionForShortcutItem(NSApplication application, UIApplicationShortcutItem shortcutItem, UIOperationHandler completionHandler)
@@ -105,20 +106,20 @@ namespace Microsoft.Maui
 		//	return wasHandled || base.ContinueUserActivity(application, userActivity, completionHandler);
 		//}
 
-		//public override void OnActivated(NSApplication application)
-		//{
-		//	Services?.InvokeLifecycleEvents<MacLifecycle.OnActivated>(del => del(application));
-		//}
+		public override void DidBecomeActive(NSNotification notification)
+		{
+			Services?.InvokeLifecycleEvents<MacLifecycle.OnActivated>(del => del(NSApplication.SharedApplication));
+		}
 
-		//public override void OnResignActivation(NSApplication application)
-		//{
-		//	Services?.InvokeLifecycleEvents<MacLifecycle.OnResignActivation>(del => del(application));
-		//}
+		public override void DidResignActive(NSNotification notification)
+		{
+			Services?.InvokeLifecycleEvents<MacLifecycle.OnResignActivation>(del => del(NSApplication.SharedApplication));
+		}
 
-		//public override void WillTerminate(NSApplication application)
-		//{
-		//	Services?.InvokeLifecycleEvents<MacLifecycle.WillTerminate>(del => del(application));
-		//}
+		public override void WillTerminate(NSNotification notification)
+		{
+			Services?.InvokeLifecycleEvents<MacLifecycle.WillTerminate>(del => del(NSApplication.SharedApplication));
+		}
 
 		//public override void DidEnterBackground(NSApplication application)
 		//{

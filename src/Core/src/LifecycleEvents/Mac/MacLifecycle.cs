@@ -11,7 +11,7 @@ namespace Microsoft.Maui.LifecycleEvents
 		public delegate bool FinishedLaunching(NSApplication application, NSDictionary launchOptions);
 		public delegate void OnActivated(NSApplication application);
 		public delegate void OnResignActivation(NSApplication application);
-		public delegate bool OpenUrl(NSApplication app, NSUrl url, NSDictionary options);
+		public delegate bool OpenUrls(NSApplication app, NSUrl[] url);
 		//public delegate void PerformActionForShortcutItem(NSApplication application, NSApplicationShortcutItem shortcutItem, UIOperationHandler completionHandler);
 		public delegate void WillEnterForeground(NSApplication application);
 		public delegate void WillTerminate(NSApplication application);
