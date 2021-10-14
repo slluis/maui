@@ -10,7 +10,7 @@ namespace Maui.Controls.Sample.Macos
 	{
 		public App()
 		{
-			MainPage = new Page();
+			MainPage = new ContentPage();
 		}
 	}
 }
