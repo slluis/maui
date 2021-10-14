@@ -23,4 +23,31 @@
     <EnableCodeSigning>false</EnableCodeSigning>
     <UseSGen>false</UseSGen>
   </PropertyGroup>
+
+  <ItemGroup Condition=" '$(UseMaui)' != 'true' ">
+    <ProjectReference Include="..\..\..\Core\src\Core-net6.csproj">
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Controls\src\Xaml\Controls.Xaml-net6.csproj">
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Controls\src\Core\Controls.Core-net6.csproj">
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Compatibility\Core\src\Compatibility-net6.csproj">
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" PrivateAssets="all" Version="$(MicrosoftExtensionsDependencyInjectionPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftExtensionsDependencyInjectionPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="$(MicrosoftExtensionsHostingPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="$(MicrosoftExtensionsHostingAbstractionsPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsLoggingPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftExtensionsLoggingAbstractionsPackageVersion)" />
+    <PackageReference Include="Microsoft.Maui.Graphics" Version="$(MicrosoftMauiGraphicsVersion)" />
+  </ItemGroup>
+
 </Project>

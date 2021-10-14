@@ -11,6 +11,7 @@ namespace Microsoft.Maui
 	{
 		MauiContext _applicationContext = null!;
 		WeakReference<IWindow>? _virtualWindow = null;
+		NSDictionary launchOptions = new NSDictionary();
 
 		internal IWindow? VirtualWindow
 		{
@@ -32,6 +33,17 @@ namespace Microsoft.Maui
 
 		public override void WillFinishLaunching(NSNotification notification)
 		{
+			var mauiApp = CreateMauiApp();
+
+			Services = mauiApp.Services;
+
+			_applicationContext = new MauiContext(Services, this);
+
+			Services?.InvokeLifecycleEvents<MacLifecycle.WillFinishLaunching>(del => del(NSApplication.SharedApplication, launchOptions));
+		}
+
+		public override void DidFinishLaunching(NSNotification notification)
+		{
 			Application = Services.GetRequiredService<IApplication>();
 
 			this.SetApplicationHandler(Application, _applicationContext);
@@ -42,11 +54,8 @@ namespace Microsoft.Maui
 
 			Window.MakeKeyAndOrderFront(Window);
 
-			//Services?.InvokeLifecycleEvents<MacLifecycle.FinishedLaunching>(del => del(application, launchOptions));
-
-			//	return true;
-
-			base.WillFinishLaunching(notification);
+			Services?.InvokeLifecycleEvents<MacLifecycle.FinishedLaunching>(del => del(NSApplication.SharedApplication, launchOptions));
+			base.DidFinishLaunching(notification);
 		}
 
 		NSWindow CreateNativeWindow()
@@ -75,22 +84,6 @@ namespace Microsoft.Maui
 			//});
 
 			//return wasHandled || base.OpenUrl(application, url, options);
-		}
-
-		public override void DidFinishLaunching(NSNotification notification)
-		{
-			Application = Services.GetRequiredService<IApplication>();
-
-			this.SetApplicationHandler(Application, _applicationContext);
-
-			var uiWindow = CreateNativeWindow();
-
-			Window = uiWindow;
-
-			Window.MakeKeyAndOrderFront(Window);
-
-			//Services?.InvokeLifecycleEvents<iOSLifecycle.FinishedLaunching>(del => del(application, launchOptions));
-			base.DidFinishLaunching(notification);
 		}
 
 		//public override void PerformActionForShortcutItem(NSApplication application, UIApplicationShortcutItem shortcutItem, UIOperationHandler completionHandler)

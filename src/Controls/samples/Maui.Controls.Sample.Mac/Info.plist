@@ -1,17 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>vstool</string>
+	<string>Maui.Controls.Sample.Mac</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.microsoft.vstool</string>
+	<string>com.companyname.Maui-Controls-Sample-Mac</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSMinimumSystemVersion</key>
-	<string>11.0</string>
+	<string>10.14</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -21,19 +21,13 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>NSHumanReadableCopyright</key>
-	<string></string>
+	<string>Microsoft</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSMainStoryboardFile</key>
 	<string>Main</string>
-	<key>CFBundleDisplayName</key>
-	<string>vstool</string>
-	<key>LSUIElement</key>
-	<true/>
-	<key>LSEnvironment</key>
-	<dict>
-		<key>MONO_ENV_OPTIONS</key>
-		<string>--debug</string>
-	</dict>
+	<key>XSAppIconAssets</key>
+	<string>Assets.xcassets/AppIcon.appiconset</string>
+	
 </dict>
 </plist>

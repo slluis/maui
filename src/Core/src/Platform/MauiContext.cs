@@ -28,6 +28,12 @@ namespace Microsoft.Maui
 		{
 			AddSpecific(application);
 		}
+#elif __MACOS__
+		public MauiContext(IServiceProvider services, AppKit.NSApplicationDelegate application, IMauiContext? parent = null)
+			: this(services, parent)
+		{
+			AddSpecific(application);
+		}
 #elif WINDOWS
 		public MauiContext(IServiceProvider services, UI.Xaml.Application application, IMauiContext? parent = null)
 			: this(services, parent)

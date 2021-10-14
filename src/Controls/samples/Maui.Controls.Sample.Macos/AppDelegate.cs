@@ -1,24 +1,25 @@
 ﻿using AppKit;
 using Foundation;
+using Microsoft.Maui;
+using Microsoft.Maui.Hosting;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls.Hosting;
 
 namespace Maui.Controls.Sample.Macos
 {
     [Register("AppDelegate")]
-    public class AppDelegate : NSApplicationDelegate
+    public class AppDelegate : MauiUIApplicationDelegate
     {
-        public AppDelegate()
-        {
-        }
+		public AppDelegate()
+		{
+		}
 
-        public override void DidFinishLaunching(NSNotification notification)
-        {
-            // Insert code here to initialize your application
-        }
-
-        public override void WillTerminate(NSNotification notification)
-        {
-            // Insert code here to tear down your application
-        }
-    }
+		protected override MauiApp CreateMauiApp()
+		{
+			var appBuilder = MauiApp.CreateBuilder();
+			appBuilder.UseMauiApp<App>();
+			return appBuilder.Build();
+		}
+	}
 }
 
