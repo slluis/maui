@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.Hosting;
 using Microsoft.Maui.LifecycleEvents;
 using AppKit;
+using CoreGraphics;
 
 namespace Microsoft.Maui
 {
@@ -61,7 +62,7 @@ namespace Microsoft.Maui
 
 		NSWindow CreateNativeWindow()
 		{
-			var uiWindow = new NSWindow();
+			var uiWindow = new NSWindow(new CGRect(0, 0, 500, 500), NSWindowStyle.Titled | NSWindowStyle.Resizable | NSWindowStyle.Closable, NSBackingStore.Buffered, false);
 
 			var mauiContext = _applicationContext.MakeScoped(uiWindow);
 
