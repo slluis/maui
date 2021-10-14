@@ -158,6 +158,9 @@ namespace Microsoft.Maui.Controls.Hosting
 #if __IOS__ || MACCATALYST
 					Internals.Registrar.RegisterEffect("Xamarin", "ShadowEffect", typeof(ShadowEffect));
 #endif
+#if __MACOS__
+					DependencyService.Register<Microsoft.Maui.Controls.Compatibility.Platform.MacOS.ResourcesProvider>();
+#endif
 
 					// Update the mappings for IView/View to work specifically for Controls
 					VisualElement.RemapForControls();
