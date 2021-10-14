@@ -90,20 +90,30 @@ namespace Microsoft.Maui.Controls.Platform
 			void PresentAlert(AlertArguments arguments)
 			{
 				var alert = new NSAlert() { MessageText = arguments.Title, InformativeText = arguments.Message };
+
 				if (arguments.Cancel != null)
 				{
-					alert.AddButton("Cancel");
+					alert.AddButton(arguments.Cancel);
 				}
 
 				if (arguments.Accept != null)
 				{
-					alert.AddButton("Ok");
+					alert.AddButton(arguments.Accept);
 				}
 
-				if (alert.RunModal() == (int) NSAlertButtonReturn.First)
+				var result = alert.RunModal();
+				if (arguments.Cancel != null && arguments.Accept != null)
+				{
+					arguments.SetResult(result != (int)NSAlertButtonReturn.First);
+				}
+				else if (arguments.Cancel != null)
+				{
+					arguments.SetResult(false);
+				}
+				else if (arguments.Accept != null)
 				{
 					arguments.SetResult(true);
-				};
+				}
 			}
 
 			//void PresentPrompt(PromptArguments arguments)

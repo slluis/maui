@@ -12,14 +12,19 @@ namespace Maui.Controls.Sample.Macos
 		{
 			var page = new ContentPage();
 			page.Title = "Hello!";
-			StackLayout stack = new StackLayout();
-			stack.Orientation = StackOrientation.Vertical;
-			stack.Add(new Label { Text = "Hi Maui 1", HorizontalTextAlignment = TextAlignment.Start, TextColor = Microsoft.Maui.Graphics.Colors.Azure, LineBreakMode = LineBreakMode.NoWrap });
-			stack.Add(new Label { Text = "Hi Maui 2", HorizontalTextAlignment = TextAlignment.End, TextColor = Microsoft.Maui.Graphics.Colors.Red, LineBreakMode = LineBreakMode.HeadTruncation });
-			stack.Add(new Label { Text = "Hi Maui 3", HorizontalTextAlignment = TextAlignment.Center, TextColor = Microsoft.Maui.Graphics.Colors.Purple, LineBreakMode = LineBreakMode.MiddleTruncation });
-			stack.Add(new Label { Text = "Hi Maui 4", TextColor = Microsoft.Maui.Graphics.Colors.Plum, LineBreakMode = LineBreakMode.CharacterWrap });
-			stack.Add(new Label { Text = "Hi Maui 5", TextColor = Microsoft.Maui.Graphics.Colors.DarkGreen, LineBreakMode = LineBreakMode.TailTruncation });
-			stack.Add(new Label { Text = "Hi Maui 6", TextColor = Microsoft.Maui.Graphics.Colors.Green, LineBreakMode = LineBreakMode.WordWrap });
+			var stack = new StackLayout() { Spacing = 10, Orientation = StackOrientation.Vertical };
+
+			var horizontal = new StackLayout() { Spacing = 10, Orientation = StackOrientation.Horizontal };
+			stack.Add(horizontal);
+			horizontal.Add(new Label { Text = "Name" });
+			horizontal.Add(new Label { Text = "Lluis" });
+
+			stack.Add(new Label { Text = "Hi Maui 1 !!!! this is a super long text", HorizontalTextAlignment = TextAlignment.Start, TextColor = Microsoft.Maui.Graphics.Colors.Azure, LineBreakMode = LineBreakMode.NoWrap });
+			stack.Add(new Label { Text = "Hi Maui 2 !!!! this is a super long text", HorizontalTextAlignment = TextAlignment.End, TextColor = Microsoft.Maui.Graphics.Colors.Red, LineBreakMode = LineBreakMode.HeadTruncation });
+			stack.Add(new Label { Text = "Hi Maui 3 !!!! this is a super long text", HorizontalTextAlignment = TextAlignment.Center, TextColor = Microsoft.Maui.Graphics.Colors.Purple, LineBreakMode = LineBreakMode.MiddleTruncation });
+			stack.Add(new Label { Text = "Hi Maui 4 !!!! this is a super long text", TextColor = Microsoft.Maui.Graphics.Colors.Plum, LineBreakMode = LineBreakMode.CharacterWrap });
+			stack.Add(new Label { Text = "Hi Maui 5 !!!! this is a super long text", TextColor = Microsoft.Maui.Graphics.Colors.DarkGreen, LineBreakMode = LineBreakMode.TailTruncation });
+			stack.Add(new Label { Text = "Hi Maui 6 !!!! this is a super long text", TextColor = Microsoft.Maui.Graphics.Colors.Green, LineBreakMode = LineBreakMode.WordWrap });
 
 			var okButton = new Button { Text = "OK", TextColor = Microsoft.Maui.Graphics.Colors.Green };
 			stack.Add(okButton);
