@@ -7,35 +7,20 @@ namespace Microsoft.Maui
 {
 	public static class ButtonExtensions
 	{
-		public static void UpdateText(this NSButton nativeButton, IText button) {}
-			//nativeButton.SetTitle(button.Text, UIControlState.Normal);
+		public static void UpdateText(this NSButton nativeButton, IText button)
+		{
+			nativeButton.Title = button.Text;
+		}
 
 		public static void UpdateTextColor(this NSButton nativeButton, ITextStyle button) =>
-			nativeButton.UpdateTextColor(button);
-
-		public static void UpdateTextColor(this NSButton nativeButton, ITextStyle button, NSColor? buttonTextColorDefaultNormal, NSColor? buttonTextColorDefaultHighlighted, NSColor? buttonTextColorDefaultDisabled)
-		{
-/*			if (button.TextColor == null)
-			{
-				nativeButton.SetTitleColor(buttonTextColorDefaultNormal, UIControlState.Normal);
-				nativeButton.SetTitleColor(buttonTextColorDefaultHighlighted, UIControlState.Highlighted);
-				nativeButton.SetTitleColor(buttonTextColorDefaultDisabled, UIControlState.Disabled);
-			}
-			else
-			{
-				var color = button.TextColor.ToNative();
-
-				nativeButton.SetTitleColor(color, UIControlState.Normal);
-				nativeButton.SetTitleColor(color, UIControlState.Highlighted);
-				nativeButton.SetTitleColor(color, UIControlState.Disabled);
-
-				nativeButton.TintColor = color;
-			}*/
-		}
+			nativeButton.ContentTintColor = button.TextColor.ToNative();
 
 		public static void UpdateCharacterSpacing(this NSButton nativeButton, ITextStyle textStyle)
 		{
-	//		nativeButton.TitleLabel.UpdateCharacterSpacing(textStyle);
+			var textAttr = nativeButton.AttributedTitle?.WithCharacterSpacing(textStyle.CharacterSpacing);
+
+			if (textAttr != null)
+				nativeButton.AttributedTitle = textAttr;
 		}
 
 		public static void UpdateFont(this NSButton nativeButton, ITextStyle textStyle, IFontManager fontManager)
