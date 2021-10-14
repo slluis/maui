@@ -7,18 +7,32 @@ namespace Microsoft.Maui
 {
 	public static class LabelExtensions
 	{
-		public static void UpdateTextColor(this MauiLabel textView, ITextStyle textStyle, Graphics.Color defaultColor)
+		static bool SetColor(MauiLabel textView, Graphics.Color color)
 		{
-			var textColor = textStyle.TextColor?.ToNative() ?? defaultColor?.ToNative();
+			var textColor = color?.ToNative();
 			if (textColor != null)
-				textView.TextColor = textColor;
+			{
+				var attributedValue = textView.AttributedStringValue?.WithColor(textColor);
+				if (attributedValue != null)
+				{
+					textView.AttributedStringValue = attributedValue;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static void UpdateTextColor(this MauiLabel textView, ITextStyle textStyle, Graphics.Color? defaultColor)
+		{
+			if (!SetColor(textView, textStyle.TextColor) && defaultColor != null)
+			{
+				SetColor(textView, defaultColor);
+			}
 		}
 
 		public static void UpdateTextColor(this MauiLabel textView, ITextStyle textStyle)
 		{
-			var textColor = textStyle.TextColor?.ToNative();
-			if (textColor != null)
-				textView.TextColor = textColor;
+			UpdateTextColor (textView, textStyle, null);
 		}
 
 		public static void UpdateCharacterSpacing(this MauiLabel nativeLabel, ITextStyle textStyle)

@@ -12,8 +12,33 @@ namespace Microsoft.Maui
 			nativeButton.Title = button.Text;
 		}
 
-		public static void UpdateTextColor(this NSButton nativeButton, ITextStyle button) =>
-			nativeButton.ContentTintColor = button.TextColor.ToNative();
+		static bool SetColor (NSButton textView, Graphics.Color color)
+		{
+			var textColor = color?.ToNative();
+			if (textColor != null)
+			{
+				var attributedValue = textView.AttributedStringValue?.WithColor(textColor);
+				if (attributedValue != null)
+				{
+					textView.AttributedStringValue = attributedValue;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static void UpdateTextColor(this NSButton textView, ITextStyle textStyle, Graphics.Color? defaultColor)
+		{
+			if (!SetColor(textView, textStyle.TextColor) && defaultColor != null)
+			{
+				SetColor(textView, defaultColor);
+			}
+		}
+
+		public static void UpdateTextColor(this NSButton textView, ITextStyle textStyle)
+		{
+			UpdateTextColor(textView, textStyle, null);
+		}
 
 		public static void UpdateCharacterSpacing(this NSButton nativeButton, ITextStyle textStyle)
 		{

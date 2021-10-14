@@ -27,6 +27,23 @@ namespace Microsoft.Maui
 			return mutableAttributedString;
 		}
 
+		public static NSMutableAttributedString? WithColor(this NSAttributedString attributedString, NSColor color)
+		{
+			if (attributedString == null || attributedString.Length == 0)
+				return null;
+
+			var mutableAttributedString = new NSMutableAttributedString(attributedString);
+			mutableAttributedString.AddAttribute
+			(
+				NSStringAttributeKey.ForegroundColor,
+				color,
+				new NSRange(0, mutableAttributedString.Length)
+			);
+
+			return mutableAttributedString;
+		}
+
+
 		public static NSMutableAttributedString? WithLineHeight(this NSAttributedString attributedString, double lineHeight)
 		{
 			if (attributedString == null || attributedString.Length == 0)

@@ -89,25 +89,21 @@ namespace Microsoft.Maui.Controls.Platform
 
 			void PresentAlert(AlertArguments arguments)
 			{
-				//var window = new NSWindow { BackgroundColor = Colors.Transparent.ToNative() };
+				var alert = new NSAlert() { MessageText = arguments.Title, InformativeText = arguments.Message };
+				if (arguments.Cancel != null)
+				{
+					alert.AddButton("Cancel");
+				}
 
-				//var alert = UIAlertController.Create(arguments.Title, arguments.Message, UIAlertControllerStyle.Alert);
-				//var oldFrame = alert.View.Frame;
-				//alert.View.Frame = new RectangleF((float)oldFrame.X, (float)oldFrame.Y, (float)oldFrame.Width, (float)oldFrame.Height - AlertPadding * 2);
+				if (arguments.Accept != null)
+				{
+					alert.AddButton("Ok");
+				}
 
-				//if (arguments.Cancel != null)
-				//{
-				//	alert.AddAction(CreateActionWithWindowHide(arguments.Cancel, UIAlertActionStyle.Cancel,
-				//		() => arguments.SetResult(false), window));
-				//}
-
-				//if (arguments.Accept != null)
-				//{
-				//	alert.AddAction(CreateActionWithWindowHide(arguments.Accept, UIAlertActionStyle.Default,
-				//		() => arguments.SetResult(true), window));
-				//}
-
-				//PresentPopUp(window, alert);
+				if (alert.RunModal() == (int) NSAlertButtonReturn.First)
+				{
+					arguments.SetResult(true);
+				};
 			}
 
 			//void PresentPrompt(PromptArguments arguments)

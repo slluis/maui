@@ -7,26 +7,6 @@ using AppKit;
 
 namespace Microsoft.Maui.Handlers
 {
-	class MauiButton : NSButton
-	{
-		public event EventHandler? MouseLeftUp;
-		public event EventHandler? MouseLeftDown;
-
-		public override bool IsFlipped => true;
-
-		public override void MouseDown(NSEvent theEvent)
-		{
-			base.MouseDown(theEvent);
-			MouseLeftDown?.Invoke(this, EventArgs.Empty);
-		}
-
-		public override void MouseUp(NSEvent theEvent)
-		{
-			base.MouseUp(theEvent);
-			MouseLeftUp?.Invoke(this, EventArgs.Empty);
-		}
-	}
-
 	public partial class ButtonHandler : ViewHandler<IButton, NSButton>
 	{
 		protected override NSButton CreateNativeView()

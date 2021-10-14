@@ -1,5 +1,4 @@
-﻿using System;
-using CoreAnimation;
+﻿using CoreAnimation;
 using CoreGraphics;
 using AppKit;
 
@@ -7,6 +6,8 @@ namespace Microsoft.Maui
 {
 	public class MauiLabel : NSTextField
 	{
+		public override bool IsFlipped => true;
+
 		// TODO COCOA
 		// public UIEdgeInsets TextInsets { get; set; }
 
@@ -47,36 +48,6 @@ namespace Microsoft.Maui
 				Superview?.SetNeedsLayout();
 			}*/
 		}
-
-		//internal void UpdatePadding(ILabel label)
-		//{
-		//	throw new NotImplementedException();
-		//}
-
-		//internal void UpdateTextPlainText(ILabel label)
-		//{
-		//	StringValue = label.Text ?? string.Empty;
-		//}
-
-		//internal void UpdateLineBreakMode(ILabel label)
-		//{
-		//	throw new NotImplementedException();
-		//}
-
-		//internal void UpdateMaxLines(ILabel label)
-		//{
-		//	MaximumNumberOfLines = label.MaxLines;
-		//}
-
-		//internal void UpdateTextDecorations(ILabel label)
-		//{
-		//	throw new NotImplementedException();
-		//}
-
-		//internal void UpdateLineHeight(ILabel label)
-		//{
-		//	throw new NotImplementedException();
-		//}
 
 		//		public override CGSize SizeThatFits(CGSize size) => AddInsets(base.SizeThatFits(size));
 
