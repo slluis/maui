@@ -54,6 +54,8 @@ namespace Microsoft.Maui
 
 			Window.MakeKeyAndOrderFront(Window);
 
+			NSApplication.SharedApplication.ActivateIgnoringOtherApps(true);
+
 			Services?.InvokeLifecycleEvents<MacLifecycle.FinishedLaunching>(del => del(NSApplication.SharedApplication, launchOptions));
 		}
 
