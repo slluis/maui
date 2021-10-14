@@ -8,7 +8,7 @@ namespace Microsoft.Maui.Controls
 		{
 			[nameof(TextType)] = MapTextType,
 			[nameof(Text)] = MapText,
-#if __IOS__
+#if __IOS__ && __MACOS__
 			[nameof(TextDecorations)] = MapTextDecorations,
 			[nameof(CharacterSpacing)] = MapCharacterSpacing,
 			[nameof(LineHeight)] = MapLineHeight,

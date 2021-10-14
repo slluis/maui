@@ -39,35 +39,35 @@ namespace Microsoft.Maui
 			}*/
 		}
 
-		internal void UpdatePadding(ILabel label)
-		{
-			throw new NotImplementedException();
-		}
+		//internal void UpdatePadding(ILabel label)
+		//{
+		//	throw new NotImplementedException();
+		//}
 
-		internal void UpdateTextPlainText(ILabel label)
-		{
-			StringValue = label.Text ?? string.Empty;
-		}
+		//internal void UpdateTextPlainText(ILabel label)
+		//{
+		//	StringValue = label.Text ?? string.Empty;
+		//}
 
-		internal void UpdateLineBreakMode(ILabel label)
-		{
-			throw new NotImplementedException();
-		}
+		//internal void UpdateLineBreakMode(ILabel label)
+		//{
+		//	throw new NotImplementedException();
+		//}
 
-		internal void UpdateMaxLines(ILabel label)
-		{
-			MaximumNumberOfLines = label.MaxLines;
-		}
+		//internal void UpdateMaxLines(ILabel label)
+		//{
+		//	MaximumNumberOfLines = label.MaxLines;
+		//}
 
-		internal void UpdateTextDecorations(ILabel label)
-		{
-			throw new NotImplementedException();
-		}
+		//internal void UpdateTextDecorations(ILabel label)
+		//{
+		//	throw new NotImplementedException();
+		//}
 
-		internal void UpdateLineHeight(ILabel label)
-		{
-			throw new NotImplementedException();
-		}
+		//internal void UpdateLineHeight(ILabel label)
+		//{
+		//	throw new NotImplementedException();
+		//}
 
 		//		public override CGSize SizeThatFits(CGSize size) => AddInsets(base.SizeThatFits(size));
 
