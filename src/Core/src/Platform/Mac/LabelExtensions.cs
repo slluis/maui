@@ -9,23 +9,23 @@ namespace Microsoft.Maui
 	{
 		public static void UpdateTextColor(this MauiLabel textView, ITextStyle textStyle, Graphics.Color defaultColor)
 		{
-			//var textColor = textStyle.TextColor?.ToNative() ?? defaultColor?.ToNative();
-
-			//if (textColor != null)
-			//	textView.SetTextColor(textColor.Value);
+			var textColor = textStyle.TextColor?.ToNative() ?? defaultColor?.ToNative();
+			if (textColor != null)
+				textView.TextColor = textColor;
 		}
 
 		public static void UpdateTextColor(this MauiLabel textView, ITextStyle textStyle)
 		{
-
+			var textColor = textStyle.TextColor?.ToNative();
+			if (textColor != null)
+				textView.TextColor = textColor;
 		}
 
 		public static void UpdateCharacterSpacing(this MauiLabel nativeLabel, ITextStyle textStyle)
 		{
-			//var textAttr = nativeLabel.AttributedText?.WithCharacterSpacing(textStyle.CharacterSpacing);
-
-			//if (textAttr != null)
-			//	nativeLabel.AttributedText = textAttr;
+			var textAttr = nativeLabel.AttributedStringValue?.WithCharacterSpacing(textStyle.CharacterSpacing);
+			if (textAttr != null)
+				nativeLabel.AttributedStringValue = textAttr;
 		}
 
 		//public static void UpdateFont(this UILabel nativeLabel, ITextStyle textStyle, IFontManager fontManager) =>
@@ -42,20 +42,19 @@ namespace Microsoft.Maui
 			//textView.SetTextSize(fontSize.Unit, fontSize.Value);
 		}
 
-
 		public static void UpdateHorizontalTextAlignment(this MauiLabel nativeLabel, ILabel label)
 		{
-			//nativeLabel.TextAlignment = label.HorizontalTextAlignment.ToNative(label);
+			nativeLabel.Alignment = label.HorizontalTextAlignment.ToNative(label);
 		}
 
 		public static void UpdateLineBreakMode(this MauiLabel nativeLabel, ILabel label)
 		{
-			//nativeLabel.SetLineBreakMode(label);
+			nativeLabel.SetLineBreakMode(label);
 		}
 
 		public static void UpdateMaxLines(this MauiLabel nativeLabel, ILabel label)
 		{
-			//nativeLabel.SetLineBreakMode(label);
+			nativeLabel.MaximumNumberOfLines = label.MaxLines;
 		}
 
 		public static void UpdatePadding(this MauiLabel nativeLabel, ILabel label)
@@ -74,58 +73,58 @@ namespace Microsoft.Maui
 
 		public static void UpdateTextDecorations(this MauiLabel nativeLabel, ILabel label)
 		{
-			//var modAttrText = nativeLabel.AttributedText?.WithDecorations(label.TextDecorations);
+			var modAttrText = nativeLabel.AttributedStringValue?.WithDecorations(label.TextDecorations);
 
-			//if (modAttrText != null)
-			//	nativeLabel.AttributedText = modAttrText;
+			if (modAttrText != null)
+				nativeLabel.AttributedStringValue = modAttrText;
 		}
 
 		public static void UpdateLineHeight(this MauiLabel nativeLabel, ILabel label)
 		{
-			//var modAttrText = nativeLabel.AttributedText?.WithLineHeight(label.LineHeight);
+			var modAttrText = nativeLabel.AttributedStringValue?.WithLineHeight(label.LineHeight);
 
-			//if (modAttrText != null)
-			//	nativeLabel.AttributedText = modAttrText;
+			if (modAttrText != null)
+				nativeLabel.AttributedStringValue = modAttrText;
 		}
 
 		public static void UpdateTextHtml(this MauiLabel textView, ILabel label)
 		{
-		
+			//throw new System.NotImplementedException();
 		}
 
 		internal static void SetLineBreakMode(this MauiLabel nativeLabel, ILabel label)
 		{
-			//int maxLines = label.MaxLines;
-			//if (maxLines < 0)
-			//	maxLines = 0;
+			int maxLines = label.MaxLines;
+			if (maxLines < 0)
+				maxLines = 0;
 
-			//switch (label.LineBreakMode)
-			//{
-			//	case LineBreakMode.NoWrap:
-			//		nativeLabel.LineBreakMode = UILineBreakMode.Clip;
-			//		maxLines = 1;
-			//		break;
-			//	case LineBreakMode.WordWrap:
-			//		nativeLabel.LineBreakMode = UILineBreakMode.WordWrap;
-			//		break;
-			//	case LineBreakMode.CharacterWrap:
-			//		nativeLabel.LineBreakMode = UILineBreakMode.CharacterWrap;
-			//		break;
-			//	case LineBreakMode.HeadTruncation:
-			//		nativeLabel.LineBreakMode = UILineBreakMode.HeadTruncation;
-			//		maxLines = 1;
-			//		break;
-			//	case LineBreakMode.MiddleTruncation:
-			//		nativeLabel.LineBreakMode = UILineBreakMode.MiddleTruncation;
-			//		maxLines = 1;
-			//		break;
-			//	case LineBreakMode.TailTruncation:
-			//		nativeLabel.LineBreakMode = UILineBreakMode.TailTruncation;
-			//		maxLines = 1;
-			//		break;
-			//}
+			switch (label.LineBreakMode)
+			{
+				case LineBreakMode.NoWrap:
+					nativeLabel.LineBreakMode = NSLineBreakMode.Clipping;
+					maxLines = 1;
+					break;
+				case LineBreakMode.WordWrap:
+					nativeLabel.LineBreakMode = NSLineBreakMode.ByWordWrapping;
+					break;
+				case LineBreakMode.CharacterWrap:
+					nativeLabel.LineBreakMode = NSLineBreakMode.CharWrapping;
+					break;
+				case LineBreakMode.HeadTruncation:
+					nativeLabel.LineBreakMode = NSLineBreakMode.TruncatingHead;
+					maxLines = 1;
+					break;
+				case LineBreakMode.MiddleTruncation:
+					nativeLabel.LineBreakMode = NSLineBreakMode.TruncatingMiddle;
+					maxLines = 1;
+					break;
+				case LineBreakMode.TailTruncation:
+					nativeLabel.LineBreakMode = NSLineBreakMode.TruncatingTail;
+					maxLines = 1;
+					break;
+			}
 
-			//nativeLabel.Lines = maxLines;
+			nativeLabel.MaximumNumberOfLines = maxLines;
 		}
 	}
 }
