@@ -55,29 +55,6 @@ namespace Microsoft.Maui
 			return _pendingLoadedView;
 		}
 
-		NSObject? frameChangedObserver;
-
-		public override void ViewDidAppear()
-		{
-			base.ViewDidAppear();
-			frameChangedObserver = NSNotificationCenter.DefaultCenter.AddObserver(NSView.FrameChangedNotification, notification =>
-			{
-				if (notification.Object == View && currentNativeView != null)
-				{
-					currentNativeView.Frame = View.Frame;
-				}
-			});
-		}
-
-		public override void ViewDidDisappear()
-		{
-			base.ViewDidDisappear();
-			if (frameChangedObserver != null)
-			{
-				NSNotificationCenter.DefaultCenter.RemoveObserver(frameChangedObserver);
-			}
-		}
-
 		public override void LoadView()
 		{
 			View = new NSView();
@@ -105,15 +82,13 @@ namespace Microsoft.Maui
 			return _view.ToNative(Context);
 		}
 
-		// TODO COCOA
-		/*
-		public override void ViewDidLayoutSubviews()
+		public override void ViewDidLayout()
 		{
-			base.ViewDidLayoutSubviews();
+			base.ViewDidLayout();
 			if (currentNativeView == null)
 				return;
 			currentNativeView.Frame = View!.Bounds;
-		}*/
+		}
 
 		public void Reload() => SetView(CurrentView, true);
 	}

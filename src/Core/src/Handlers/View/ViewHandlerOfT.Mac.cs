@@ -33,8 +33,8 @@ namespace Microsoft.Maui.Handlers
 
 			// The position of Bounds is usually (0,0), but in some cases (e.g., UIScrollView) it's the content offset.
 			// So just leave it a whatever value iOS thinks it should be.
-			nativeView.Bounds = new CoreGraphics.CGRect(nativeView.Bounds.X, nativeView.Bounds.Y, rect.Width, rect.Height);
-
+			nativeView.Frame = new CoreGraphics.CGRect(nativeView.Frame.X, nativeView.Frame.Y, rect.Width, rect.Height);
+			 
 			nativeView.UpdateBackgroundLayerFrame();
 		}
 
@@ -47,7 +47,11 @@ namespace Microsoft.Maui.Handlers
 				return new Size(widthConstraint, heightConstraint);
 			}
 
-			var sizeThatFits = nativeView is MauiView mauiView ? mauiView.SizeThatFits(new CoreGraphics.CGSize((float)widthConstraint, (float)heightConstraint)) : nativeView.FittingSize;
+			var sizeThatFits = nativeView is MauiView mauiView ? mauiView.SizeThatFits(new CoreGraphics.CGSize((float)widthConstraint, (float)heightConstraint)) : nativeView.IntrinsicContentSize;
+			if (sizeThatFits.Width == -1)
+				sizeThatFits.Width = (nfloat)widthConstraint;
+			if (sizeThatFits.Height == -1)
+				sizeThatFits.Height = (nfloat)heightConstraint;
 
 			var size = new Size(
 				sizeThatFits.Width == float.PositiveInfinity ? double.PositiveInfinity : sizeThatFits.Width,
