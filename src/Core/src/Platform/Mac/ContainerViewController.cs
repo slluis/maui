@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Maui.HotReload;
 using AppKit;
+using Foundation;
 
 namespace Microsoft.Maui
 {
