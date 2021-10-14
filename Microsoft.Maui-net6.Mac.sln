@@ -180,6 +180,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestUtils.DeviceTests", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Controls.DeviceTests", "src\Controls\tests\DeviceTests\Controls.DeviceTests.csproj", "{C8B3C3B3-1CDA-41A2-BF20-A7FE33D6BB36}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maui.Controls.Sample.Mac", "src\Controls\samples\Maui.Controls.Sample.Mac\Maui.Controls.Sample.Mac.csproj", "{4729D1F9-FB43-46E1-8420-3B5BE9A8F76F}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Compatibility\ControlGallery\src\Issues.Shared\Compatibility.ControlGallery.Issues.Shared.projitems*{0a39a74b-6f7a-4d41-84f2-b0ccdce899df}*SharedItemsImports = 5
@@ -445,6 +447,10 @@ Global
 		{C8B3C3B3-1CDA-41A2-BF20-A7FE33D6BB36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8B3C3B3-1CDA-41A2-BF20-A7FE33D6BB36}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C8B3C3B3-1CDA-41A2-BF20-A7FE33D6BB36}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{4729D1F9-FB43-46E1-8420-3B5BE9A8F76F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4729D1F9-FB43-46E1-8420-3B5BE9A8F76F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4729D1F9-FB43-46E1-8420-3B5BE9A8F76F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4729D1F9-FB43-46E1-8420-3B5BE9A8F76F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -530,6 +536,7 @@ Global
 		{0A39A74B-6F7A-4D41-84F2-B0CCDCE899DF} = {DDBA9144-36FC-429E-99E1-2A64825434C1}
 		{F28E8899-98D2-4915-8D48-D101D4837AB9} = {7AC28763-9C68-4BF9-A1BA-25CBFFD2D15C}
 		{C8B3C3B3-1CDA-41A2-BF20-A7FE33D6BB36} = {25D0D27A-C5FE-443D-8B65-D6C987F4A80E}
+		{4729D1F9-FB43-46E1-8420-3B5BE9A8F76F} = {E1082E26-D700-4127-9329-66D673FD2D55}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0B8ABEAD-D2B5-4370-A187-62B5ABE4EE50}

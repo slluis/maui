@@ -19,7 +19,7 @@ namespace Microsoft.AspNetCore.Components.WebView.Maui
 {
 	public partial class BlazorWebViewHandler : ViewHandler<IBlazorWebView, NSView>
 	{
-		//private MacOSWebViewManager? _webviewManager;
+		private MacOSWebViewManager? _webviewManager = null;
 
 		private const string AppOrigin = "app://0.0.0.0/";
 		private const string BlazorInitScript = @"
