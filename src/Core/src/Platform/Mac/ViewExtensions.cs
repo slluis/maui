@@ -12,11 +12,6 @@ namespace Microsoft.Maui
 	{
 		internal const string BackgroundLayerName = "MauiBackgroundLayer";
 		
-		public static NSViewController ToNSViewController (this IView view, IMauiContext? context)
-		{
-			throw new Exception("not implemented");
-		}
-
 		public static void UpdateIsEnabled(this NSView nativeView, IView view)
 		{
 			if (nativeView is not NSControl uiControl)

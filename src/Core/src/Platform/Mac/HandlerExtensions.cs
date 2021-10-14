@@ -6,7 +6,7 @@ namespace Microsoft.Maui
 {
 	public static class HandlerExtensions
 	{
-		public static NSViewController ToUIViewController(this IElement view, IMauiContext context)
+		public static NSViewController ToNSViewController(this IElement view, IMauiContext context)
 		{
 			var nativeView = view.ToNative(context);
 			if (view?.Handler is INativeViewHandler nvh && nvh.ViewController != null)
