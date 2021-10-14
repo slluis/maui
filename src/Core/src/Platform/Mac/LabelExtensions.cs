@@ -42,14 +42,6 @@ namespace Microsoft.Maui
 			//textView.SetTextSize(fontSize.Unit, fontSize.Value);
 		}
 
-		public static void UpdateCharacterSpacing(this MauiLabel nativeLabel, ITextStyle textStyle)
-		{
-			var textAttr = nativeLabel.AttributedText?.WithCharacterSpacing(textStyle.CharacterSpacing);
-
-			if (textAttr != null)
-				nativeLabel.AttributedText = textAttr;
-		}
-
 		public static void UpdateHorizontalTextAlignment(this MauiLabel nativeLabel, ILabel label)
 		{
 			nativeLabel.Alignment = label.HorizontalTextAlignment.ToNative(label);
