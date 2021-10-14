@@ -1,5 +1,7 @@
 #if __IOS__ || MACCATALYST
 using NativeView = UIKit.UIButton;
+#elif __MACOS__
+using NativeView = AppKit.NSButton;
 #elif MONOANDROID
 using NativeView = Google.Android.Material.Button.MaterialButton;
 #elif WINDOWS

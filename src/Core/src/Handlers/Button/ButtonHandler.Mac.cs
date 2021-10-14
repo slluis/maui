@@ -7,94 +7,101 @@ using AppKit;
 
 namespace Microsoft.Maui.Handlers
 {
-	// TODO COCOA
+	class MauiButton : NSButton
+	{
+		public event EventHandler? MouseLeftUp;
+		public event EventHandler? MouseLeftDown;
+
+		public override bool IsFlipped => true;
+
+		public override void MouseDown(NSEvent theEvent)
+		{
+			base.MouseDown(theEvent);
+			MouseLeftDown?.Invoke(this, EventArgs.Empty);
+		}
+
+		public override void MouseUp(NSEvent theEvent)
+		{
+			base.MouseUp(theEvent);
+			MouseLeftUp?.Invoke(this, EventArgs.Empty);
+		}
+	}
+
 	public partial class ButtonHandler : ViewHandler<IButton, NSButton>
 	{
-//		static readonly NSControlState[] ControlStates = { NSControlState.Normal, NSControlState.Highlighted, NSControlState.Disabled };
-
-		//static NSColor? ButtonTextColorDefaultDisabled;
-		//static NSColor? ButtonTextColorDefaultHighlighted;
-		//static NSColor? ButtonTextColorDefaultNormal;
-
 		protected override NSButton CreateNativeView()
 		{
-			var button = new NSButton();
-			SetControlPropertiesFromProxy(button);
+			var button = new MauiButton();
 			return button;
 		}
 
 		protected override void ConnectHandler(NSButton nativeView)
 		{
-/*			nativeView.TouchUpInside += OnButtonTouchUpInside;
-			nativeView.TouchUpOutside += OnButtonTouchUpOutside;
-			nativeView.TouchDown += OnButtonTouchDown;
-*/
+			if (nativeView is MauiButton mauiButton)
+			{
+				mauiButton.MouseLeftDown += OnButtonTouchDown;
+				mauiButton.MouseLeftUp += OnButtonTouchUpInside;
+
+			}
 			base.ConnectHandler(nativeView);
 		}
 
 		protected override void DisconnectHandler(NSButton nativeView)
 		{
-/*			nativeView.TouchUpInside -= OnButtonTouchUpInside;
-			nativeView.TouchUpOutside -= OnButtonTouchUpOutside;
-			nativeView.TouchDown -= OnButtonTouchDown;
-*/
-			base.DisconnectHandler(nativeView);
-		}
+			if (nativeView is MauiButton mauiButton)
+			{
+				mauiButton.MouseLeftDown -= OnButtonTouchDown;
+				mauiButton.MouseLeftUp -= OnButtonTouchUpInside;
 
-		void SetupDefaults(NSButton nativeView)
-		{
-/*			ButtonTextColorDefaultNormal = nativeView.TitleColor(UIControlState.Normal);
-			ButtonTextColorDefaultHighlighted = nativeView.TitleColor(UIControlState.Highlighted);
-			ButtonTextColorDefaultDisabled = nativeView.TitleColor(UIControlState.Disabled);
-*/
+			}
+			base.DisconnectHandler(nativeView);
 		}
 
 		public static void MapText(IButtonHandler handler, IText button)
 		{
-/*			handler.TypedNativeView?.UpdateText(button);
-
+			handler.TypedNativeView?.UpdateText(button);
 			// Any text update requires that we update any attributed string formatting
 			MapFormatting(handler, button);
-*/
 		}
 
 		public static void MapTextColor(IButtonHandler handler, ITextStyle button)
 		{
-//			handler.TypedNativeView?.UpdateTextColor(button, ButtonTextColorDefaultNormal, ButtonTextColorDefaultHighlighted, ButtonTextColorDefaultDisabled);
+			handler.TypedNativeView?.UpdateTextColor(button);
 		}
 
 		public static void MapCharacterSpacing(IButtonHandler handler, ITextStyle button)
 		{
-//			handler.TypedNativeView?.UpdateCharacterSpacing(button);
+			handler.TypedNativeView?.UpdateCharacterSpacing(button);
 		}
 
 		public static void MapPadding(IButtonHandler handler, IButton button)
 		{
-			//			handler.TypedNativeView?.UpdatePadding(button);
+			handler.TypedNativeView?.UpdatePadding(button);
 		}
 
 		public static void MapFont(IButtonHandler handler, ITextStyle button)
 		{
 			var fontManager = handler.GetRequiredService<IFontManager>();
-
-			//handler.TypedNativeView?.UpdateFont(button, fontManager);
+			handler.TypedNativeView?.UpdateFont(button, fontManager);
 		}
 
 		public static void MapFormatting(IButtonHandler handler, IText button)
 		{
 			// Update all of the attributed text formatting properties
-			//handler.TypedNativeView?.UpdateCharacterSpacing(button);
+			handler.TypedNativeView?.UpdateCharacterSpacing(button);
 		}
 
 		void OnSetImageSource(NSImage? image)
 		{
 			if (image != null)
 			{
-				//	NativeView.SetImage(image.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal), UIControlState.Normal);
+				NativeView.Image = image;
+				//TODO: Improve
+				//SetImage(image.ImageWithRenderingMode(NSImageRenderingMode.AlwaysOriginal), UIControlState.Normal);
 			}
 			else
 			{
-				//	NativeView.SetImage(null, UIControlState.Normal);
+				NativeView.Image = null;
 			}
 
 			VirtualView.ImageSourceLoaded();
@@ -111,16 +118,6 @@ namespace Microsoft.Maui.Handlers
 			}
 
 			return handler.ImageSourceLoader.UpdateImageSourceAsync();
-		}
-
-		static void SetControlPropertiesFromProxy(NSButton nativeView)
-		{
-/*			foreach (UIControlState uiControlState in ControlStates)
-			{
-				nativeView.SetTitleColor(NSButton.Appearance.TitleColor(uiControlState), uiControlState); // If new values are null, old values are preserved.
-				nativeView.SetTitleShadowColor(NSButton.Appearance.TitleShadowColor(uiControlState), uiControlState);
-				nativeView.SetBackgroundImage(NSButton.Appearance.BackgroundImageForState(uiControlState), uiControlState);
-			}*/
 		}
 
 		void OnButtonTouchUpInside(object? sender, EventArgs e)
