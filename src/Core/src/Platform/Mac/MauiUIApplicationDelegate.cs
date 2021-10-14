@@ -55,7 +55,6 @@ namespace Microsoft.Maui
 			Window.MakeKeyAndOrderFront(Window);
 
 			Services?.InvokeLifecycleEvents<MacLifecycle.FinishedLaunching>(del => del(NSApplication.SharedApplication, launchOptions));
-			base.DidFinishLaunching(notification);
 		}
 
 		NSWindow CreateNativeWindow()

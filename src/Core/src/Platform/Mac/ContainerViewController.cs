@@ -56,7 +56,7 @@ namespace Microsoft.Maui
 
 		public override void LoadView()
 		{
-			base.LoadView();
+			View = new NSView();
 			if (_view != null && Context != null)
 				LoadNativeView(_view);
 		}
