@@ -18,6 +18,20 @@ namespace Microsoft.Maui
 			return (bool)(_respondsToSafeArea = RespondsToSelector(new Selector("safeAreaInsets")));
 		}
 
+		public override void Layout()
+		{
+			base.Layout();
+			LayoutSubviews();
+		}
+
+		public override CGSize FittingSize
+		{
+			get
+			{
+				return SizeThatFits(new CGSize (double.PositiveInfinity, double.PositiveInfinity));
+			}
+		}
+
 		protected CGRect AdjustForSafeArea(CGRect bounds)
 		{
 			if (View is not ISafeAreaView sav || sav.IgnoreSafeArea || !RespondsToSafeArea())
@@ -25,20 +39,15 @@ namespace Microsoft.Maui
 				return bounds;
 			}
 
-			// TODO COCOA
-			return bounds;
-//			return SafeAreaInsets.InsetRect(bounds);
+			var insets = SafeAreaInsets;
+			return new CGRect(bounds.Left + insets.Left, bounds.Top + insets.Top, bounds.Width - insets.Left - insets.Right, bounds.Height - insets.Top - insets.Bottom);
 		}
 
-		// TODO COCOA
-		// Call this from FittingSize?
 		public virtual CGSize SizeThatFits(CGSize size)
 		{
-			throw new NotImplementedException();
+			return base.FittingSize;
 		}
 
-		// TODO COCOA
-		// Call this from where?
 		public virtual void LayoutSubviews()
 		{
 		}
