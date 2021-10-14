@@ -12,10 +12,19 @@ namespace Microsoft.Maui
 
 		public MauiLabel(CGRect frame) : base(frame)
 		{
+			Initialize();
 		}
 
 		public MauiLabel()
 		{
+			Initialize();
+		}
+
+		void Initialize()
+		{
+			Editable = false;
+			DrawsBackground = false;
+			Bordered = false;
 		}
 
 /*		public override void DrawText(CGRect rect) =>
