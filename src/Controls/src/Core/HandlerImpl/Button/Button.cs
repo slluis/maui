@@ -29,7 +29,6 @@ namespace Microsoft.Maui.Controls
 
 		public static void MapContentLayout(ButtonHandler handler, Button button)
 		{
-			throw new NotImplementedException();
 			//handler.NativeView.UpdateContentLayout(button);
 		}
 	}
