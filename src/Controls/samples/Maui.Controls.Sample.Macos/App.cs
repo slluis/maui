@@ -14,10 +14,36 @@ namespace Maui.Controls.Sample.Macos
 			page.Title = "Hello!";
 			var stack = new StackLayout() { Spacing = 10, Orientation = StackOrientation.Vertical };
 
-			var horizontal = new StackLayout() { Spacing = 10, Orientation = StackOrientation.Horizontal };
-			stack.Add(horizontal);
-			horizontal.Add(new Label { Text = "Name" });
-			horizontal.Add(new Label { Text = "Lluis" });
+			var textField = new Entry() {
+				Placeholder = "Type something in the field",
+				PlaceholderColor = Microsoft.Maui.Graphics.Colors.Red
+			};
+			stack.Add(textField);
+
+			var selectionResult = new Label() { Text = "Please write something in the field" };
+			stack.Add(selectionResult);
+
+			textField.TextChanged += (s, e) =>
+			{
+				selectionResult.Text = $"Text: '{textField.Text}'";
+			};
+
+			var picker = new Picker();
+			picker.Items.Add("Lluis");
+			picker.Items.Add("Jose");
+			stack.Add(picker);
+
+			picker.SelectedIndexChanged += (s,e) =>
+			{
+				if (picker.SelectedItem is string itm)
+				{
+					selectionResult.Text = $"Selected '{itm}' item";
+				}
+				else
+				{
+					selectionResult.Text = "No selection";
+				}
+			};
 
 			stack.Add(new Label { Text = "Hi Maui 1 !!!! this is a super long text", HorizontalTextAlignment = TextAlignment.Start, TextColor = Microsoft.Maui.Graphics.Colors.Azure, LineBreakMode = LineBreakMode.NoWrap });
 			stack.Add(new Label { Text = "Hi Maui 2 !!!! this is a super long text", HorizontalTextAlignment = TextAlignment.End, TextColor = Microsoft.Maui.Graphics.Colors.Red, LineBreakMode = LineBreakMode.HeadTruncation });

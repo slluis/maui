@@ -43,6 +43,12 @@ namespace Microsoft.Maui
 			return mutableAttributedString;
 		}
 
+		public static NSColor? GetColor(this NSAttributedString attributedString)
+		{
+			if (attributedString == null || attributedString.Length == 0)
+				return null;
+			return (NSColor)attributedString.GetAttribute(NSStringAttributeKey.ForegroundColor, 0, out _);
+		}
 
 		public static NSMutableAttributedString? WithLineHeight(this NSAttributedString attributedString, double lineHeight)
 		{

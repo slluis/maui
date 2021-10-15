@@ -8,29 +8,18 @@ namespace Microsoft.Maui.Handlers
 {
 	public partial class EntryHandler : ViewHandler<IEntry, MauiTextField>
 	{
-		NSColor? _defaultTextColor;
-		Color? _defaultPlaceholderColor;
-
 		protected override MauiTextField CreateNativeView()
 		{
-			var nativeEntry = new MauiTextField
-			{
-//				BorderStyle = NSTextBorderStyle.RoundedRect,
-//				ClipsToBounds = true
-			};
-
-			_defaultTextColor = nativeEntry.TextColor;
-
-			// Placeholder default color is 70% gray					
-			// https://developer.apple.com/library/prerelease/ios/documentation/UIKit/Reference/UITextField_Class/index.html#//apple_ref/occ/instp/UITextField/placeholder
-			_defaultPlaceholderColor = ColorExtensions.SeventyPercentGrey.ToColor();
-
+			var nativeEntry = new MauiTextField();
 			return nativeEntry;
 		}
 
 		protected override void ConnectHandler(MauiTextField nativeView)
 		{
 			base.ConnectHandler(nativeView);
+
+			nativeView.Changed += OnEditingChanged;
+			nativeView.Activated += OnEditingChanged;
 
 	/*		nativeView.ShouldReturn = OnShouldReturn;
 			nativeView.EditingChanged += OnEditingChanged;
@@ -43,10 +32,12 @@ namespace Microsoft.Maui.Handlers
 		{
 			base.DisconnectHandler(nativeView);
 
-/*			nativeView.EditingChanged -= OnEditingChanged;
-			nativeView.EditingDidEnd -= OnEditingEnded;
-			nativeView.TextPropertySet -= OnTextPropertySet;
-			nativeView.ShouldChangeCharacters -= OnShouldChangeCharacters;*/
+			nativeView.Changed -= OnEditingChanged;
+			nativeView.Activated -= OnEditingChanged;
+			/*			nativeView.EditingChanged -= OnEditingChanged;
+						nativeView.EditingDidEnd -= OnEditingEnded;
+						nativeView.TextPropertySet -= OnTextPropertySet;
+						nativeView.ShouldChangeCharacters -= OnShouldChangeCharacters;*/
 		}
 
 		public static void MapText(EntryHandler handler, IEntry entry)
@@ -59,7 +50,11 @@ namespace Microsoft.Maui.Handlers
 
 		public static void MapTextColor(EntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateTextColor(entry, handler._defaultTextColor);
+			var _defaultTextColor = handler.NativeView.AttributedStringValue?.GetColor();
+			if (_defaultTextColor != null)
+			{
+				handler.NativeView?.UpdateTextColorWithEntry(entry, _defaultTextColor);
+			}
 		}
 
 		public static void MapIsPassword(EntryHandler handler, IEntry entry)
@@ -94,7 +89,11 @@ namespace Microsoft.Maui.Handlers
 
 		public static void MapPlaceholderColor(EntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdatePlaceholder(entry, handler._defaultPlaceholderColor);
+			var _defaultTextColor = handler.NativeView.AttributedStringValue?.GetColor();
+			if (_defaultTextColor != null)
+			{
+				handler.NativeView?.UpdatePlaceholder(entry, _defaultTextColor.ToColor());
+			}
 		}
 
 		public static void MapIsReadOnly(EntryHandler handler, IEntry entry)
@@ -163,10 +162,6 @@ namespace Microsoft.Maui.Handlers
 		}
 
 		void OnEditingChanged(object? sender, EventArgs e) => OnTextChanged();
-
-		void OnEditingEnded(object? sender, EventArgs e) => OnTextChanged();
-
-		void OnTextPropertySet(object? sender, EventArgs e) => OnTextChanged();
 
 		void OnTextChanged()
 		{
