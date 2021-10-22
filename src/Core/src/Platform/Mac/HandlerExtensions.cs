@@ -17,6 +17,21 @@ namespace Microsoft.Maui
 
 		public static NSView ToNative(this IElement view, IMauiContext context)
 		{
+			return ToNative(view, context, false);
+		}
+
+		/// <summary>
+		/// Returns the native view that renders the provided view
+		/// </summary>
+		/// <param name="view">The view</param>
+		/// <param name="context">Maui context</param>
+		/// <param name="embedable">True if the view is going to be added to a view or window external to Maui</param>
+		/// <returns>The native view</returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="Exception"></exception>
+		/// <exception cref="InvalidOperationException"></exception>
+		public static NSView ToNative(this IElement view, IMauiContext context, bool embedable)
+		{
 			_ = view ?? throw new ArgumentNullException(nameof(view));
 			_ = context ?? throw new ArgumentNullException(nameof(context));
 
@@ -43,6 +58,10 @@ namespace Microsoft.Maui
 				throw new InvalidOperationException($"Unable to convert {view} to {typeof(NSView)}");
 			}
 
+			if (embedable && view is IView iview)
+			{
+				return new MauiHostView(iview, result);
+			}
 			return result;
 		}
 

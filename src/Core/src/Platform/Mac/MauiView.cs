@@ -5,7 +5,7 @@ using System;
 
 namespace Microsoft.Maui
 {
-	public abstract class MauiView : NSView
+	public class MauiView : NSView
 	{
 		static bool? _respondsToSafeArea;
 
@@ -26,11 +26,9 @@ namespace Microsoft.Maui
 			LayoutSubviews();
 		}
 
-		public override CGSize FittingSize
-		{
-			get
-			{
-				return SizeThatFits(new CGSize (double.PositiveInfinity, double.PositiveInfinity));
+		public override CGSize IntrinsicContentSize {
+			get {
+				return SizeThatFits(new CGSize(double.PositiveInfinity, double.PositiveInfinity));
 			}
 		}
 
@@ -47,7 +45,7 @@ namespace Microsoft.Maui
 
 		public virtual CGSize SizeThatFits(CGSize size)
 		{
-			return base.FittingSize;
+			return base.IntrinsicContentSize;
 		}
 
 		public virtual void LayoutSubviews()
