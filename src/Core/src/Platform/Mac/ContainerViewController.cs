@@ -55,14 +55,9 @@ namespace Microsoft.Maui
 			return _pendingLoadedView;
 		}
 
-		class ContentViewRoot : NSView
-		{
-			public override bool IsFlipped => true;
-		}
-
 		public override void LoadView()
 		{
-			View = new ContentViewRoot();
+			View = new MauiView { View = _view as IView };
 			if (_view != null && Context != null)
 				LoadNativeView(_view);
 		}
