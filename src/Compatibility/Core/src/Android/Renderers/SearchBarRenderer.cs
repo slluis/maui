@@ -14,6 +14,7 @@ using Size = Microsoft.Maui.Graphics.Size;
 
 namespace Microsoft.Maui.Controls.Compatibility.Platform.Android
 {
+	[System.Obsolete(Compatibility.Hosting.MauiAppBuilderExtensions.UseMapperInstead)]
 	public class SearchBarRenderer : ViewRenderer<SearchBar, SearchView>, SearchView.IOnQueryTextListener
 	{
 		EditText _editText;
@@ -35,7 +36,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.Android
 			return true;
 		}
 
-		[PortHandler("Partially ported")]
+		[PortHandler]
 		bool SearchView.IOnQueryTextListener.OnQueryTextSubmit(string query)
 		{
 			((ISearchBarController)Element).OnSearchButtonPressed();
@@ -46,7 +47,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.Android
 		public override SizeRequest GetDesiredSize(int widthConstraint, int heightConstraint)
 		{
 			var sizerequest = base.GetDesiredSize(widthConstraint, heightConstraint);
-			if (Forms.SdkInt == BuildVersionCodes.N && heightConstraint == 0 && sizerequest.Request.Height == 0)
+			if (Forms.IsNougatOrNewer && heightConstraint == 0 && sizerequest.Request.Height == 0)
 			{
 				sizerequest.Request = new Size(sizerequest.Request.Width, _defaultHeight);
 			}
@@ -178,7 +179,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.Android
 			if (_editText == null)
 				return;
 
-			_editText.UpdateHorizontalAlignment(Element.HorizontalTextAlignment, Context.HasRtlSupport(), Microsoft.Maui.TextAlignment.Center.ToVerticalGravityFlags());
+			_editText.UpdateHorizontalAlignment(Element.HorizontalTextAlignment, Microsoft.Maui.TextAlignment.Center.ToVerticalGravityFlags());
 		}
 
 		[PortHandler]
@@ -208,6 +209,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.Android
 			}
 		}
 
+		[PortHandler("Partially ported")]
 		void UpdateEnabled()
 		{
 			SearchBar model = Element;
@@ -268,9 +270,6 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.Android
 		[PortHandler]
 		void UpdateCharacterSpacing()
 		{
-			if (!Forms.IsLollipopOrNewer)
-				return;
-
 			_editText = _editText ?? Control.GetChildrenOfType<EditText>().FirstOrDefault();
 
 			if (_editText != null)

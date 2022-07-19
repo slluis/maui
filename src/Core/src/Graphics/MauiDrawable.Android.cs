@@ -4,7 +4,7 @@ using Android.Graphics.Drawables;
 using Android.Graphics.Drawables.Shapes;
 using Android.Util;
 using AndroidX.Core.Content;
-using Microsoft.Maui.Graphics.Native;
+using Microsoft.Maui.Graphics.Platform;
 using static Android.Graphics.Paint;
 using AColor = Android.Graphics.Color;
 using AContext = Android.Content.Context;
@@ -23,12 +23,11 @@ namespace Microsoft.Maui.Graphics
 
 		bool _disposed;
 
+		ARect? _bounds;
 		int _width;
 		int _height;
 
 		Path? _clipPath;
-		Path? _maskPath;
-		APaint? _maskPaint;
 		APaint? _borderPaint;
 
 		IShape? _shape;
@@ -55,11 +54,14 @@ namespace Microsoft.Maui.Graphics
 			_clipPath = new Path();
 
 			_context = context;
-			_density = context?.Resources?.DisplayMetrics?.Density ?? 1.0f;
+			_density = context.GetDisplayDensity();
 		}
 
 		public void SetBackgroundColor(AColor? backgroundColor)
 		{
+			if (_backgroundColor == backgroundColor)
+				return;
+
 			_backgroundColor = backgroundColor;
 
 			InvalidateSelf();
@@ -91,13 +93,16 @@ namespace Microsoft.Maui.Graphics
 				SetDefaultBackgroundColor();
 			else
 			{
-				var backgroundColor = solidPaint.Color.ToNative();
+				var backgroundColor = solidPaint.Color.ToPlatform();
 				SetBackgroundColor(backgroundColor);
 			}
 		}
 
 		public void SetBackground(LinearGradientPaint linearGradientPaint)
 		{
+			if (_background == linearGradientPaint)
+				return;
+
 			_invalidatePath = true;
 
 			_backgroundColor = null;
@@ -109,6 +114,9 @@ namespace Microsoft.Maui.Graphics
 
 		public void SetBackground(RadialGradientPaint radialGradientPaint)
 		{
+			if (_background == radialGradientPaint)
+				return;
+
 			_invalidatePath = true;
 
 			_backgroundColor = null;
@@ -130,6 +138,9 @@ namespace Microsoft.Maui.Graphics
 
 		public void SetBorderShape(IShape? shape)
 		{
+			if (_shape == shape)
+				return;
+
 			_invalidatePath = true;
 
 			_shape = shape;
@@ -140,6 +151,9 @@ namespace Microsoft.Maui.Graphics
 
 		public void SetBorderColor(AColor? borderColor)
 		{
+			if (_borderColor == borderColor)
+				return;
+
 			_borderColor = borderColor;
 
 			InvalidateSelf();
@@ -150,17 +164,20 @@ namespace Microsoft.Maui.Graphics
 			if (paint is SolidPaint solidPaint)
 				SetBorderBrush(solidPaint);
 
-			if (paint is LinearGradientPaint linearGradientPaint)
+			else if (paint is LinearGradientPaint linearGradientPaint)
 				SetBorderBrush(linearGradientPaint);
 
-			if (paint is RadialGradientPaint radialGradientPaint)
+			else if (paint is RadialGradientPaint radialGradientPaint)
 				SetBorderBrush(radialGradientPaint);
 
-			if (paint is ImagePaint imagePaint)
+			else if (paint is ImagePaint imagePaint)
 				SetBorderBrush(imagePaint);
 
-			if (paint is PatternPaint patternPaint)
+			else if (paint is PatternPaint patternPaint)
 				SetBorderBrush(patternPaint);
+
+			else
+				SetEmptyBorderBrush();
 		}
 
 		public void SetBorderBrush(SolidPaint solidPaint)
@@ -170,7 +187,7 @@ namespace Microsoft.Maui.Graphics
 
 			var borderColor = solidPaint.Color == null
 				? (AColor?)null
-				: solidPaint.Color.ToNative();
+				: solidPaint.Color.ToPlatform();
 
 			_stroke = null;
 			SetBorderColor(borderColor);
@@ -178,6 +195,9 @@ namespace Microsoft.Maui.Graphics
 
 		public void SetBorderBrush(LinearGradientPaint linearGradientPaint)
 		{
+			if (_stroke == linearGradientPaint)
+				return;
+
 			_invalidatePath = true;
 
 			_borderColor = null;
@@ -189,10 +209,35 @@ namespace Microsoft.Maui.Graphics
 
 		public void SetBorderBrush(RadialGradientPaint radialGradientPaint)
 		{
+			if (_stroke == radialGradientPaint)
+				return;
+
 			_invalidatePath = true;
 
 			_borderColor = null;
 			_stroke = radialGradientPaint;
+
+			InitializeBorderIfNeeded();
+			InvalidateSelf();
+		}
+
+		// TODO: NET7 make public for net7.0
+		internal void SetEmptyBorderBrush()
+		{
+			_invalidatePath = true;
+
+			if (_backgroundColor != null)
+			{
+				_borderColor = _backgroundColor.Value;
+				_stroke = null;
+			}
+			else
+			{
+				_borderColor = null;
+
+				if (_background != null)
+					SetBorderBrush(_background);
+			}
 
 			InitializeBorderIfNeeded();
 			InvalidateSelf();
@@ -210,9 +255,14 @@ namespace Microsoft.Maui.Graphics
 
 		public void SetBorderWidth(double strokeWidth)
 		{
+			float strokeThickness = (float)(strokeWidth * _density);
+
+			if (_strokeThickness == strokeThickness)
+				return;
+
 			_invalidatePath = true;
 
-			_strokeThickness = (float)(strokeWidth * _density);
+			_strokeThickness = strokeThickness;
 
 			InitializeBorderIfNeeded();
 			InvalidateSelf();
@@ -238,6 +288,9 @@ namespace Microsoft.Maui.Graphics
 
 		public void SetBorderMiterLimit(float strokeMiterLimit)
 		{
+			if (_strokeMiterLimit == strokeMiterLimit)
+				return;
+
 			_strokeMiterLimit = strokeMiterLimit;
 
 			InvalidateSelf();
@@ -259,6 +312,9 @@ namespace Microsoft.Maui.Graphics
 					aLineJoin = Join.Round;
 					break;
 			}
+
+			if (_strokeLineJoin == aLineJoin)
+				return;
 
 			_strokeLineJoin = aLineJoin;
 
@@ -282,25 +338,40 @@ namespace Microsoft.Maui.Graphics
 					break;
 			}
 
+			if (_strokeLineCap == aLineCap)
+				return;
+
 			_strokeLineCap = aLineCap;
+
+			InvalidateSelf();
+		}
+
+		public void InvalidateBorderBounds()
+		{
+			_bounds = null;
 
 			InvalidateSelf();
 		}
 
 		protected override void OnBoundsChange(ARect? bounds)
 		{
-			if (bounds != null)
+			if (_bounds != bounds)
 			{
-				var width = bounds.Width();
-				var height = bounds.Height();
+				_bounds = bounds;
 
-				if (_width == width && _height == height)
-					return;
+				if (_bounds != null)
+				{
+					var width = _bounds.Width();
+					var height = _bounds.Height();
 
-				_invalidatePath = true;
+					if (_width == width && _height == height)
+						return;
 
-				_width = width;
-				_height = height;
+					_invalidatePath = true;
+
+					_width = width;
+					_height = height;
+				}
 			}
 
 			base.OnBoundsChange(bounds);
@@ -327,7 +398,9 @@ namespace Microsoft.Maui.Graphics
 						_borderPaint.SetPathEffect(_borderPathEffect);
 
 					if (_borderColor != null)
+#pragma warning disable CA1416 // https://github.com/xamarin/xamarin-android/issues/6962
 						_borderPaint.Color = _borderColor.Value;
+#pragma warning restore CA1416
 					else
 					{
 						if (_stroke != null)
@@ -341,9 +414,13 @@ namespace Microsoft.Maui.Graphics
 
 					if (_shape != null)
 					{
-						var bounds = new Rectangle(0, 0, _width, _height);
+						float offset = _strokeThickness / 2;
+						float w = (float)(_width / _density) - _strokeThickness;
+						float h = (float)(_height / _density) - _strokeThickness;
+
+						var bounds = new Graphics.Rect(offset, offset, w, h);
 						var path = _shape.PathForBounds(bounds);
-						var clipPath = path?.AsAndroidPath();
+						var clipPath = path?.AsAndroidPath(scaleX: (float)_density, scaleY: (float)_density);
 
 						if (clipPath == null)
 							return;
@@ -352,13 +429,6 @@ namespace Microsoft.Maui.Graphics
 						{
 							_clipPath.Reset();
 							_clipPath.Set(clipPath);
-
-							if (_maskPath != null && HasBorder())
-							{
-								_maskPath.Reset();
-								_maskPath.AddRect(0, 0, _width, _height, Path.Direction.Cw!);
-								_maskPath.InvokeOp(_clipPath, Path.Op.Difference!);
-							}
 						}
 					}
 				}
@@ -373,9 +443,6 @@ namespace Microsoft.Maui.Graphics
 
 				if (_clipPath != null && _borderPaint != null)
 					canvas.DrawPath(_clipPath, _borderPaint);
-
-				if (_maskPath != null && _maskPaint != null)
-					canvas.DrawPath(_maskPath, _maskPaint);
 
 				canvas.RestoreToCount(saveCount);
 			}
@@ -419,19 +486,6 @@ namespace Microsoft.Maui.Graphics
 		{
 			if (disposing)
 			{
-				if (_maskPath != null)
-				{
-					_maskPath.Dispose();
-					_maskPath = null;
-				}
-
-				if (_maskPaint != null)
-				{
-					_maskPaint.SetXfermode(null);
-					_maskPaint.Dispose();
-					_maskPaint = null;
-				}
-
 				if (_borderPaint != null)
 				{
 					_borderPaint.Dispose();
@@ -444,7 +498,7 @@ namespace Microsoft.Maui.Graphics
 		{
 			InitializeBorderIfNeeded();
 
-			return _shape != null && _strokeThickness > 0;
+			return _shape != null;
 		}
 
 		void InitializeBorderIfNeeded()
@@ -453,18 +507,6 @@ namespace Microsoft.Maui.Graphics
 			{
 				DisposeBorder(true);
 				return;
-			}
-
-			if (_maskPath == null)
-				_maskPath = new Path();
-
-			if (_maskPaint == null)
-			{
-				_maskPaint = new APaint(PaintFlags.AntiAlias);
-				_maskPaint.SetStyle(APaint.Style.FillAndStroke);
-
-				PorterDuffXfermode porterDuffClearMode = new PorterDuffXfermode(PorterDuff.Mode.Clear);
-				_maskPaint.SetXfermode(porterDuffClearMode);
 			}
 
 			if (_borderPaint == null)
@@ -495,30 +537,32 @@ namespace Microsoft.Maui.Graphics
 			}
 		}
 
-		void SetBackground(APaint nativePaint)
+		void SetBackground(APaint platformPaint)
 		{
-			if (nativePaint != null)
+			if (platformPaint != null)
 			{
 				if (_backgroundColor != null)
-					nativePaint.Color = _backgroundColor.Value;
+#pragma warning disable CA1416 // https://github.com/xamarin/xamarin-android/issues/6962
+					platformPaint.Color = _backgroundColor.Value;
+#pragma warning restore CA1416
 				else
 				{
 					if (_background != null)
-						SetPaint(nativePaint, _background);
+						SetPaint(platformPaint, _background);
 				}
 			}
 		}
 
-		void SetPaint(APaint nativePaint, GPaint paint)
+		void SetPaint(APaint platformPaint, GPaint paint)
 		{
 			if (paint is LinearGradientPaint linearGradientPaint)
-				SetLinearGradientPaint(nativePaint, linearGradientPaint);
+				SetLinearGradientPaint(platformPaint, linearGradientPaint);
 
 			if (paint is RadialGradientPaint radialGradientPaint)
-				SetRadialGradientPaint(nativePaint, radialGradientPaint);
+				SetRadialGradientPaint(platformPaint, radialGradientPaint);
 		}
 
-		void SetLinearGradientPaint(APaint nativePaint, LinearGradientPaint linearGradientPaint)
+		void SetLinearGradientPaint(APaint platformPaint, LinearGradientPaint linearGradientPaint)
 		{
 			var p1 = linearGradientPaint.StartPoint;
 			var x1 = (float)p1.X;
@@ -544,10 +588,10 @@ namespace Microsoft.Maui.Graphics
 				shader.Offsets,
 				Shader.TileMode.Clamp!);
 
-			nativePaint.SetShader(linearGradientShader);
+			platformPaint.SetShader(linearGradientShader);
 		}
 
-		public void SetRadialGradientPaint(APaint nativePaint, RadialGradientPaint radialGradientPaint)
+		public void SetRadialGradientPaint(APaint platformPaint, RadialGradientPaint radialGradientPaint)
 		{
 			var center = radialGradientPaint.Center;
 			float centerX = (float)center.X;
@@ -571,7 +615,7 @@ namespace Microsoft.Maui.Graphics
 				radialGradientData.Offsets,
 				Shader.TileMode.Clamp!);
 
-			nativePaint.SetShader(radialGradient);
+			platformPaint.SetShader(radialGradient);
 		}
 
 		GradientData GetGradientPaintData(GradientPaint gradientPaint)
@@ -583,7 +627,7 @@ namespace Microsoft.Maui.Graphics
 			int count = 0;
 			foreach (var orderStop in orderStops)
 			{
-				data.Colors[count] = orderStop.Color.ToNative().ToArgb();
+				data.Colors[count] = orderStop.Color.ToPlatform().ToArgb();
 				data.Offsets[count] = orderStop.Offset;
 				count++;
 			}

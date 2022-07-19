@@ -1,8 +1,9 @@
 ﻿using Android.Content.Res;
+using Android.Text;
 using Android.Widget;
 using SearchView = AndroidX.AppCompat.Widget.SearchView;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static class SearchViewExtensions
 	{
@@ -31,12 +32,9 @@ namespace Microsoft.Maui
 			}
 			else
 			{
-				var androidColor = placeholderTextColor.ToNative();
-
-				if (!editText.HintTextColors.IsOneColor(ColorExtensions.States, androidColor))
+				if (PlatformInterop.CreateEditTextColorStateList(editText.HintTextColors, placeholderTextColor.ToPlatform()) is ColorStateList c)
 				{
-					var acolor = androidColor.ToArgb();
-					editText.SetHintTextColor(new ColorStateList(ColorExtensions.States, new[] { acolor, acolor }));
+					editText.SetHintTextColor(c);
 				}
 			}
 		}
@@ -90,6 +88,15 @@ namespace Microsoft.Maui
 			}
 		}
 
+		public static void UpdateIsReadOnly(this EditText editText, ISearchBar searchBar)
+		{
+			bool isReadOnly = !searchBar.IsReadOnly;
+
+			editText.FocusableInTouchMode = isReadOnly;
+			editText.Focusable = isReadOnly;
+			editText.SetCursorVisible(isReadOnly);
+		}
+
 		public static void UpdateCancelButtonColor(this SearchView searchView, ISearchBar searchBar)
 		{
 			if (searchView.Resources == null)
@@ -108,6 +115,32 @@ namespace Microsoft.Maui
 					else
 						image.Drawable.ClearColorFilter();
 				}
+			}
+		}
+
+		public static void UpdateIsTextPredictionEnabled(this SearchView searchView, ISearchBar searchBar, EditText? editText = null)
+		{
+			editText ??= searchView.GetFirstChildOfType<EditText>();
+
+			if (editText == null)
+				return;
+
+			if (searchBar.IsTextPredictionEnabled)
+				editText.InputType &= ~InputTypes.TextFlagNoSuggestions;
+			else
+				editText.InputType |= InputTypes.TextFlagNoSuggestions;
+		}
+
+		public static void UpdateIsEnabled(this SearchView searchView, ISearchBar searchBar, EditText? editText = null)
+		{
+			editText ??= searchView.GetFirstChildOfType<EditText>();
+
+			if (editText == null)
+				return;
+
+			if (editText != null)
+			{
+				editText.Enabled = searchBar.IsEnabled;
 			}
 		}
 	}

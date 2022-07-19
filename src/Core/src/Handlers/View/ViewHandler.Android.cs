@@ -1,118 +1,199 @@
 ﻿using System;
 using Android.Views;
-using Android.Widget;
 using AndroidX.Core.View;
-using AndroidX.Core.View.Accessibility;
-using NativeView = Android.Views.View;
+using PlatformView = Android.Views.View;
 
 namespace Microsoft.Maui.Handlers
 {
 	public partial class ViewHandler
 	{
-		partial void DisconnectingHandler(NativeView nativeView)
+		partial void ConnectingHandler(PlatformView? platformView)
 		{
-			if (nativeView.IsAlive()
-				&& ViewCompat.GetAccessibilityDelegate(nativeView) is MauiAccessibilityDelegateCompat ad)
+			if (platformView != null)
 			{
-				ad.Handler = null;
-				ViewCompat.SetAccessibilityDelegate(nativeView, null);
+				platformView.FocusChange += OnPlatformViewFocusChange;
 			}
+		}
+
+		partial void DisconnectingHandler(PlatformView platformView)
+		{
+			if (platformView.IsAlive())
+			{
+				platformView.FocusChange -= OnPlatformViewFocusChange;
+
+				if (ViewCompat.GetAccessibilityDelegate(platformView) is MauiAccessibilityDelegateCompat ad)
+				{
+					ad.Handler = null;
+					ViewCompat.SetAccessibilityDelegate(platformView, null);
+				}
+			}
+		}
+
+		void OnRootViewSet(object? sender, EventArgs e)
+		{
+			UpdateValue(nameof(IToolbarElement.Toolbar));
 		}
 
 		static partial void MappingFrame(IViewHandler handler, IView view)
 		{
-			handler.GetWrappedNativeView()?.UpdateAnchorX(view);
-			handler.GetWrappedNativeView()?.UpdateAnchorY(view);
+			handler.ToPlatform().UpdateAnchorX(view);
+			handler.ToPlatform().UpdateAnchorY(view);
 		}
 
 		public static void MapTranslationX(IViewHandler handler, IView view)
 		{
-			handler.GetWrappedNativeView()?.UpdateTranslationX(view);
+			handler.ToPlatform().UpdateTranslationX(view);
 		}
 
 		public static void MapTranslationY(IViewHandler handler, IView view)
 		{
-			handler.GetWrappedNativeView()?.UpdateTranslationY(view);
+			handler.ToPlatform().UpdateTranslationY(view);
 		}
 
 		public static void MapScale(IViewHandler handler, IView view)
 		{
-			handler.GetWrappedNativeView()?.UpdateScale(view);
+			handler.ToPlatform().UpdateScale(view);
 		}
 
 		public static void MapScaleX(IViewHandler handler, IView view)
 		{
-			handler.GetWrappedNativeView()?.UpdateScaleX(view);
+			handler.ToPlatform().UpdateScaleX(view);
 		}
 
 		public static void MapScaleY(IViewHandler handler, IView view)
 		{
-			handler.GetWrappedNativeView()?.UpdateScaleY(view);
+			handler.ToPlatform().UpdateScaleY(view);
 		}
 
 		public static void MapRotation(IViewHandler handler, IView view)
 		{
-			handler.GetWrappedNativeView()?.UpdateRotation(view);
+			handler.ToPlatform().UpdateRotation(view);
 		}
 
 		public static void MapRotationX(IViewHandler handler, IView view)
 		{
-			handler.GetWrappedNativeView()?.UpdateRotationX(view);
+			handler.ToPlatform().UpdateRotationX(view);
 		}
 
 		public static void MapRotationY(IViewHandler handler, IView view)
 		{
-			handler.GetWrappedNativeView()?.UpdateRotationY(view);
+			handler.ToPlatform().UpdateRotationY(view);
 		}
 
 		public static void MapAnchorX(IViewHandler handler, IView view)
 		{
-			handler.GetWrappedNativeView()?.UpdateAnchorX(view);
+			handler.ToPlatform().UpdateAnchorX(view);
 		}
 
 		public static void MapAnchorY(IViewHandler handler, IView view)
 		{
-			handler.GetWrappedNativeView()?.UpdateAnchorY(view);
+			handler.ToPlatform().UpdateAnchorY(view);
 		}
 
 		static partial void MappingSemantics(IViewHandler handler, IView view)
 		{
-			if (handler.NativeView == null)
+			if (handler.PlatformView == null)
 				return;
 
-			var accessibilityDelegate = ViewCompat.GetAccessibilityDelegate(handler.NativeView as View) as MauiAccessibilityDelegateCompat;
+			AccessibilityDelegateCompat? accessibilityDelegate = null;
+			if (handler.PlatformView is View viewPlatform)
+				accessibilityDelegate = ViewCompat.GetAccessibilityDelegate(viewPlatform) as MauiAccessibilityDelegateCompat;
 
-			if (view.Semantics != null && accessibilityDelegate == null)
+			if (handler.PlatformView is not PlatformView platformView)
+				return;
+
+			platformView = platformView.GetSemanticPlatformElement();
+
+			var desc = view.Semantics?.Description;
+			var hint = view.Semantics?.Hint;
+
+			// We use MauiAccessibilityDelegateCompat to fix the issue of AutomationId breaking accessibility
+			// Because AutomationId gets set on the contentDesc we have to clear that out on the accessibility node via
+			// the use of our MauiAccessibilityDelegateCompat
+			if (!string.IsNullOrWhiteSpace(hint) ||
+				!string.IsNullOrWhiteSpace(desc) ||
+				!string.IsNullOrWhiteSpace(view.AutomationId))
 			{
-				if (handler.NativeView is not NativeView nativeView)
-					return;
-
-				if (nativeView is AndroidX.AppCompat.Widget.SearchView sv)
-					nativeView = sv.FindViewById(Resource.Id.search_button)!;
-
-				if (!string.IsNullOrWhiteSpace(view.Semantics.Hint) || !string.IsNullOrWhiteSpace(view.Semantics.Description))
+				if (accessibilityDelegate == null)
 				{
-					if (accessibilityDelegate == null)
+					var currentDelegate = ViewCompat.GetAccessibilityDelegate(platformView);
+					if (currentDelegate is MauiAccessibilityDelegateCompat)
+						currentDelegate = null;
+
+					accessibilityDelegate = new MauiAccessibilityDelegateCompat(currentDelegate)
 					{
-						var currentDelegate = ViewCompat.GetAccessibilityDelegate(nativeView);
-						if (currentDelegate is MauiAccessibilityDelegateCompat)
-							currentDelegate = null;
+						Handler = handler
+					};
 
-						accessibilityDelegate = new MauiAccessibilityDelegateCompat(currentDelegate)
-						{
-							Handler = handler
-						};
-
-						ViewCompat.SetAccessibilityDelegate(nativeView, accessibilityDelegate);
-					}
+					ViewCompat.SetAccessibilityDelegate(platformView, accessibilityDelegate);
 				}
-				else if (accessibilityDelegate != null)
+
+				if (!string.IsNullOrWhiteSpace(hint) ||
+					!string.IsNullOrWhiteSpace(desc))
 				{
-					ViewCompat.SetAccessibilityDelegate(nativeView, null);
+					platformView.ImportantForAccessibility = ImportantForAccessibility.Yes;
 				}
+			}
+			else if (accessibilityDelegate != null)
+			{
+				ViewCompat.SetAccessibilityDelegate(platformView, null);
+			}
+		}
 
-				if (accessibilityDelegate != null)
-					nativeView.ImportantForAccessibility = ImportantForAccessibility.Yes;
+		public static void MapToolbar(IViewHandler handler, IView view)
+		{
+			if (handler.VirtualView is not IToolbarElement te || te.Toolbar == null)
+				return;
+
+			MapToolbar(handler, te);
+		}
+
+		internal static void MapToolbar(IElementHandler handler, IToolbarElement te)
+		{
+			if (te.Toolbar == null)
+				return;
+
+			var rootManager = handler.MauiContext?.GetNavigationRootManager();
+			rootManager?.SetToolbarElement(te);
+
+			var platformView = handler.PlatformView as View;
+
+			_ = handler.MauiContext ?? throw new InvalidOperationException($"{nameof(MauiContext)} should have been set by base class.");
+
+			var appbarLayout =
+				platformView?.FindViewById<ViewGroup>(Resource.Id.navigationlayout_appbar) ??
+				rootManager?.RootView?.FindViewById<ViewGroup>(Resource.Id.navigationlayout_appbar);
+
+			var nativeToolBar = te.Toolbar?.ToPlatform(handler.MauiContext);
+
+			if (appbarLayout == null)
+			{
+				return;
+			}
+
+			if (appbarLayout.ChildCount > 0 &&
+				appbarLayout.GetChildAt(0) == nativeToolBar)
+			{
+				return;
+			}
+
+			appbarLayout.AddView(nativeToolBar, 0);
+		}
+
+		public virtual bool NeedsContainer
+		{
+			get
+			{
+				return VirtualView?.Clip != null || VirtualView?.Shadow != null
+					|| (VirtualView as IBorder)?.Border != null || VirtualView?.InputTransparent == true;
+			}
+		}
+
+		void OnPlatformViewFocusChange(object? sender, PlatformView.FocusChangeEventArgs e)
+		{
+			if (VirtualView != null)
+			{
+				VirtualView.IsFocused = e.HasFocus;
 			}
 		}
 	}

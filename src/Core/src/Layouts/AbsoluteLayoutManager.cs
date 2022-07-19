@@ -33,13 +33,15 @@ namespace Microsoft.Maui.Layouts
 					continue;
 				}
 
-				var measure = child.Measure(availableWidth, availableHeight);
-
 				var bounds = AbsoluteLayout.GetLayoutBounds(child);
 				var flags = AbsoluteLayout.GetLayoutFlags(child);
-
 				bool isWidthProportional = HasFlag(flags, AbsoluteLayoutFlags.WidthProportional);
 				bool isHeightProportional = HasFlag(flags, AbsoluteLayoutFlags.HeightProportional);
+
+				var measureWidth = ResolveChildMeasureConstraint(bounds.Width, isWidthProportional, widthConstraint);
+				var measureHeight = ResolveChildMeasureConstraint(bounds.Height, isHeightProportional, heightConstraint);
+
+				var measure = child.Measure(measureWidth, measureHeight);
 
 				var width = ResolveDimension(isWidthProportional, bounds.Width, availableWidth, measure.Width);
 				var height = ResolveDimension(isHeightProportional, bounds.Height, availableHeight, measure.Height);
@@ -54,14 +56,17 @@ namespace Microsoft.Maui.Layouts
 			return new Size(finalWidth, finalHeight);
 		}
 
-		public override Size ArrangeChildren(Rectangle bounds)
+		public override Size ArrangeChildren(Rect bounds)
 		{
 			var padding = AbsoluteLayout.Padding;
 
-			double top = padding.Top + bounds.Y;
-			double left = padding.Left + bounds.X;
+			double top = padding.Top + bounds.Top;
+			double left = padding.Left + bounds.Left;
+			double right = bounds.Right - padding.Right;
 			double availableWidth = bounds.Width - padding.HorizontalThickness;
 			double availableHeight = bounds.Height - padding.VerticalThickness;
+
+			bool leftToRight = AbsoluteLayout.ShouldArrangeLeftToRight();
 
 			for (int n = 0; n < AbsoluteLayout.Count; n++)
 			{
@@ -91,7 +96,15 @@ namespace Microsoft.Maui.Layouts
 					destination.Y = (availableHeight - destination.Height) * destination.Y;
 				}
 
-				child.Arrange(destination.Offset(left, top));
+				// Figure out where we're starting from (the left edge of the padded area, or the right edge)
+				if (leftToRight)
+					destination.X += left;
+				else
+					destination.X = right - destination.X - destination.Width;
+
+				destination.Y += top;
+
+				child.Arrange(destination);
 			}
 
 			return new Size(availableWidth, availableHeight);
@@ -121,6 +134,22 @@ namespace Microsoft.Maui.Layouts
 			}
 
 			return value;
+		}
+
+		static double ResolveChildMeasureConstraint(double boundsValue, bool proportional, double constraint)
+		{
+			if (boundsValue < 0)
+			{
+				// If the child view doesn't have bounds set by the AbsoluteLayout, then we'll let it auto-size
+				return double.PositiveInfinity;
+			}
+
+			if (proportional)
+			{
+				return boundsValue * constraint;
+			}
+
+			return boundsValue;
 		}
 	}
 }

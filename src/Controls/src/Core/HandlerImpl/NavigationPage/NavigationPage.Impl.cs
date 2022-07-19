@@ -3,54 +3,63 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Internals;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Layouts;
 
 namespace Microsoft.Maui.Controls
 {
-	public partial class NavigationPage : INavigationView
+	/// <include file="../../../../docs/Microsoft.Maui.Controls/NavigationPage.xml" path="Type[@FullName='Microsoft.Maui.Controls.NavigationPage']/Docs" />
+	public partial class NavigationPage : IStackNavigationView, IToolbarElement
 	{
+		// If the user is making overlapping navigation requests this is used to fire once all navigation 
+		// events have been processed
+		TaskCompletionSource<object> _allPendingNavigationCompletionSource;
+
+		// This is used to process the currently active navigation request
+		TaskCompletionSource<object> _currentNavigationCompletionSource;
+
+		int _waitingCount = 0;
+		readonly SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1, 1);
+
+		partial void Init()
+		{
+			this.Appearing += OnAppearing;
+		}
+
 		Thickness IView.Margin => Thickness.Zero;
 
-		protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
+		protected override void LayoutChildren(double x, double y, double width, double height)
 		{
-			if (Content is IView view)
-			{
-				_ = view.Measure(widthConstraint, heightConstraint);
-			}
-
-			return new Size(widthConstraint, heightConstraint);
+			// We don't want forcelayout to call the legacy
+			// Page.LayoutChildren code
 		}
 
-		protected override Size ArrangeOverride(Rectangle bounds)
+		void IStackNavigation.RequestNavigation(NavigationRequest eventArgs)
 		{
-			Frame = this.ComputeFrame(bounds);
-
-			if (Content is IView view)
-			{
-				_ = view.Arrange(Frame);
-			}
-
-			return Frame.Size;
-		}
-
-		void INavigationView.RequestNavigation(NavigationRequest eventArgs)
-		{
-			Handler?.Invoke(nameof(INavigationView.RequestNavigation), eventArgs);
+			Handler?.Invoke(nameof(IStackNavigation.RequestNavigation), eventArgs);
 		}
 
 		// If a native navigation occurs then this syncs up the NavigationStack
 		// with the new native Navigation Stack
-		void INavigationView.NavigationFinished(IReadOnlyList<IView> newStack)
+		void IStackNavigation.NavigationFinished(IReadOnlyList<IView> newStack)
 		{
-			SyncToNavigationStack(newStack);
-			var completionSource = _taskCompletionSource;
-			CurrentPage = (Page)newStack[newStack.Count - 1];
-			RootPage = (Page)newStack[0];
+			// If the user is performing multiple overlapping navigations then we don't want to sync the native stack to our xplat stack
+			// We wait until we get to the end of the queue and then we sync up.
+			// Otherwise intermediate results will wipe out the navigationstack
+			if (_waitingCount <= 1)
+			{
+				SyncToNavigationStack(newStack);
+				CurrentPage = (Page)newStack[newStack.Count - 1];
+				RootPage = (Page)newStack[0];
+			}
+
+			var completionSource = _currentNavigationCompletionSource;
 			CurrentNavigationTask = null;
-			_taskCompletionSource = null;
+			_currentNavigationCompletionSource = null;
 			completionSource?.SetResult(null);
 		}
 
@@ -86,91 +95,164 @@ namespace Microsoft.Maui.Controls
 
 		IReadOnlyList<IView> NavigationStack => this.Navigation.NavigationStack;
 
-		static void CurrentPagePropertyChanged(BindableObject bindable, object oldValue, object newValue)
-		{
-			var np = (NavigationPage)bindable;
 
-			if (oldValue is INotifyPropertyChanged ncpOld)
+		static void OnCurrentPageChanged(BindableObject bindable, object oldValue, object newValue)
+		{
+			if (oldValue is Page oldPage)
+				oldPage.SendDisappearing();
+
+			if (newValue is Page newPage && ((NavigationPage)bindable).HasAppeared)
+				newPage.SendAppearing();
+		}
+
+		internal IToolbar FindMyToolbar()
+		{
+			if (this.Toolbar != null)
+				return Toolbar;
+
+			var rootPage = this.FindParentWith(x => (x is IWindow te || Navigation.ModalStack.Contains(x)), true);
+			if (this.FindParentWith(x => (x is IToolbarElement te && te.Toolbar != null), false) is IToolbarElement te)
 			{
-				ncpOld.PropertyChanged -= np.CurrentPagePropertyChanged;
+				// This means I'm inside a Modal Page so we shouldn't return the Toolbar from the window
+				if (rootPage is not IWindow && te is IWindow)
+					return null;
+
+				return te.Toolbar;
 			}
 
-			if (newValue is INotifyPropertyChanged ncpNew)
+			return null;
+		}
+
+		void OnAppearing(object sender, EventArgs e)
+		{
+			// Update the Container level Toolbar with my Toolbar information
+			if (FindMyToolbar() is not NavigationPageToolbar)
 			{
-				ncpNew.PropertyChanged += np.CurrentPagePropertyChanged;
+				// If the root is a flyoutpage then we set the toolbar on the flyout page
+				var flyoutPage = this.FindParentOfType<FlyoutPage>();
+				if (flyoutPage != null && flyoutPage.Parent is IWindow)
+				{
+					var toolbar = new NavigationPageToolbar(flyoutPage, flyoutPage);
+					flyoutPage.Toolbar = toolbar;
+				}
+				// Is the root a modal page?
+				else
+				{
+					// Is the root the window or is this part of a modal stack
+					var rootPage = this.FindParentWith(x => (x is IWindow te || Navigation.ModalStack.Contains(x)), true);
+
+					if (rootPage is Window w)
+					{
+						var toolbar = new NavigationPageToolbar(w, w.Page);
+						w.Toolbar = toolbar;
+					}
+					else if (rootPage is Page p)
+					{
+						var toolbar = new NavigationPageToolbar(p, p);
+						p.Toolbar = toolbar;
+					}
+				}
 			}
 		}
 
-		void CurrentPagePropertyChanged(object sender, PropertyChangedEventArgs e)
+		async Task SendHandlerUpdateAsync(
+			bool animated,
+			Action processStackChanges,
+			Action firePostNavigatingEvents,
+			Action fireNavigatedEvents)
 		{
-			if (e.IsOneOf(NavigationPage.HasNavigationBarProperty,
-				NavigationPage.HasBackButtonProperty,
-				NavigationPage.TitleIconImageSourceProperty,
-				NavigationPage.TitleViewProperty,
-				NavigationPage.IconColorProperty) ||
-				e.IsOneOf(Page.TitleProperty, PlatformConfiguration.AndroidSpecific.AppCompat.NavigationPage.BarHeightProperty))
+			if (!_setForMaui || this.IsShimmed())
 			{
-				Handler?.UpdateValue(e.PropertyName);
+				return;
 			}
-		}
 
+			processStackChanges?.Invoke();
 
-		Task WaitForCurrentNavigationTask() =>
-			CurrentNavigationTask ?? Task.CompletedTask;
+			if (Handler == null)
+			{
+				return;
+			}
 
-		// This is used for navigation events that don't effect the currently visible page
-		// InsertPageBefore/RemovePage
-		async void SendHandlerUpdate(bool animated)
-		{
-			await WaitForCurrentNavigationTask();
-			var trulyReadOnlyNavigationStack = new List<IView>(NavigationStack);
-			var request = new NavigationRequest(trulyReadOnlyNavigationStack, animated);
-			((INavigationView)this).RequestNavigation(request);
-		}
+			try
+			{
+				Interlocked.Increment(ref _waitingCount);
 
-		TaskCompletionSource<object> _taskCompletionSource;
+				// Wait for pending navigation tasks to finish
+				await SemaphoreSlim.WaitAsync();
 
-		async Task SendHandlerUpdateAsync(bool animated, bool push = false, bool pop = false, bool popToRoot = false)
-		{
-			// Wait for any pending navigation tasks to finish
-			await WaitForCurrentNavigationTask();
+				var currentNavRequestTaskSource = new TaskCompletionSource<object>();
+				_allPendingNavigationCompletionSource ??= new TaskCompletionSource<object>();
 
-			var completionSource = new TaskCompletionSource<object>();
-			CurrentNavigationTask = completionSource.Task;
-			_taskCompletionSource = completionSource;
+				if (CurrentNavigationTask == null)
+				{
+					CurrentNavigationTask = _allPendingNavigationCompletionSource.Task;
+				}
+				else if (CurrentNavigationTask != _allPendingNavigationCompletionSource.Task)
+				{
+					throw new InvalidOperationException("Pending Navigations still processing");
+				}
 
-			// We create a new list to send to the handler because the structure backing 
-			// The Navigation stack isn't immutable
-			var previousPage = CurrentPage;
-			var immutableNavigationStack = new List<IView>(NavigationStack);
+				_currentNavigationCompletionSource = currentNavRequestTaskSource;
 
-			// Alert currently visible pages that navigation is happening
-			SendNavigating();
+				// We create a new list to send to the handler because the structure backing 
+				// The Navigation stack isn't immutable
+				var immutableNavigationStack = new List<IView>(NavigationStack);
+				firePostNavigatingEvents?.Invoke();
 
-			// Create the request for the handler
-			var request = new NavigationRequest(immutableNavigationStack, animated);
-			((INavigationView)this).RequestNavigation(request);
+				// Create the request for the handler
+				var request = new NavigationRequest(immutableNavigationStack, animated);
+				((IStackNavigation)this).RequestNavigation(request);
 
-			// Wait for the handler to finish processing the navigation
-			await completionSource.Task;
+				// Wait for the handler to finish processing the navigation
+				// This task completes once the handler calls INavigationView.Finished
+				await currentNavRequestTaskSource.Task;
+			}
+			finally
+			{
+				if (Interlocked.Decrement(ref _waitingCount) == 0)
+				{
+					_allPendingNavigationCompletionSource.SetResult(new object());
+					_allPendingNavigationCompletionSource = null;
+				}
+
+				SemaphoreSlim.Release();
+			}
 
 			// Send navigated event to currently visible pages and associated navigation event
-			SendNavigated(previousPage);
-			if (push)
-				Pushed?.Invoke(this, new NavigationEventArgs(CurrentPage));
-			else if (pop)
-				Popped?.Invoke(this, new NavigationEventArgs(previousPage));
-			else
-				PoppedToRoot?.Invoke(this, new NavigationEventArgs(previousPage));
+			fireNavigatedEvents?.Invoke();
 		}
 
 		private protected override void OnHandlerChangedCore()
 		{
 			base.OnHandlerChangedCore();
-			var immutableNavigationStack = new List<IView>(NavigationStack);
-			SendNavigating();
-			var request = new NavigationRequest(immutableNavigationStack, false);
-			((INavigationView)this).RequestNavigation(request);
+
+			if (Handler == null && FindMyToolbar() is IToolbar tb)
+			{
+				tb.Handler = null;
+				if (tb.Parent is Window w)
+					w.Toolbar = null;
+				else if (tb.Parent is Page p)
+					p.Toolbar = null;
+			}
+
+			if (Navigation is MauiNavigationImpl && InternalChildren.Count > 0)
+			{
+				var navStack = Navigation.NavigationStack;
+				var visiblePage = Navigation.NavigationStack[NavigationStack.Count - 1];
+				RootPage = navStack[0];
+				CurrentPage = visiblePage;
+
+				SendHandlerUpdateAsync(false, null,
+				() =>
+				{
+					FireAppearing(CurrentPage);
+				},
+				() =>
+				{
+					SendNavigated(null);
+				})
+				.FireAndForget(Handler);
+			}
 		}
 
 		// Once we get all platforms over to the new APIs
@@ -192,13 +274,6 @@ namespace Microsoft.Maui.Controls
 				return _castingList.Value;
 			}
 
-
-			void SendHandlerUpdate(bool animated)
-			{
-				var request = new NavigationRequest(GetNavigationStack(), false);
-				Owner.Handler?.Invoke(nameof(INavigationView.RequestNavigation), request);
-			}
-
 			protected override void OnInsertPageBefore(Page page, Page before)
 			{
 				if (page == null)
@@ -213,45 +288,119 @@ namespace Microsoft.Maui.Controls
 				if (Owner.InternalChildren.Contains(page))
 					throw new ArgumentException("Cannot insert page which is already in the navigation stack");
 
-				int index = Owner.InternalChildren.IndexOf(before);
-				Owner.InternalChildren.Insert(index, page);
 
-				if (index == 0)
-					Owner.RootPage = page;
+				Owner.SendHandlerUpdateAsync(false,
+					() =>
+					{
+						int index = Owner.InternalChildren.IndexOf(before);
+						Owner.InternalChildren.Insert(index, page);
 
-				SendHandlerUpdate(false);
+						if (index == 0)
+							Owner.RootPage = page;
+					},
+					() =>
+					{
+					},
+					() =>
+					{
+						//// If no other pending operations happen
+						//// Then update the toolbar to match
+						//// the current navigation stack
+						//if (Owner._waitingCount == 0)
+						//	Owner.UpdateToolbar();
+
+					}).FireAndForget();
 			}
 
 			protected async override Task<Page> OnPopAsync(bool animated)
 			{
-				var page = (Page)Owner.InternalChildren.Last();
-				Owner.FireDisappearing(page);
+				if (Owner.InternalChildren.Count == 1)
+				{
+					return null;
+				}
 
-				if (Owner.InternalChildren.Last() == page)
-					Owner.FireAppearing((Page)Owner.InternalChildren[Owner.InternalChildren.Count - 2]);
+				var currentPage = NavigationStack[NavigationStack.Count - 1];
+				var newCurrentPage = NavigationStack[NavigationStack.Count - 2];
 
-				Owner.RemoveFromInnerChildren(page);
-				Owner.CurrentPage = (Page)Owner.InternalChildren.Last();
-				await Owner.SendHandlerUpdateAsync(animated, pop: true);
-				return page;
+				await Owner.SendHandlerUpdateAsync(animated,
+					() =>
+					{
+						Owner.RemoveFromInnerChildren(currentPage);
+						Owner.CurrentPage = newCurrentPage;
+					},
+					() =>
+					{
+						Owner.SendNavigating(currentPage);
+						Owner.FireDisappearing(currentPage);
+						Owner.FireAppearing(newCurrentPage);
+					},
+					() =>
+					{
+						Owner.SendNavigated(currentPage);
+						Owner?.Popped?.Invoke(Owner, new NavigationEventArgs(currentPage));
+					});
+
+				return currentPage;
 			}
 
 			protected override Task OnPopToRootAsync(bool animated)
 			{
-				Element[] childrenToRemove = Owner.InternalChildren.Skip(1).ToArray();
-				foreach (Element child in childrenToRemove)
-				{
-					Owner.RemoveFromInnerChildren(child);
-				}
+				if (NavigationStack.Count == 1)
+					return Task.CompletedTask;
 
-				Owner.CurrentPage = Owner.RootPage;
-				return Owner.SendHandlerUpdateAsync(animated, popToRoot: true);
+				Page previousPage = Owner.CurrentPage;
+				Page newPage = Owner.RootPage;
+				List<Page> pagesToRemove = new List<Page>();
+
+				return Owner.SendHandlerUpdateAsync(animated,
+					() =>
+					{
+						var lastIndex = NavigationStack.Count - 1;
+						while (lastIndex > 0)
+						{
+							var page = (Page)NavigationStack[lastIndex];
+							Owner.RemoveFromInnerChildren(page);
+							lastIndex = NavigationStack.Count - 1;
+							pagesToRemove.Insert(0, page);
+						}
+						Owner.CurrentPage = newPage;
+					},
+					() =>
+					{
+						Owner.SendNavigating(previousPage);
+						Owner.FireDisappearing(previousPage);
+						Owner.FireAppearing(newPage);
+					},
+					() =>
+					{
+						Owner.SendNavigated(previousPage);
+						Owner?.PoppedToRoot?.Invoke(Owner, new PoppedToRootEventArgs(newPage, pagesToRemove));
+					});
 			}
 
 			protected override Task OnPushAsync(Page root, bool animated)
 			{
-				Owner.PushPage(root);
-				return Owner.SendHandlerUpdateAsync(animated, push: true);
+				if (Owner.InternalChildren.Contains(root))
+					return Task.CompletedTask;
+
+				var previousPage = Owner.CurrentPage;
+
+				return Owner.SendHandlerUpdateAsync(animated,
+					() =>
+					{
+						Owner.PushPage(root);
+					},
+					() =>
+					{
+						Owner.SendNavigating(previousPage);
+						Owner.FireDisappearing(previousPage);
+						Owner.FireAppearing(root);
+					},
+					() =>
+					{
+						Owner.SendNavigated(previousPage);
+						Owner?.Pushed?.Invoke(Owner, new NavigationEventArgs(root));
+					});
 			}
 
 			protected override void OnRemovePage(Page page)
@@ -264,7 +413,7 @@ namespace Microsoft.Maui.Controls
 
 				if (page == Owner.CurrentPage)
 				{
-					Log.Warning("NavigationPage", "RemovePage called for CurrentPage object. This can result in undesired behavior, consider calling PopAsync instead.");
+					Application.Current?.FindMauiContext()?.CreateLogger<NavigationPage>()?.LogWarning("RemovePage called for CurrentPage object. This can result in undesired behavior, consider calling PopAsync instead.");
 					PopAsync();
 					return;
 				}
@@ -272,13 +421,26 @@ namespace Microsoft.Maui.Controls
 				if (!Owner.InternalChildren.Contains(page))
 					throw new ArgumentException("Page to remove must be contained on this Navigation Page");
 
-				Owner.RemoveFromInnerChildren(page);
+				Owner.SendHandlerUpdateAsync(false,
+					() =>
+					{
+						Owner.RemoveFromInnerChildren(page);
 
-				if (Owner.RootPage == page)
-					Owner.RootPage = (Page)Owner.InternalChildren.First();
+						if (Owner.RootPage == page)
+							Owner.RootPage = (Page)Owner.InternalChildren[0];
+					},
+					() =>
+					{
+					},
+					() =>
+					{
+						//// If no other pending operations happen
+						//// Then update the toolbar to match
+						//// the current navigation stack
+						//if (Owner._waitingCount == 0)
+						//	Owner.UpdateToolbar();
 
-
-				Owner.SendHandlerUpdate(false);
+					}).FireAndForget();
 			}
 		}
 	}

@@ -1,13 +1,15 @@
 #if __IOS__ || MACCATALYST
-using NativeView = UIKit.UIButton;
+using PlatformView = UIKit.UIButton;
 #elif __MACOS__
-using NativeView = AppKit.NSButton;
+using PlatformView = AppKit.NSButton;
 #elif MONOANDROID
-using NativeView = Google.Android.Material.Button.MaterialButton;
+using PlatformView = Google.Android.Material.Button.MaterialButton;
 #elif WINDOWS
-using NativeView = Microsoft.Maui.MauiButton;
-#elif NETSTANDARD || (NET6_0 && !IOS && !ANDROID)
-using NativeView = System.Object;
+using PlatformView = Microsoft.UI.Xaml.Controls.Button;
+#elif TIZEN
+using PlatformView = Tizen.UIExtensions.ElmSharp.Button;
+#elif (NETSTANDARD || !PLATFORM) || (NET6_0_OR_GREATER && !IOS && !ANDROID && !TIZEN)
+using PlatformView = System.Object;
 #endif
 
 namespace Microsoft.Maui.Handlers
@@ -16,38 +18,43 @@ namespace Microsoft.Maui.Handlers
 	{
 		ImageSourcePartLoader? _imageSourcePartLoader;
 		public ImageSourcePartLoader ImageSourceLoader =>
-			_imageSourcePartLoader ??= new ImageSourcePartLoader(this, () => VirtualView?.ImageSource, OnSetImageSource);
+			_imageSourcePartLoader ??= new ImageSourcePartLoader(this, () => (VirtualView as IImageButton), OnSetImageSource);
 
-		public static IPropertyMapper<ITextStyle, IButtonHandler> TextStyleMapper = new PropertyMapper<ITextStyle, IButtonHandler>(ViewHandler.ViewMapper)
+		public static IPropertyMapper<IImage, IButtonHandler> ImageButtonMapper = new PropertyMapper<IImage, IButtonHandler>()
+		{
+			[nameof(IImage.Source)] = MapImageSource
+		};
+
+		public static IPropertyMapper<ITextButton, IButtonHandler> TextButtonMapper = new PropertyMapper<ITextButton, IButtonHandler>()
 		{
 			[nameof(ITextStyle.CharacterSpacing)] = MapCharacterSpacing,
 			[nameof(ITextStyle.Font)] = MapFont,
 			[nameof(ITextStyle.TextColor)] = MapTextColor,
+			[nameof(IText.Text)] = MapText
 		};
 
-		public static IPropertyMapper<IText, IButtonHandler> TextMapper = new PropertyMapper<IText, IButtonHandler>(TextStyleMapper)
-		{
-			[nameof(IText.Text)] = MapText,
-		};
-
-		public static IPropertyMapper<IButton, IButtonHandler> Mapper = new PropertyMapper<IButton, IButtonHandler>(TextMapper)
+		public static IPropertyMapper<IButton, IButtonHandler> Mapper = new PropertyMapper<IButton, IButtonHandler>(TextButtonMapper, ImageButtonMapper, ViewHandler.ViewMapper)
 		{
 			[nameof(IButton.Background)] = MapBackground,
 			[nameof(IButton.Padding)] = MapPadding,
-			[nameof(IButton.ImageSource)] = MapImageSource
+			[nameof(IButtonStroke.StrokeThickness)] = MapStrokeThickness,
+			[nameof(IButtonStroke.StrokeColor)] = MapStrokeColor,
+			[nameof(IButtonStroke.CornerRadius)] = MapCornerRadius
 		};
 
-		public ButtonHandler() : base(Mapper)
+		public static CommandMapper<IButton, IButtonHandler> CommandMapper = new(ViewCommandMapper);
+
+		public ButtonHandler() : base(Mapper, CommandMapper)
 		{
 
 		}
 
-		public ButtonHandler(IPropertyMapper? mapper = null) : base(mapper ?? Mapper)
+		public ButtonHandler(IPropertyMapper? mapper = null) : base(mapper ?? Mapper, CommandMapper)
 		{
 		}
 
-		IButton IButtonHandler.TypedVirtualView => VirtualView;
+		IButton IButtonHandler.VirtualView => VirtualView;
 
-		NativeView IButtonHandler.TypedNativeView => NativeView;
+		PlatformView IButtonHandler.PlatformView => PlatformView;
 	}
 }

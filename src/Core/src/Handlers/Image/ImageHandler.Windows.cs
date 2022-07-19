@@ -8,26 +8,11 @@ namespace Microsoft.Maui.Handlers
 {
 	public partial class ImageHandler : ViewHandler<IImage, Image>
 	{
-		protected override Image CreateNativeView() => new Image();
+		protected override Image CreatePlatformView() => new Image();
 
-		protected override void ConnectHandler(Image nativeView)
+		protected override void DisconnectHandler(Image platformView)
 		{
-			base.ConnectHandler(nativeView);
-
-			nativeView.Loaded += OnNativeViewLoaded;
-			nativeView.Unloaded += OnNativeViewUnloaded;
-		}
-
-		protected override void DisconnectHandler(Image nativeView)
-		{
-			base.DisconnectHandler(nativeView);
-
-			if (nativeView.XamlRoot != null)
-				nativeView.XamlRoot.Changed -= OnXamlRootChanged;
-
-			nativeView.Loaded -= OnNativeViewLoaded;
-			nativeView.Unloaded -= OnNativeViewUnloaded;
-
+			base.DisconnectHandler(platformView);
 			SourceLoader.Reset();
 		}
 
@@ -38,50 +23,22 @@ namespace Microsoft.Maui.Handlers
 		public static void MapBackground(IImageHandler handler, IImage image)
 		{
 			handler.UpdateValue(nameof(IViewHandler.ContainerView));
-
-			handler.GetWrappedNativeView()?.UpdateBackground(image);
+			handler.ToPlatform().UpdateBackground(image);
 		}
 
 		public static void MapAspect(IImageHandler handler, IImage image) =>
-			handler.TypedNativeView?.UpdateAspect(image);
+			handler.PlatformView?.UpdateAspect(image);
 
 		public static void MapIsAnimationPlaying(IImageHandler handler, IImage image) =>
-			handler.TypedNativeView?.UpdateIsAnimationPlaying(image);
+			handler.PlatformView?.UpdateIsAnimationPlaying(image);
 
 		public static void MapSource(IImageHandler handler, IImage image) =>
 			MapSourceAsync(handler, image).FireAndForget(handler);
 
-		public static Task MapSourceAsync(IImageHandler handler, IImage image)
-		{
-			if (handler.NativeView == null)
-				return Task.CompletedTask;
+		public static Task MapSourceAsync(IImageHandler handler, IImage image) =>
+			handler.SourceLoader.UpdateImageSourceAsync();
 
-			handler.TypedNativeView.Clear();
-			return handler.SourceLoader.UpdateImageSourceAsync();
-		}
-
-		void OnSetImageSource(ImageSource? obj)
-		{
-			NativeView.Source = obj;
-		}
-
-		void OnNativeViewLoaded(object sender = null!, RoutedEventArgs e = null!)
-		{
-			if (NativeView?.XamlRoot != null)
-			{
-				NativeView.XamlRoot.Changed += OnXamlRootChanged;
-			}
-		}
-
-		void OnNativeViewUnloaded(object sender = null!, RoutedEventArgs e = null!)
-		{
-			if (NativeView?.XamlRoot != null)
-				NativeView.XamlRoot.Changed -= OnXamlRootChanged;
-		}
-
-		void OnXamlRootChanged(XamlRoot sender, XamlRootChangedEventArgs args)
-		{
-			UpdateValue(nameof(IImage.Source));
-		}
+		void OnSetImageSource(ImageSource? obj) =>
+			PlatformView.Source = obj;
 	}
 }

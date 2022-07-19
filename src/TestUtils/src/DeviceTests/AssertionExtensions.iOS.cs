@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CoreAnimation;
 using CoreGraphics;
 using Foundation;
+using Microsoft.Maui.Platform;
 using UIKit;
 using Xunit;
 using Xunit.Sdk;
@@ -12,28 +12,105 @@ namespace Microsoft.Maui.DeviceTests
 {
 	public static partial class AssertionExtensions
 	{
-		public static string CreateColorAtPointError(this UIImage bitmap, UIColor expectedColor, int x, int y)
+		public static string CreateColorAtPointError(this UIImage bitmap, UIColor expectedColor, int x, int y) =>
+			CreateColorError(bitmap, $"Expected {expectedColor} at point {x},{y} in renderered view.");
+
+		public static string CreateColorError(this UIImage bitmap, string message) =>
+			$"{message} This is what it looked like:<img>{bitmap.ToBase64String()}</img>";
+
+		public static string CreateEqualError(this UIImage bitmap, UIImage other, string message) =>
+			$"{message} This is what it looked like: <img>{bitmap.ToBase64String()}</img> and <img>{other.ToBase64String()}</img>";
+
+		public static string ToBase64String(this UIImage bitmap)
 		{
 			var data = bitmap.AsPNG();
-			var imageAsString = data.GetBase64EncodedString(Foundation.NSDataBase64EncodingOptions.None);
-			return $"Expected {expectedColor} at point {x},{y} in renderered view. This is what it looked like:<img>{imageAsString}</img>";
+			return data.GetBase64EncodedString(NSDataBase64EncodingOptions.None);
 		}
 
-		public static string CreateColorError(this UIImage bitmap, string message)
+		public static Task AttachAndRun(this UIView view, Action action) =>
+			view.AttachAndRun(() =>
+			{
+				action();
+				return Task.FromResult(true);
+			});
+
+		public static Task<T> AttachAndRun<T>(this UIView view, Func<T> action) =>
+			view.AttachAndRun(() =>
+			{
+				var result = action();
+				return Task.FromResult(result);
+			});
+
+		public static Task AttachAndRun(this UIView view, Func<Task> action) =>
+			view.AttachAndRun(async () =>
+			{
+				await action();
+				return true;
+			});
+
+		public static async Task<T> AttachAndRun<T>(this UIView view, Func<Task<T>> action)
 		{
-			var data = bitmap.AsPNG();
-			var imageAsString = data.GetBase64EncodedString(Foundation.NSDataBase64EncodingOptions.None);
-			return $"{message}. This is what it looked like:<img>{imageAsString}</img>";
+			var currentView = FindContentView();
+			currentView.AddSubview(view);
+
+			// Give the UI time to refresh
+			await Task.Delay(100);
+
+			var result = await action();
+
+			view.RemoveFromSuperview();
+
+			// Give the UI time to refresh
+			await Task.Delay(100);
+
+			return result;
 		}
 
-		// TODO: attach this view to the UI if anything breaks
-		public static Task AttachAndRun(this UIView view, Action action)
+		static UIView FindContentView()
 		{
-			action();
-			return Task.CompletedTask;
+			if (GetKeyWindow(UIApplication.SharedApplication) is not UIWindow window)
+			{
+				throw new InvalidOperationException("Could not attach view - unable to find UIWindow");
+			}
+
+			if (window.RootViewController is not UIViewController viewController)
+			{
+				throw new InvalidOperationException("Could not attach view - unable to find RootViewController");
+			}
+
+			while (viewController.PresentedViewController != null)
+			{
+				viewController = viewController.PresentedViewController;
+			}
+
+			if (viewController == null)
+			{
+				throw new InvalidOperationException("Could not attach view - unable to find presented ViewController");
+			}
+
+			if (viewController is UINavigationController nav)
+			{
+				viewController = nav.VisibleViewController;
+			}
+
+			var currentView = viewController.View;
+
+			if (currentView == null)
+			{
+				throw new InvalidOperationException("Could not attach view - unable to find visible view");
+			}
+
+			var attachParent = currentView.FindDescendantView<ContentView>() as UIView;
+
+			if (attachParent == null)
+			{
+				attachParent = currentView.FindDescendantView<UIView>();
+			}
+
+			return attachParent ?? currentView;
 		}
 
-		public static Task<UIImage> ToUIImage(this UIView view)
+		public static Task<UIImage> ToBitmap(this UIView view)
 		{
 			if (view.Superview is WrapperView wrapper)
 				view = wrapper;
@@ -136,48 +213,48 @@ namespace Microsoft.Maui.DeviceTests
 
 		public static async Task<UIImage> AssertColorAtPoint(this UIView view, UIColor expectedColor, int x, int y)
 		{
-			var bitmap = await view.ToUIImage();
+			var bitmap = await view.ToBitmap();
 			return bitmap.AssertColorAtPoint(expectedColor, x, y);
 		}
 
 		public static async Task<UIImage> AssertColorAtCenter(this UIView view, UIColor expectedColor)
 		{
-			var bitmap = await view.ToUIImage();
+			var bitmap = await view.ToBitmap();
 			return bitmap.AssertColorAtCenter(expectedColor);
 		}
 
 		public static async Task<UIImage> AssertColorAtBottomLeft(this UIView view, UIColor expectedColor)
 		{
-			var bitmap = await view.ToUIImage();
+			var bitmap = await view.ToBitmap();
 			return bitmap.AssertColorAtBottomLeft(expectedColor);
 		}
 
 		public static async Task<UIImage> AssertColorAtBottomRight(this UIView view, UIColor expectedColor)
 		{
-			var bitmap = await view.ToUIImage();
+			var bitmap = await view.ToBitmap();
 			return bitmap.AssertColorAtBottomRight(expectedColor);
 		}
 
 		public static async Task<UIImage> AssertColorAtTopLeft(this UIView view, UIColor expectedColor)
 		{
-			var bitmap = await view.ToUIImage();
+			var bitmap = await view.ToBitmap();
 			return bitmap.AssertColorAtTopLeft(expectedColor);
 		}
 
 		public static async Task<UIImage> AssertColorAtTopRight(this UIView view, UIColor expectedColor)
 		{
-			var bitmap = await view.ToUIImage();
+			var bitmap = await view.ToBitmap();
 			return bitmap.AssertColorAtTopRight(expectedColor);
 		}
 
 		public static async Task<UIImage> AssertContainsColor(this UIView view, UIColor expectedColor)
 		{
-			var bitmap = await view.ToUIImage();
+			var bitmap = await view.ToBitmap();
 			return bitmap.AssertContainsColor(expectedColor);
 		}
 
 		public static Task<UIImage> AssertContainsColor(this UIView view, Microsoft.Maui.Graphics.Color expectedColor) =>
-			AssertContainsColor(view, expectedColor.ToNative());
+			AssertContainsColor(view, expectedColor.ToPlatform());
 
 		public static UIImage AssertContainsColor(this UIImage bitmap, UIColor expectedColor)
 		{
@@ -196,7 +273,35 @@ namespace Microsoft.Maui.DeviceTests
 			return bitmap;
 		}
 
-		public static UILineBreakMode ToNative(this LineBreakMode mode) =>
+		public static Task AssertEqual(this UIImage bitmap, UIImage other)
+		{
+			Assert.NotNull(bitmap);
+			Assert.NotNull(other);
+
+			Assert.Equal(bitmap.Size, other.Size);
+
+			Assert.True(IsMatching(), CreateEqualError(bitmap, other, $"Images did not match."));
+
+			return Task.CompletedTask;
+
+			bool IsMatching()
+			{
+				for (int x = 0; x < bitmap.Size.Width; x++)
+				{
+					for (int y = 0; y < bitmap.Size.Height; y++)
+					{
+						var first = bitmap.ColorAtPoint(x, y);
+						var second = other.ColorAtPoint(x, y);
+
+						if (!ColorComparison.ARGBEquivalent(first, second))
+							return false;
+					}
+				}
+				return true;
+			}
+		}
+
+		public static UILineBreakMode ToPlatform(this LineBreakMode mode) =>
 			mode switch
 			{
 				LineBreakMode.NoWrap => UILineBreakMode.Clip,
@@ -255,22 +360,56 @@ namespace Microsoft.Maui.DeviceTests
 
 		public static void AssertEqual(this CATransform3D expected, CATransform3D actual, int precision = 4)
 		{
-			Assert.Equal((double)expected.m11, (double)actual.m11, precision);
-			Assert.Equal((double)expected.m12, (double)actual.m12, precision);
-			Assert.Equal((double)expected.m13, (double)actual.m13, precision);
-			Assert.Equal((double)expected.m14, (double)actual.m14, precision);
-			Assert.Equal((double)expected.m21, (double)actual.m21, precision);
-			Assert.Equal((double)expected.m22, (double)actual.m22, precision);
-			Assert.Equal((double)expected.m23, (double)actual.m23, precision);
-			Assert.Equal((double)expected.m24, (double)actual.m24, precision);
-			Assert.Equal((double)expected.m31, (double)actual.m31, precision);
-			Assert.Equal((double)expected.m32, (double)actual.m32, precision);
-			Assert.Equal((double)expected.m33, (double)actual.m33, precision);
-			Assert.Equal((double)expected.m34, (double)actual.m34, precision);
-			Assert.Equal((double)expected.m41, (double)actual.m41, precision);
-			Assert.Equal((double)expected.m42, (double)actual.m42, precision);
-			Assert.Equal((double)expected.m43, (double)actual.m43, precision);
-			Assert.Equal((double)expected.m44, (double)actual.m44, precision);
+			Assert.Equal((double)expected.M11, (double)actual.M11, precision);
+			Assert.Equal((double)expected.M12, (double)actual.M12, precision);
+			Assert.Equal((double)expected.M13, (double)actual.M13, precision);
+			Assert.Equal((double)expected.M14, (double)actual.M14, precision);
+			Assert.Equal((double)expected.M21, (double)actual.M21, precision);
+			Assert.Equal((double)expected.M22, (double)actual.M22, precision);
+			Assert.Equal((double)expected.M23, (double)actual.M23, precision);
+			Assert.Equal((double)expected.M24, (double)actual.M24, precision);
+			Assert.Equal((double)expected.M31, (double)actual.M31, precision);
+			Assert.Equal((double)expected.M32, (double)actual.M32, precision);
+			Assert.Equal((double)expected.M33, (double)actual.M33, precision);
+			Assert.Equal((double)expected.M34, (double)actual.M34, precision);
+			Assert.Equal((double)expected.M41, (double)actual.M41, precision);
+			Assert.Equal((double)expected.M42, (double)actual.M42, precision);
+			Assert.Equal((double)expected.M43, (double)actual.M43, precision);
+			Assert.Equal((double)expected.M44, (double)actual.M44, precision);
+		}
+
+		static UIWindow? GetKeyWindow(UIApplication application)
+		{
+			if (OperatingSystem.IsIOSVersionAtLeast(15))
+			{
+				foreach (var scene in application.ConnectedScenes)
+				{
+					if (scene is UIWindowScene windowScene
+						&& windowScene.ActivationState == UISceneActivationState.ForegroundActive)
+					{
+						foreach (var window in windowScene.Windows)
+						{
+							if (window.IsKeyWindow)
+							{
+								return window;
+							}
+						}
+					}
+				}
+
+				return null;
+			}
+
+			var windows = application.Windows;
+
+			for (int i = 0; i < windows.Length; i++)
+			{
+				var window = windows[i];
+				if (window.IsKeyWindow)
+					return window;
+			}
+
+			return null;
 		}
 	}
 }

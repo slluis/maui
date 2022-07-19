@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Maui.Graphics;
+using ObjCRuntime;
 using UIKit;
 
-namespace Microsoft.Maui.Platform.iOS
+namespace Microsoft.Maui.Platform
 {
 	public static class UIPageControlExtensions
 	{
@@ -31,9 +32,9 @@ namespace Microsoft.Maui.Platform.iOS
 			=> pageControl.Pages = pageCount;
 
 		public static void UpdatePagesIndicatorTintColor(this UIPageControl pageControl, IIndicatorView indicatorView)
-			=> pageControl.PageIndicatorTintColor = indicatorView.IndicatorColor?.ToColor()?.ToNative();
+			=> pageControl.PageIndicatorTintColor = indicatorView.IndicatorColor?.ToColor()?.ToPlatform();
 
 		public static void UpdateCurrentPagesIndicatorTintColor(this UIPageControl pageControl, IIndicatorView indicatorView)
-			=> pageControl.CurrentPageIndicatorTintColor = indicatorView.SelectedIndicatorColor?.ToColor()?.ToNative();
+			=> pageControl.CurrentPageIndicatorTintColor = indicatorView.SelectedIndicatorColor?.ToColor()?.ToPlatform();
 	}
 }

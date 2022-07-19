@@ -1,34 +1,4 @@
 <Project>
-  <PropertyGroup>
-    <_UseNet6Packages Condition=" '$(TargetFramework.Contains(net6.0))' == 'true' or '$(PackageType)' == 'DotnetPlatform' ">true</_UseNet6Packages>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(_UseNet6Packages)' != 'true' ">
-    <SystemCodeDomPackageVersion>4.7.0</SystemCodeDomPackageVersion>
-  </PropertyGroup>
-   <!-- Microsoft.Maui.Graphics related Packages -->
-  <PropertyGroup>
-    <MicrosoftGraphicsWin2DVersion>1.0.0.26-experimental1</MicrosoftGraphicsWin2DVersion>
-    <MicrosoftMauiGraphicsVersion>6.0.101-preview.9.512</MicrosoftMauiGraphicsVersion>
-  </PropertyGroup>
-   <!-- WINUI related Packages -->
-  <PropertyGroup>
-    <_MicrosoftWindowsAppSdkVersion>1.0.0-experimental1</_MicrosoftWindowsAppSdkVersion>
-    <_MicrosoftWebWebView2Version>1.0.961.33</_MicrosoftWebWebView2Version>
-  </PropertyGroup>
-  <!-- Android related Packages -->
-  <PropertyGroup>
-    <_XamarinAndroidGlideVersion>4.12.0.2</_XamarinAndroidGlideVersion>
-  </PropertyGroup>
-  <!-- SkiaSharp related Packages -->
-  <PropertyGroup>
-    <_SkiaSharpVersion>2.88.0-preview.145</_SkiaSharpVersion>
-    <_HarfBuzzSharpVersion>2.8.2-preview.145</_HarfBuzzSharpVersion>
-    <_SkiaSharpNativeAssetsVersion>0.0.0-commit.7533b54bb17a4dbc0c837e47eb4615b3ff2d26ed.145</_SkiaSharpNativeAssetsVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0-ios' Or '$(TargetFramework)' == 'net6.0-maccatalyst'">
-    <!-- Debugger workaround -->
-    <MtouchExtraArgs>$(MtouchExtraArgs) --setenv:MONO_THREADS_SUSPEND=preemptive</MtouchExtraArgs>
-  </PropertyGroup>
   <ItemGroup>
     <PackageReference
         Update="Microsoft.Maui.Graphics"
@@ -39,77 +9,77 @@
          Version="$(MicrosoftMauiGraphicsVersion)"
     />
     <PackageReference
+         Update="Microsoft.Maui.Graphics.Skia"
+         Version="$(MicrosoftMauiGraphicsVersion)"
+    />
+    <PackageReference
+         Update="System.Numerics.Vectors"
+         Version="$(SystemNumericsVectorsVersion)"
+    />
+    <PackageReference
         Update="Microsoft.Extensions.Configuration"
-        Version="$(MicrosoftExtensionsConfigurationPackageVersion)"
+        Version="$(MicrosoftExtensionsServicingPackageVersion)"
     />
     <PackageReference
         Update="Microsoft.Extensions.Configuration.Abstractions"
-        Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)"
+        Version="$(MicrosoftExtensionsPackageVersion)"
+    />
+    <PackageReference
+        Update="Microsoft.Extensions.Configuration.Json"
+        Version="$(MicrosoftExtensionsPackageVersion)"
     />
     <PackageReference
         Update="Microsoft.Extensions.DependencyInjection"
-        Version="$(MicrosoftExtensionsDependencyInjectionPackageVersion)"
+        Version="$(MicrosoftExtensionsPackageVersion)"
     />
     <PackageReference
         Update="Microsoft.Extensions.DependencyInjection.Abstractions"
-        Version="$(MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion)"
+        Version="$(MicrosoftExtensionsPackageVersion)"
     />
     <PackageReference
         Update="Microsoft.Extensions.FileProviders.Abstractions"
-        Version="$(MicrosoftExtensionsFileProvidersAbstractionsPackageVersion)"
-    />
-    <PackageReference
-        Update="Microsoft.Extensions.Hosting"
-        Version="$(MicrosoftExtensionsHostingPackageVersion)"
-    />
-    <PackageReference
-        Update="Microsoft.Extensions.Hosting.Abstractions"
-        Version="$(MicrosoftExtensionsHostingAbstractionsPackageVersion)"
+        Version="$(MicrosoftExtensionsPackageVersion)"
     />
     <PackageReference
         Update="Microsoft.Extensions.Logging.Abstractions"
-        Version="$(MicrosoftExtensionsLoggingAbstractionsPackageVersion)"
+        Version="$(MicrosoftExtensionsServicingPackageVersion)"
     />
     <PackageReference
         Update="Microsoft.Extensions.Logging"
-        Version="$(MicrosoftExtensionsLoggingPackageVersion)"
+        Version="$(MicrosoftExtensionsPackageVersion)"
     />
     <PackageReference
         Update="Microsoft.Extensions.Logging.Console"
-        Version="$(MicrosoftExtensionsLoggingConsolePackageVersion)"
+        Version="$(MicrosoftExtensionsPackageVersion)"
     />
     <PackageReference
         Update="Microsoft.Extensions.Logging.Debug"
-        Version="$(MicrosoftExtensionsLoggingDebugPackageVersion)"
+        Version="$(MicrosoftExtensionsPackageVersion)"
     />
     <PackageReference
         Update="Microsoft.Extensions.Primitives"
-        Version="$(MicrosoftExtensionsPrimitivesPackageVersion)"
+        Version="$(MicrosoftExtensionsPackageVersion)"
     />
     <PackageReference
         Update="Microsoft.WindowsAppSDK"
-        Version="$(_MicrosoftWindowsAppSdkVersion)"
-    />
-    <PackageReference
-        Update="Microsoft.WindowsAppSDK.Foundation"
-        Version="$(_MicrosoftWindowsAppSdkVersion)"
-    />
-    <PackageReference
-        Update="Microsoft.WindowsAppSDK.WinUI"
-        Version="$(_MicrosoftWindowsAppSdkVersion)"
-    />
-    <PackageReference
-        Update="Microsoft.WindowsAppSDK.InteractiveExperiences"
-        Version="$(_MicrosoftWindowsAppSdkVersion)"
-        NoWarn="NU1701"
+        Version="$(MicrosoftWindowsAppSDKPackageVersion)"
+        NoWarn="NU1605"
     />
     <PackageReference
         Update="Microsoft.Graphics.Win2D"
-        Version="$(MicrosoftGraphicsWin2DVersion)"
+        Version="$(MicrosoftGraphicsWin2DPackageVersion)"
     />
     <PackageReference
         Update="Xamarin.Android.Glide"
         Version="$(_XamarinAndroidGlideVersion)"
+    />
+    <PackageReference
+        Update="Xamarin.AndroidX.Security.SecurityCrypto"
+        Version="$(_XamarinAndroidXSecurityVersion)"
+    />
+    <PackageReference
+        Update="Xamarin.Google.Crypto.Tink.Android"
+        Version="$(_XamarinGoogleCryptoTinkAndroidVersion)"
     />
     <PackageReference
         Update="Microsoft.AspNetCore.Authorization"
@@ -135,15 +105,37 @@
         Update="Microsoft.Web.WebView2"
         Version="$(_MicrosoftWebWebView2Version)"
     />
+    <PackageReference
+        Update="Microsoft.CodeAnalysis.PublicApiAnalyzers"
+        Version="$(MicrosoftCodeAnalysisPublicApiAnalyzersVersion)"
+    />
+    <PackageReference
+        Update="Tizen.UIExtensions.ElmSharp"
+        Version="$(TizenUIExtensionsVersion)"
+    />
+    <PackageReference
+        Update="Svg.Skia"
+        Version="$(SvgSkiaPackageVersion)"
+    />
+    <PackageReference
+        Update="Svg.Custom"
+        Version="$(SvgSkiaPackageVersion)"
+    />
+    <PackageReference
+        Update="Svg.Picture"
+        Version="$(SvgSkiaPackageVersion)"
+    />
+    <PackageReference
+        Update="Svg.Model"
+        Version="$(SvgSkiaPackageVersion)"
+    />
+    <PackageReference
+        Update="ShimSkiaSharp"
+        Version="$(SvgSkiaPackageVersion)"
+    />
+    <PackageReference
+        Update="Fizzler"
+        Version="$(FizzlerPackageVersion)"
+    />
   </ItemGroup>
-
-  <!-- Workaround for https://github.com/dotnet/sdk/issues/18148 where an analyzer from a new version of a package
-       is not found in the older version of that same package. So we just remove usage of the analyzer entirely
-       because we don't use it in this repo.  -->
-  <Target Name="RemoveLoggingAnalyzer" BeforeTargets="CoreCompile">
-    <ItemGroup>
-      <Analyzer Remove="@(Analyzer)" Condition="%(FileName) == 'Microsoft.Extensions.Logging.Generators'" />
-      <Analyzer Remove="@(Analyzer)" Condition="%(FileName) == 'System.Text.Json.SourceGeneration' and '$(BuildForLegacy)' == 'true'" />
-    </ItemGroup>
-  </Target>
 </Project>

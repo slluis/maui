@@ -23,8 +23,13 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 			var child = new Label();
 			Page root = new ContentPage { Content = child };
 
+			Assert.AreEqual(root, child.Parent);
+
 			Assert.AreEqual(((IElementController)root).LogicalChildren.Count, 1);
 			Assert.AreSame(((IElementController)root).LogicalChildren.First(), child);
+
+			((ContentPage)root).Content = null;
+			Assert.Null(child.Parent);
 		}
 
 		[Test]
@@ -34,7 +39,8 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 			Page root = new ContentPage { Content = child };
 			root.IsPlatformEnabled = child.IsPlatformEnabled = true;
 
-			root.Layout(new Rectangle(0, 0, 200, 500));
+			root.Layout(new Rect(0, 0, 200, 500));
+
 
 			Assert.AreEqual(child.Width, 200);
 			Assert.AreEqual(child.Height, 500);
@@ -46,7 +52,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 			var child = new Label { IsPlatformEnabled = true, WidthRequest = 100, HorizontalOptions = LayoutOptions.Center };
 			var root = new ContentPage { IsPlatformEnabled = true, Content = child };
 
-			root.Layout(new Rectangle(0, 0, 200, 500));
+			root.Layout(new Rect(0, 0, 200, 500));
 
 			Assert.AreEqual(50, child.X);
 			Assert.AreEqual(100, child.Width);
@@ -65,7 +71,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 				Content = child
 			};
 
-			root.Layout(new Rectangle(0, 0, 200, 500));
+			root.Layout(new Rect(0, 0, 200, 500));
 
 			Assert.AreEqual(0, child.X);
 			Assert.AreEqual(200, child.Y);
@@ -82,7 +88,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 				IsPlatformEnabled = true
 			};
 
-			root.Layout(new Rectangle(0, 0, 200, 500));
+			root.Layout(new Rect(0, 0, 200, 500));
 
 			Assert.AreEqual(0, child.X);
 			Assert.AreEqual(0, child.Y);
@@ -96,7 +102,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 			var child = new Label { IsPlatformEnabled = true, HorizontalOptions = LayoutOptions.Center };
 			var root = new ContentPage { IsPlatformEnabled = true, Content = child };
 
-			root.Layout(new Rectangle(0, 0, 200, 500));
+			root.Layout(new Rect(0, 0, 200, 500));
 
 			Assert.AreEqual(50, child.X);
 			Assert.AreEqual(100, child.Width);
@@ -114,7 +120,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 				Content = child
 			};
 
-			root.Layout(new Rectangle(0, 0, 200, 500));
+			root.Layout(new Rect(0, 0, 200, 500));
 
 			Assert.AreEqual(0, child.X);
 			Assert.AreEqual(240, child.Y);
@@ -162,13 +168,13 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 				IsPlatformEnabled = true,
 			};
 
-			page.Layout(new Rectangle(0, 0, 800, 800));
+			page.Layout(new Rect(0, 0, 800, 800));
 
-			Assert.AreEqual(new Rectangle(0, 0, 800, 800), child.Bounds);
+			Assert.AreEqual(new Rect(0, 0, 800, 800), child.Bounds);
 
-			page.Layout(new Rectangle(0, 0, 50, 50));
+			page.Layout(new Rect(0, 0, 50, 50));
 
-			Assert.AreEqual(new Rectangle(0, 0, 50, 50), child.Bounds);
+			Assert.AreEqual(new Rect(0, 0, 50, 50), child.Bounds);
 		}
 
 		[Test]
@@ -188,13 +194,13 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 				IsPlatformEnabled = true,
 			};
 
-			page.Layout(new Rectangle(0, 0, 800, 800));
+			page.Layout(new Rect(0, 0, 800, 800));
 
-			Assert.AreEqual(new Rectangle(0, 0, 100, 200), child.Bounds);
+			Assert.AreEqual(new Rect(0, 0, 100, 200), child.Bounds);
 
-			page.Layout(new Rectangle(0, 0, 50, 50));
+			page.Layout(new Rect(0, 0, 50, 50));
 
-			Assert.AreEqual(new Rectangle(0, 0, 50, 50), child.Bounds);
+			Assert.AreEqual(new Rect(0, 0, 50, 50), child.Bounds);
 		}
 
 		[Test]
@@ -214,13 +220,13 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 				IsPlatformEnabled = true,
 			};
 
-			page.Layout(new Rectangle(0, 0, 800, 800));
+			page.Layout(new Rect(0, 0, 800, 800));
 
-			Assert.AreEqual(new Rectangle(700, 600, 100, 200), child.Bounds);
+			Assert.AreEqual(new Rect(700, 600, 100, 200), child.Bounds);
 
-			page.Layout(new Rectangle(0, 0, 50, 50));
+			page.Layout(new Rect(0, 0, 50, 50));
 
-			Assert.AreEqual(new Rectangle(0, 0, 50, 50), child.Bounds);
+			Assert.AreEqual(new Rect(0, 0, 50, 50), child.Bounds);
 		}
 
 		[Test]
@@ -240,13 +246,13 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 				IsPlatformEnabled = true,
 			};
 
-			page.Layout(new Rectangle(0, 0, 800, 800));
+			page.Layout(new Rect(0, 0, 800, 800));
 
-			Assert.AreEqual(new Rectangle(350, 300, 100, 200), child.Bounds);
+			Assert.AreEqual(new Rect(350, 300, 100, 200), child.Bounds);
 
-			page.Layout(new Rectangle(0, 0, 50, 50));
+			page.Layout(new Rect(0, 0, 50, 50));
 
-			Assert.AreEqual(new Rectangle(0, 0, 50, 50), child.Bounds);
+			Assert.AreEqual(new Rect(0, 0, 50, 50), child.Bounds);
 		}
 
 		[Test]
@@ -264,16 +270,16 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 				IsPlatformEnabled = true,
 			};
 
-			page.Layout(new Rectangle(0, 0, 800, 800));
+			page.Layout(new Rect(0, 0, 800, 800));
 
-			Assert.AreEqual(new Rectangle(0, 0, 800, 800), child.Bounds);
-			((IPageController)page).ContainerArea = new Rectangle(10, 10, 30, 30);
+			Assert.AreEqual(new Rect(0, 0, 800, 800), child.Bounds);
+			((IPageController)page).ContainerArea = new Rect(10, 10, 30, 30);
 
-			Assert.AreEqual(new Rectangle(10, 10, 30, 30), child.Bounds);
+			Assert.AreEqual(new Rect(10, 10, 30, 30), child.Bounds);
 
-			page.Layout(new Rectangle(0, 0, 50, 50));
+			page.Layout(new Rect(0, 0, 50, 50));
 
-			Assert.AreEqual(new Rectangle(10, 10, 30, 30), child.Bounds);
+			Assert.AreEqual(new Rect(10, 10, 30, 30), child.Bounds);
 		}
 
 		[Test]
@@ -329,7 +335,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 
 			Assert.That(sent, Is.False, "Busy message sent while not visible");
 
-			((IPageController)page).SendAppearing();
+			_ = new Window(page);
 
 			Assert.That(sent, Is.True, "Busy message not sent when visible");
 		}
@@ -338,6 +344,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 		public void BusySentWhenBusyPageDisappears()
 		{
 			var page = new ContentPage { IsBusy = true };
+			_ = new Window(page);
 			((IPageController)page).SendAppearing();
 
 			var sent = false;
@@ -359,6 +366,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 			MessagingCenter.Subscribe<Page, bool>(this, Page.BusySetSignalName, (p, b) => sent = true);
 
 			var page = new ContentPage();
+			_ = new Window(page);
 			((IPageController)page).SendAppearing();
 
 			Assert.That(sent, Is.False, "Busy message sent appearing while not busy");
@@ -457,7 +465,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 			bool sent = false;
 			page.Appearing += (sender, args) => sent = true;
 
-			((IPageController)page).SendAppearing();
+			_ = new Window(page);
 
 			Assert.True(sent);
 		}
@@ -466,6 +474,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 		public void SendDisappearing()
 		{
 			var page = new ContentPage();
+			_ = new Window(page);
 
 			((IPageController)page).SendAppearing();
 
@@ -485,7 +494,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 			int countAppearing = 0;
 			page.Appearing += (sender, args) => countAppearing++;
 
-			((IPageController)page).SendAppearing();
+			_ = new Window(page);
 			((IPageController)page).SendAppearing();
 
 			Assert.That(countAppearing, Is.EqualTo(1));
@@ -515,7 +524,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 			};
 			navPage.Appearing += (sender, e) => sentNav = true;
 
-			((IPageController)navPage).SendAppearing();
+			_ = new Window(navPage);
 
 			Assert.True(sentNav);
 			Assert.True(sent);
@@ -528,6 +537,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 			var page = new ContentPage();
 
 			var navPage = new NavigationPage(page);
+			_ = new Window(navPage);
 			((IPageController)navPage).SendAppearing();
 
 			bool sentNav = false;

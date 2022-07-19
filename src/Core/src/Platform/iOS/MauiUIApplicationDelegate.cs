@@ -3,84 +3,81 @@ using Foundation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.Hosting;
 using Microsoft.Maui.LifecycleEvents;
+using ObjCRuntime;
 using UIKit;
 
 namespace Microsoft.Maui
 {
-	public abstract class MauiUIApplicationDelegate : UIApplicationDelegate, IUIApplicationDelegate
+	public abstract partial class MauiUIApplicationDelegate : UIResponder, IUIApplicationDelegate, IPlatformApplication
 	{
-		MauiContext _applicationContext = null!;
-		WeakReference<IWindow>? _virtualWindow;
+		internal const string MauiSceneConfigurationKey = "__MAUI_DEFAULT_SCENE_CONFIGURATION__";
+		internal const string GetConfigurationSelectorName = "application:configurationForConnectingSceneSession:options:";
 
-		internal IWindow? VirtualWindow
-		{
-			get
-			{
-				IWindow? window = null;
-				_virtualWindow?.TryGetTarget(out window);
-				return window;
-			}
-		}
+		IMauiContext _applicationContext = null!;
 
-		protected MauiUIApplicationDelegate()
+		protected MauiUIApplicationDelegate() : base()
 		{
 			Current = this;
+			IPlatformApplication.Current = this;
 		}
 
 		protected abstract MauiApp CreateMauiApp();
 
-		public override bool WillFinishLaunching(UIApplication application, NSDictionary launchOptions)
+		[Export("application:willFinishLaunchingWithOptions:")]
+		public virtual bool WillFinishLaunching(UIApplication application, NSDictionary launchOptions)
 		{
 			var mauiApp = CreateMauiApp();
 
-			Services = mauiApp.Services;
+			var rootContext = new MauiContext(mauiApp.Services);
 
-			_applicationContext = new MauiContext(Services, this);
+			_applicationContext = rootContext.MakeApplicationScope(this);
+
+			Services = _applicationContext.Services;
 
 			Services?.InvokeLifecycleEvents<iOSLifecycle.WillFinishLaunching>(del => del(application, launchOptions));
 
 			return true;
 		}
 
-		public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
+		[Export("application:didFinishLaunchingWithOptions:")]
+		public virtual bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
 		{
 			Application = Services.GetRequiredService<IApplication>();
 
 			this.SetApplicationHandler(Application, _applicationContext);
 
-			var uiWindow = CreateNativeWindow();
+			// if there is no scene delegate or support for scene delegates, then we set up the window here
+			if (!this.HasSceneManifest())
+				this.CreatePlatformWindow(Application, application, launchOptions);
 
-			Window = uiWindow;
-
-			Window.MakeKeyAndVisible();
-
-			Services?.InvokeLifecycleEvents<iOSLifecycle.FinishedLaunching>(del => del(application, launchOptions));
+			Services?.InvokeLifecycleEvents<iOSLifecycle.FinishedLaunching>(del => del(application!, launchOptions!));
 
 			return true;
 		}
 
-		UIWindow CreateNativeWindow()
+		public override bool RespondsToSelector(Selector? sel)
 		{
-			var uiWindow = new UIWindow();
+			// if the app is not a multi-window app, then we cannot override the GetConfiguration method
+			if (sel?.Name == GetConfigurationSelectorName && !this.HasSceneManifest())
+				return false;
 
-			var mauiContext = _applicationContext.MakeScoped(uiWindow);
-
-			Services?.InvokeLifecycleEvents<iOSLifecycle.OnMauiContextCreated>(del => del(mauiContext));
-
-			var activationState = new ActivationState(mauiContext);
-			var window = Application.CreateWindow(activationState);
-			_virtualWindow = new WeakReference<IWindow>(window);
-			uiWindow.SetWindowHandler(window, mauiContext);
-
-			return uiWindow;
+			return base.RespondsToSelector(sel);
 		}
 
-		public override void PerformActionForShortcutItem(UIApplication application, UIApplicationShortcutItem shortcutItem, UIOperationHandler completionHandler)
+		[Export("application:configurationForConnectingSceneSession:options:")]
+		[System.Runtime.Versioning.SupportedOSPlatform("ios13.1")]
+		[System.Runtime.Versioning.SupportedOSPlatform("tvos13.1")]
+		public virtual UISceneConfiguration GetConfiguration(UIApplication application, UISceneSession connectingSceneSession, UISceneConnectionOptions options)
+			=> new(MauiUIApplicationDelegate.MauiSceneConfigurationKey, connectingSceneSession.Role);
+
+		[Export("application:performActionForShortcutItem:completionHandler:")]
+		public virtual void PerformActionForShortcutItem(UIApplication application, UIApplicationShortcutItem shortcutItem, UIOperationHandler completionHandler)
 		{
 			Services?.InvokeLifecycleEvents<iOSLifecycle.PerformActionForShortcutItem>(del => del(application, shortcutItem, completionHandler));
 		}
 
-		public override bool OpenUrl(UIApplication application, NSUrl url, NSDictionary options)
+		[Export("application:openURL:options:")]
+		public virtual bool OpenUrl(UIApplication application, NSUrl url, NSDictionary options)
 		{
 			var wasHandled = false;
 
@@ -89,10 +86,11 @@ namespace Microsoft.Maui
 				wasHandled = del(application, url, options) || wasHandled;
 			});
 
-			return wasHandled || base.OpenUrl(application, url, options);
+			return wasHandled;
 		}
 
-		public override bool ContinueUserActivity(UIApplication application, NSUserActivity userActivity, UIApplicationRestorationHandler completionHandler)
+		[Export("application:continueUserActivity:restorationHandler:")]
+		public virtual bool ContinueUserActivity(UIApplication application, NSUserActivity userActivity, UIApplicationRestorationHandler completionHandler)
 		{
 			var wasHandled = false;
 
@@ -101,37 +99,43 @@ namespace Microsoft.Maui
 				wasHandled = del(application, userActivity, completionHandler) || wasHandled;
 			});
 
-			return wasHandled || base.ContinueUserActivity(application, userActivity, completionHandler);
+			return wasHandled;
 		}
 
-		public override void OnActivated(UIApplication application)
+		[Export("applicationDidBecomeActive:")]
+		public virtual void OnActivated(UIApplication application)
 		{
 			Services?.InvokeLifecycleEvents<iOSLifecycle.OnActivated>(del => del(application));
 		}
 
-		public override void OnResignActivation(UIApplication application)
+		[Export("applicationWillResignActive:")]
+		public virtual void OnResignActivation(UIApplication application)
 		{
 			Services?.InvokeLifecycleEvents<iOSLifecycle.OnResignActivation>(del => del(application));
 		}
 
-		public override void WillTerminate(UIApplication application)
+		[Export("applicationWillTerminate:")]
+		public virtual void WillTerminate(UIApplication application)
 		{
 			Services?.InvokeLifecycleEvents<iOSLifecycle.WillTerminate>(del => del(application));
 		}
 
-		public override void DidEnterBackground(UIApplication application)
+		[Export("applicationDidEnterBackground:")]
+		public virtual void DidEnterBackground(UIApplication application)
 		{
 			Services?.InvokeLifecycleEvents<iOSLifecycle.DidEnterBackground>(del => del(application));
 		}
 
-		public override void WillEnterForeground(UIApplication application)
+		[Export("applicationWillEnterForeground:")]
+		public virtual void WillEnterForeground(UIApplication application)
 		{
 			Services?.InvokeLifecycleEvents<iOSLifecycle.WillEnterForeground>(del => del(application));
 		}
 
 		public static MauiUIApplicationDelegate Current { get; private set; } = null!;
 
-		public override UIWindow? Window { get; set; }
+		[Export("window")]
+		public virtual UIWindow? Window { get; set; }
 
 		public IServiceProvider Services { get; protected set; } = null!;
 

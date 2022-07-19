@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Maui.Graphics;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace Microsoft.Maui.Controls.Core.UnitTests
@@ -11,20 +12,6 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 	[TestFixture]
 	public class ScrollViewUnitTests : BaseTestFixture
 	{
-		[SetUp]
-		public override void Setup()
-		{
-			base.Setup();
-			Device.PlatformServices = new MockPlatformServices();
-		}
-
-		[TearDown]
-		public override void TearDown()
-		{
-			base.TearDown();
-			Device.PlatformServices = null;
-		}
-
 		[Test]
 		public void TestConstructor()
 		{
@@ -43,7 +30,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 		[TestCase(ScrollOrientation.Both)]
 		public void GetsCorrectSizeRequestWithWrappingContent(ScrollOrientation orientation)
 		{
-			Device.PlatformServices = new MockPlatformServices(getNativeSizeFunc: null, useRealisticLabelMeasure: true);
+			MockPlatformSizeService.Current.UseRealisticLabelMeasure = true;
 
 			var scrollView = new ScrollView
 			{
@@ -69,185 +56,6 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 			var r = scrollView.Measure(100, 100);
 
 			Assert.AreEqual(10, r.Request.Height);
-		}
-
-		[Test]
-		public void TestContentSizeChangedVertical()
-		{
-			View view = new View { IsPlatformEnabled = true, WidthRequest = 100, HeightRequest = 100 };
-
-			ScrollView scroll = new ScrollView { Content = view };
-			scroll.Layout(new Rectangle(0, 0, 50, 50));
-
-			Assert.AreEqual(new Size(50, 100), scroll.ContentSize);
-
-			bool changed = false;
-			scroll.PropertyChanged += (sender, e) =>
-			{
-				switch (e.PropertyName)
-				{
-					case "ContentSize":
-						changed = true;
-						break;
-				}
-			};
-
-			view.HeightRequest = 200;
-
-			Assert.True(changed);
-			Assert.AreEqual(new Size(50, 200), scroll.ContentSize);
-		}
-
-		[Test]
-		public void TestContentSizeChangedVerticalBidirectional()
-		{
-			View view = new View { IsPlatformEnabled = true, WidthRequest = 100, HeightRequest = 100 };
-
-			ScrollView scroll = new ScrollView { Content = view, Orientation = ScrollOrientation.Both };
-			scroll.Layout(new Rectangle(0, 0, 50, 50));
-
-			Assert.AreEqual(new Size(100, 100), scroll.ContentSize);
-
-			bool changed = false;
-			scroll.PropertyChanged += (sender, e) =>
-			{
-				switch (e.PropertyName)
-				{
-					case "ContentSize":
-						changed = true;
-						break;
-				}
-			};
-
-			view.HeightRequest = 200;
-
-			Assert.True(changed);
-			Assert.AreEqual(new Size(100, 200), scroll.ContentSize);
-		}
-
-		[Test]
-		public void TestContentSizeChangedHorizontal()
-		{
-			View view = new View { IsPlatformEnabled = true, WidthRequest = 100, HeightRequest = 100 };
-
-			var scroll = new ScrollView
-			{
-				Orientation = ScrollOrientation.Horizontal,
-				Content = view
-			};
-			scroll.Layout(new Rectangle(0, 0, 50, 50));
-
-			Assert.AreEqual(new Size(100, 50), scroll.ContentSize);
-
-			bool changed = false;
-			scroll.PropertyChanged += (sender, e) =>
-			{
-				switch (e.PropertyName)
-				{
-					case "ContentSize":
-						changed = true;
-						break;
-				}
-			};
-
-			view.WidthRequest = 200;
-
-			Assert.True(changed);
-			Assert.AreEqual(new Size(200, 50), scroll.ContentSize);
-		}
-
-		[Test]
-		public void TestContentSizeChangedHorizontalBidirectional()
-		{
-			View view = new View { IsPlatformEnabled = true, WidthRequest = 100, HeightRequest = 100 };
-
-			var scroll = new ScrollView
-			{
-				Orientation = ScrollOrientation.Both,
-				Content = view
-			};
-			scroll.Layout(new Rectangle(0, 0, 50, 50));
-
-			Assert.AreEqual(new Size(100, 100), scroll.ContentSize);
-
-			bool changed = false;
-			scroll.PropertyChanged += (sender, e) =>
-			{
-				switch (e.PropertyName)
-				{
-					case "ContentSize":
-						changed = true;
-						break;
-				}
-			};
-
-			view.WidthRequest = 200;
-
-			Assert.True(changed);
-			Assert.AreEqual(new Size(200, 100), scroll.ContentSize);
-		}
-
-		[Test]
-		public void TestContentSizeDidNotChangeNeither()
-		{
-			View view = new View { IsPlatformEnabled = true, WidthRequest = 100, HeightRequest = 100 };
-
-			var scroll = new ScrollView
-			{
-				Orientation = ScrollOrientation.Neither,
-				Content = view
-			};
-
-			var originalBounds = new Rectangle(0, 0, 50, 50);
-
-			scroll.Layout(originalBounds);
-
-			Assert.That(originalBounds.Size, Is.EqualTo(scroll.ContentSize));
-
-			bool changed = false;
-			scroll.PropertyChanged += (sender, e) =>
-			{
-				switch (e.PropertyName)
-				{
-					case "ContentSize":
-						changed = true;
-						break;
-				}
-			};
-
-			view.WidthRequest = 200;
-
-			Assert.That(changed, Is.False);
-			Assert.That(originalBounds.Size, Is.EqualTo(scroll.ContentSize));
-		}
-
-		[Test]
-		public void TestContentSizeClamping()
-		{
-			View view = new View { IsPlatformEnabled = true, WidthRequest = 100, HeightRequest = 100 };
-
-			var scroll = new ScrollView
-			{
-				Orientation = ScrollOrientation.Horizontal,
-				Content = view,
-			};
-			scroll.Layout(new Rectangle(0, 0, 50, 50));
-
-			bool changed = false;
-			scroll.PropertyChanged += (sender, e) =>
-			{
-				switch (e.PropertyName)
-				{
-					case "ContentSize":
-						changed = true;
-						break;
-				}
-			};
-
-			view.HeightRequest = 200;
-
-			Assert.False(changed);
-			Assert.AreEqual(new Size(100, 50), scroll.ContentSize);
 		}
 
 		[Test]
@@ -288,6 +96,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 
 			Assert.True(changed);
 			Assert.AreEqual(child, scrollView.Content);
+			Assert.AreEqual(child.Parent, scrollView);
 
 			changed = false;
 
@@ -299,6 +108,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 
 			Assert.True(changed);
 			Assert.Null(scrollView.Content);
+			Assert.Null(child.Parent);
 		}
 
 		[Test]
@@ -477,57 +287,6 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 		}
 
 		[Test]
-		public void TestScrollContentMarginHorizontal()
-		{
-			View view = new View { IsPlatformEnabled = true, Margin = 100, WidthRequest = 100, HeightRequest = 100 };
-
-			var scroll = new ScrollView
-			{
-				Content = view,
-				Orientation = ScrollOrientation.Horizontal,
-			};
-			scroll.Layout(new Rectangle(0, 0, 100, 100));
-
-			Assert.AreEqual(new Size(300, 100), scroll.ContentSize);
-			Assert.AreEqual(100, scroll.Height);
-			Assert.AreEqual(100, scroll.Width);
-		}
-
-		[Test]
-		public void TestScrollContentMarginVertical()
-		{
-			View view = new View { IsPlatformEnabled = true, Margin = 100, WidthRequest = 100, HeightRequest = 100 };
-
-			var scroll = new ScrollView
-			{
-				Content = view,
-				Orientation = ScrollOrientation.Vertical,
-			};
-			scroll.Layout(new Rectangle(0, 0, 100, 100));
-
-			Assert.AreEqual(new Size(100, 300), scroll.ContentSize);
-			Assert.AreEqual(100, scroll.Height);
-			Assert.AreEqual(100, scroll.Width);
-		}
-
-		[Test]
-		public void TestScrollContentMarginBiDirectional()
-		{
-			View view = new View { IsPlatformEnabled = true, Margin = 100, WidthRequest = 100, HeightRequest = 100 };
-
-			var scroll = new ScrollView
-			{
-				Content = view,
-				Orientation = ScrollOrientation.Both,
-			};
-			scroll.Layout(new Rectangle(0, 0, 100, 100));
-
-			Assert.AreEqual(new Size(300, 300), scroll.ContentSize);
-			Assert.AreEqual(100, scroll.Height);
-			Assert.AreEqual(100, scroll.Width);
-		}
-
-		[Test]
 		public void TestBackToBackBiDirectionalScroll()
 		{
 			var scrollView = new ScrollView
@@ -555,6 +314,12 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 
 			scrollView.ScrollToAsync(0, 100, true);
 			Assert.AreEqual(y100Count, 2);
+		}
+
+		void AssertInvalidated(IViewHandler handler)
+		{
+			handler.Received().Invoke(Arg.Is(nameof(IView.InvalidateMeasure)), Arg.Any<object>());
+			handler.ClearReceivedCalls();
 		}
 	}
 }

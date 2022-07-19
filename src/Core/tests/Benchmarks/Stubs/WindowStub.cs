@@ -6,6 +6,10 @@ namespace Microsoft.Maui.Handlers.Benchmarks
 	{
 		public IView Content { get; set; }
 
+		public IVisualDiagnosticsOverlay VisualDiagnosticsOverlay { get; }
+
+		public System.Collections.Generic.IReadOnlyCollection<IWindowOverlay> Overlays { get; }
+
 		public string Title { get; set; }
 
 		public bool IsCreated { get; set; }
@@ -50,6 +54,18 @@ namespace Microsoft.Maui.Handlers.Benchmarks
 			IsResumed = false;
 		}
 
-		public bool BackButtonPressed() => true;
+		public void Backgrounding(IPersistedState state)
+		{
+		}
+
+		public bool AddOverlay(IWindowOverlay overlay) => false;
+
+		public bool RemoveOverlay(IWindowOverlay overlay) => false;
+
+		public bool BackButtonClicked() => true;
+
+		public float RequestDisplayDensity() => 1.0f;
+
+		public virtual void DisplayDensityChanged(float displayDensity) { }
 	}
 }

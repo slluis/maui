@@ -1,126 +1,157 @@
 ﻿using Microsoft.Maui.Graphics;
 using AView = Android.Views.View;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static class StrokeExtensions
 	{
-		public static void UpdateStrokeShape(this AView nativeView, IBorder border)
+		public static void UpdateBorderStroke(this AView platformView, IBorderStroke border)
+		{
+			// Always set the drawable first
+			platformView.UpdateMauiDrawable(border);
+
+			var borderShape = border.Shape;
+			MauiDrawable? mauiDrawable = platformView.Background as MauiDrawable;
+
+			if (mauiDrawable == null && borderShape == null)
+				return;
+
+			mauiDrawable?.SetBorderBrush(border.Stroke);
+			mauiDrawable?.SetBorderWidth(border.StrokeThickness);
+			platformView.UpdateStrokeDashPattern(border);
+			platformView.UpdateStrokeDashOffset(border);
+			mauiDrawable?.SetBorderMiterLimit(border.StrokeMiterLimit);
+			mauiDrawable?.SetBorderLineCap(border.StrokeLineCap);
+			mauiDrawable?.SetBorderLineJoin(border.StrokeLineJoin);
+
+		}
+
+		public static void UpdateStrokeShape(this AView platformView, IBorderStroke border)
 		{
 			var borderShape = border.Shape;
-			MauiDrawable? background = nativeView.Background as MauiDrawable;
+			MauiDrawable? mauiDrawable = platformView.Background as MauiDrawable;
 
-			if (background == null && borderShape == null)
+			if (mauiDrawable == null && borderShape == null)
 				return;
 
-			nativeView.UpdateMauiDrawable(border);
+			platformView.UpdateMauiDrawable(border);
 		}
 
-		public static void UpdateStroke(this AView nativeView, IBorder border)
+		public static void UpdateStroke(this AView platformView, IBorderStroke border)
 		{
 			var stroke = border.Stroke;
-			MauiDrawable? background = nativeView.Background as MauiDrawable;
+			MauiDrawable? mauiDrawable = platformView.Background as MauiDrawable;
 
-			if (background == null && stroke.IsNullOrEmpty())
+			if (mauiDrawable == null && stroke.IsNullOrEmpty())
 				return;
 
-			nativeView.UpdateMauiDrawable(border);
+			platformView.UpdateMauiDrawable(border);
+			mauiDrawable?.SetBorderBrush(border.Stroke);
 		}
 
-		public static void UpdateStrokeThickness(this AView nativeView, IBorder border)
+		public static void UpdateStrokeThickness(this AView platformView, IBorderStroke border)
 		{
-			MauiDrawable? background = nativeView.Background as MauiDrawable;
+			MauiDrawable? mauiDrawable = platformView.Background as MauiDrawable;
 			bool hasBorder = border.Shape != null && border.Stroke != null;
 
-			if (background == null && !hasBorder)
+			if (mauiDrawable == null && !hasBorder)
 				return;
 
-			nativeView.UpdateMauiDrawable(border);
+			mauiDrawable?.SetBorderWidth(border.StrokeThickness);
 		}
 
-		public static void UpdateStrokeDashPattern(this AView nativeView, IBorder border)
+		public static void UpdateStrokeDashPattern(this AView platformView, IBorderStroke border)
 		{
 			var strokeDashPattern = border.StrokeDashPattern;
-			MauiDrawable? background = nativeView.Background as MauiDrawable;
+			MauiDrawable? mauiDrawable = platformView.Background as MauiDrawable;
 
 			bool hasBorder = border.Shape != null && border.Stroke != null;
 
-			if (background == null && !hasBorder && (strokeDashPattern == null || strokeDashPattern.Length == 0))
+			if (mauiDrawable == null && !hasBorder && (strokeDashPattern == null || strokeDashPattern.Length == 0))
 				return;
 
-			nativeView.UpdateMauiDrawable(border);
+			mauiDrawable?.SetBorderDash(border.StrokeDashPattern, border.StrokeDashOffset);
 		}
 
-		public static void UpdateStrokeDashOffset(this AView nativeView, IBorder border)
+		public static void UpdateStrokeDashOffset(this AView platformView, IBorderStroke border)
 		{
-			MauiDrawable? background = nativeView.Background as MauiDrawable;
+			MauiDrawable? mauiDrawable = platformView.Background as MauiDrawable;
 
 			bool hasBorder = border.Shape != null && border.Stroke != null;
 
-			if (background == null && !hasBorder)
+			if (mauiDrawable == null && !hasBorder)
 				return;
 
-			nativeView.UpdateMauiDrawable(border);
+			mauiDrawable?.SetBorderDash(border.StrokeDashPattern, border.StrokeDashOffset);
 		}
 
-		public static void UpdateStrokeMiterLimit(this AView nativeView, IBorder border)
+		public static void UpdateStrokeMiterLimit(this AView platformView, IBorderStroke border)
 		{
-			MauiDrawable? background = nativeView.Background as MauiDrawable;
+			MauiDrawable? mauiDrawable = platformView.Background as MauiDrawable;
 
 			bool hasBorder = border.Shape != null && border.Stroke != null;
 
-			if (background == null && !hasBorder)
+			if (mauiDrawable == null && !hasBorder)
 				return;
 
-			nativeView.UpdateMauiDrawable(border);
+			mauiDrawable?.SetBorderMiterLimit(border.StrokeMiterLimit);
 		}
 
-		public static void UpdateStrokeLineCap(this AView nativeView, IBorder border)
+		public static void UpdateStrokeLineCap(this AView platformView, IBorderStroke border)
 		{
-			MauiDrawable? background = nativeView.Background as MauiDrawable;
+			MauiDrawable? mauiDrawable = platformView.Background as MauiDrawable;
 			bool hasBorder = border.Shape != null && border.Stroke != null;
 
-			if (background == null && !hasBorder)
+			if (mauiDrawable == null && !hasBorder)
 				return;
 
-			nativeView.UpdateMauiDrawable(border);
+			mauiDrawable?.SetBorderLineCap(border.StrokeLineCap);
 		}
 
-		public static void UpdateStrokeLineJoin(this AView nativeView, IBorder border)
+		public static void UpdateStrokeLineJoin(this AView platformView, IBorderStroke border)
 		{
-			MauiDrawable? background = nativeView.Background as MauiDrawable;
+			MauiDrawable? mauiDrawable = platformView.Background as MauiDrawable;
 			bool hasBorder = border.Shape != null && border.Stroke != null;
 
-			if (background == null && !hasBorder)
+			if (mauiDrawable == null && !hasBorder)
 				return;
 
-			nativeView.UpdateMauiDrawable(border);
+			mauiDrawable?.SetBorderLineJoin(border.StrokeLineJoin);
 		}
 
-		internal static void UpdateMauiDrawable(this AView nativeView, IBorder border)
+		public static void InvalidateBorderStrokeBounds(this AView platformView)
 		{
-			bool hasBorder = border.Shape != null && border.Stroke != null;
+			if (platformView.Background is not MauiDrawable mauiDrawable)
+				return;
+
+			mauiDrawable.InvalidateBorderBounds();
+		}
+
+		internal static void UpdateMauiDrawable(this AView platformView, IBorderStroke border)
+		{
+			bool hasBorder = border.Shape != null;
 
 			if (!hasBorder)
 				return;
 
-			MauiDrawable? mauiDrawable = nativeView.Background as MauiDrawable;
+			MauiDrawable? mauiDrawable = platformView.Background as MauiDrawable;
 
 			if (mauiDrawable == null)
 			{
-				mauiDrawable = new MauiDrawable(nativeView.Context);
+				mauiDrawable = new MauiDrawable(platformView.Context);
 
-				nativeView.Background = mauiDrawable;
+				platformView.Background = mauiDrawable;
 			}
 
-			mauiDrawable.SetBackground(border.Background);
-			mauiDrawable.SetBorderBrush(border.Stroke);
-			mauiDrawable.SetBorderWidth(border.StrokeThickness);
-			mauiDrawable.SetBorderDash(border.StrokeDashPattern, border.StrokeDashOffset);
-			mauiDrawable.SetBorderMiterLimit(border.StrokeMiterLimit);
-			mauiDrawable.SetBorderLineJoin(border.StrokeLineJoin);
-			mauiDrawable.SetBorderLineCap(border.StrokeLineCap);
+			if (border is IView v)
+				mauiDrawable.SetBackground(v.Background);
+			else
+				mauiDrawable.SetBackground(new SolidPaint(Colors.Transparent));
+
 			mauiDrawable.SetBorderShape(border.Shape);
+
+			if (platformView is ContentViewGroup contentViewGroup)
+				contentViewGroup.Clip = border;
 		}
 	}
 }

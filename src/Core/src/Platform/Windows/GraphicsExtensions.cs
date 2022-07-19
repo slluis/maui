@@ -3,7 +3,7 @@ using System;
 using Microsoft.Maui.Graphics;
 using Microsoft.UI.Xaml.Media;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static class GraphicsExtensions
 	{
@@ -66,7 +66,7 @@ namespace Microsoft.Maui
 						endAngle += 360;
 					}
 
-					var sweep = Graphics.Geometry.GetSweep(startAngle, endAngle, clockwise);
+					var sweep = GeometryUtil.GetSweep(startAngle, endAngle, clockwise);
 					var absSweep = Math.Abs(sweep);
 
 					var rectX = topLeft.X * scale;
@@ -74,8 +74,8 @@ namespace Microsoft.Maui
 					var rectWidth = bottomRight.X * scale - topLeft.X * scale;
 					var rectHeight = bottomRight.Y * scale - topLeft.Y * scale;
 
-					var startPoint = Graphics.Geometry.EllipseAngleToPoint(rectX, rectY, rectWidth, rectHeight, -startAngle);
-					var endPoint = Graphics.Geometry.EllipseAngleToPoint(rectX, rectY, rectWidth, rectHeight, -endAngle);
+					var startPoint = GeometryUtil.EllipseAngleToPoint(rectX, rectY, rectWidth, rectHeight, -startAngle);
+					var endPoint = GeometryUtil.EllipseAngleToPoint(rectX, rectY, rectWidth, rectHeight, -endAngle);
 
 					if (figure == null)
 					{
@@ -110,14 +110,14 @@ namespace Microsoft.Maui
 			return geometry;
 		}
 
-		public static Windows.Foundation.Point AsPoint(this PointF target)
+		public static global::Windows.Foundation.Point AsPoint(this PointF target)
 		{
-			return new Windows.Foundation.Point(target.X, target.Y);
+			return new global::Windows.Foundation.Point(target.X, target.Y);
 		}
 
-		public static Windows.Foundation.Point AsPoint(this PointF target, float ppu)
+		public static global::Windows.Foundation.Point AsPoint(this PointF target, float ppu)
 		{
-			return new Windows.Foundation.Point(target.X * ppu, target.Y * ppu);
+			return new global::Windows.Foundation.Point(target.X * ppu, target.Y * ppu);
 		}
 	}
 }

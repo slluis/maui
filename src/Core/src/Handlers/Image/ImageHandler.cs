@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Threading;
 #if __IOS__ || MACCATALYST
-using NativeView = UIKit.UIImageView;
+using PlatformView = UIKit.UIImageView;
 #elif __MACOS__
-using NativeView = AppKit.NSImageView;
+using PlatformView = AppKit.NSImageView;
 #elif MONOANDROID
-using NativeView = Android.Widget.ImageView;
+using PlatformView = Android.Widget.ImageView;
 #elif WINDOWS
-using NativeView = Microsoft.UI.Xaml.Controls.Image;
-#elif NETSTANDARD || (NET6_0 && !IOS && !ANDROID)
-using NativeView = System.Object;
+using PlatformView = Microsoft.UI.Xaml.Controls.Image;
+#elif TIZEN
+using PlatformView = Tizen.UIExtensions.ElmSharp.Image;
+#elif (NETSTANDARD || !PLATFORM) || (NET6_0_OR_GREATER && !IOS && !ANDROID && !TIZEN)
+using PlatformView = System.Object;
 #endif
 
 namespace Microsoft.Maui.Handlers
@@ -18,7 +20,7 @@ namespace Microsoft.Maui.Handlers
 	{
 		public static IPropertyMapper<IImage, IImageHandler> Mapper = new PropertyMapper<IImage, IImageHandler>(ViewHandler.ViewMapper)
 		{
-#if __ANDROID__
+#if __ANDROID__ || WINDOWS || TIZEN
 			[nameof(IImage.Background)] = MapBackground,
 #endif
 			[nameof(IImage.Aspect)] = MapAspect,
@@ -44,8 +46,8 @@ namespace Microsoft.Maui.Handlers
 
 
 		// TODO MAUI: Should we remove all shadowing? 
-		IImage IImageHandler.TypedVirtualView => VirtualView;
+		IImage IImageHandler.VirtualView => VirtualView;
 
-		NativeView IImageHandler.TypedNativeView => NativeView;
+		PlatformView IImageHandler.PlatformView => PlatformView;
 	}
 }

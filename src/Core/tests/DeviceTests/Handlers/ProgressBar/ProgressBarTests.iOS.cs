@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Handlers;
+using ObjCRuntime;
 using UIKit;
 using Xunit;
 
@@ -10,7 +11,7 @@ namespace Microsoft.Maui.DeviceTests
 	public partial class ProgressBarHandlerTests
 	{
 		UIProgressView GetNativeProgressBar(ProgressBarHandler progressBarHandler) =>
-			progressBarHandler.NativeView;
+			progressBarHandler.PlatformView;
 
 		double GetNativeProgress(ProgressBarHandler progressBarHandler) =>
 			GetNativeProgressBar(progressBarHandler).Progress;

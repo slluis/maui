@@ -3,10 +3,11 @@ using System;
 using CoreAnimation;
 using CoreGraphics;
 using Microsoft.Maui.Graphics;
-using Microsoft.Maui.Graphics.Native;
+using Microsoft.Maui.Graphics.Platform;
+using ObjCRuntime;
 using UIKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public class MauiCALayer : CALayer
 	{
@@ -52,7 +53,7 @@ namespace Microsoft.Maui
 
 			var clipPath = GetClipPath();
 
-			if (clipPath != null)
+			if (clipPath! != null!)
 				ctx.AddPath(clipPath);
 
 			ctx.Clip();
@@ -89,7 +90,7 @@ namespace Microsoft.Maui
 			if (solidPaint.Color == null)
 				SetDefaultBackgroundColor();
 			else
-				_backgroundColor = solidPaint.Color.ToNative();
+				_backgroundColor = solidPaint.Color.ToPlatform();
 
 			_background = null;
 
@@ -144,7 +145,7 @@ namespace Microsoft.Maui
 		{
 			_strokeColor = solidPaint.Color == null
 				? UIColor.Clear
-				: solidPaint.Color.ToNative();
+				: solidPaint.Color.ToPlatform();
 
 			_stroke = null;
 
@@ -295,7 +296,7 @@ namespace Microsoft.Maui
 				ctx.SetFillColor(_backgroundColor.CGColor);
 				var clipPath = GetClipPath();
 
-				if (clipPath != null)
+				if (clipPath! != null!)
 					ctx.AddPath(clipPath);
 
 				ctx.DrawPath(CGPathDrawingMode.Fill);
@@ -318,7 +319,7 @@ namespace Microsoft.Maui
 
 			var clipPath = GetClipPath();
 
-			if (clipPath != null)
+			if (clipPath! != null!)
 				ctx.AddPath(clipPath);
 
 			if (_stroke != null)

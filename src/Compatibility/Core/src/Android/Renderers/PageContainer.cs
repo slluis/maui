@@ -2,11 +2,13 @@ using System;
 using Android.Content;
 using Android.Runtime;
 using Android.Views;
+using AndroidX.CoordinatorLayout.Widget;
 using AndroidX.Fragment.App;
 using Microsoft.Maui.Handlers;
 
 namespace Microsoft.Maui.Controls.Compatibility.Platform.Android
 {
+	[System.Obsolete]
 	internal class PageContainer : ViewGroup
 	{
 		bool _disposed;
@@ -32,7 +34,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.Android
 			Child.UpdateLayout();
 
 			if (Child.View is ContentViewGroup ||
-				Child.View is NavigationLayout ||
+				Child.View is CoordinatorLayout ||
 				Child.View is FragmentContainerView)
 			{
 				// This is a way to handle situations where the root page is shimmed and uses fragments to host other pages (e.g., NavigationPageRenderer)

@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <UsingMicrosoftMauiControlsSdk>true</UsingMicrosoftMauiControlsSdk>
+    <UsingMicrosoftMauiSdk>true</UsingMicrosoftMauiSdk>
   </PropertyGroup>
 
   <!-- Imported last -->

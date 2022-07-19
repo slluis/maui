@@ -1,11 +1,12 @@
 ﻿using Microsoft.Maui.Graphics;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public partial class WrapperView
 	{
 		IShape? _clip;
 		IShadow? _shadow;
+		IBorderStroke? _border;
 
 #if WINDOWS
 		public new IShape? Clip
@@ -16,9 +17,6 @@ namespace Microsoft.Maui
 			get => _clip;
 			set
 			{
-				if (_clip == value)
-					return;
-
 				_clip = value;
 				ClipChanged();
 			}
@@ -40,8 +38,18 @@ namespace Microsoft.Maui
 				ShadowChanged();
 			}
 		}
+		public IBorderStroke? Border
+		{
+			get => _border;
+			set
+			{
+				_border = value;
+				BorderChanged();
+			}
+		}
 
 		partial void ClipChanged();
 		partial void ShadowChanged();
+		partial void BorderChanged();
 	}
 }

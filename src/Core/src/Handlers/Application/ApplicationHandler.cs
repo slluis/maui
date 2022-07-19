@@ -1,14 +1,17 @@
 using System;
+using System.Runtime.Versioning;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 #if __IOS__ || MACCATALYST
-using NativeView = UIKit.UIApplicationDelegate;
+using PlatformView = UIKit.IUIApplicationDelegate;
 #elif __MACOS__
-using NativeView = AppKit.NSApplicationDelegate;
+using PlatformView = AppKit.NSApplicationDelegate;
 #elif MONOANDROID
-using NativeView = Android.App.Application;
+using PlatformView = Android.App.Application;
 #elif WINDOWS
-using NativeView = Microsoft.UI.Xaml.Application;
+using PlatformView = Microsoft.UI.Xaml.Application;
+#elif TIZEN
+using PlatformView = Tizen.Applications.CoreApplication;
 #endif
 
 namespace Microsoft.Maui.Handlers
@@ -23,7 +26,11 @@ namespace Microsoft.Maui.Handlers
 
 		public static CommandMapper<IApplication, ApplicationHandler> CommandMapper = new(ElementCommandMapper)
 		{
-			[TerminateCommandKey] = MapTerminate
+			[TerminateCommandKey] = MapTerminate,
+#pragma warning disable CA1416 // TODO: should we propogate SupportedOSPlatform("ios13.0") here
+			[nameof(IApplication.OpenWindow)] = MapOpenWindow,
+			[nameof(IApplication.CloseWindow)] = MapCloseWindow,
+#pragma warning restore CA1416
 		};
 
 		ILogger<ApplicationHandler>? _logger;
@@ -41,9 +48,9 @@ namespace Microsoft.Maui.Handlers
 		ILogger? Logger =>
 			_logger ??= MauiContext?.Services.CreateLogger<ApplicationHandler>();
 
-#if !NETSTANDARD
-		protected override NativeView CreateNativeElement() =>
-			MauiContext?.Services.GetService<NativeView>() ?? throw new InvalidOperationException($"MauiContext did not have a valid application.");
+#if !(NETSTANDARD || !PLATFORM)
+		protected override PlatformView CreatePlatformElement() =>
+			MauiContext?.Services.GetService<PlatformView>() ?? throw new InvalidOperationException($"MauiContext did not have a valid application.");
 #endif
 	}
 }

@@ -2,7 +2,9 @@ using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls.Compatibility.Platform.UWP;
+using Microsoft.Maui.Dispatching;
 using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Platform;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using NUnit.Framework;
@@ -57,7 +59,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UAP.UnitTests
 
 		async Task<WColor> GetNativeColor(View view)
 		{
-			return await Device.InvokeOnMainThreadAsync(() =>
+			return await view.Dispatcher.DispatchAsync(() =>
 			{
 				var control = GetNativeControl(view);
 
@@ -94,7 +96,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UAP.UnitTests
 			var frame = new Frame() { BackgroundColor = Colors.Orange };
 			var expectedColor = frame.BackgroundColor.ToWindowsColor();
 
-			var actualColor = await Device.InvokeOnMainThreadAsync(() =>
+			var actualColor = await frame.Dispatcher.DispatchAsync(() =>
 			{
 				var renderer = GetRenderer(frame);
 				var nativeElement = renderer.GetNativeElement() as WBorder;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -8,104 +6,96 @@ using Microsoft.UI.Xaml.Media;
 
 namespace Microsoft.Maui.Handlers
 {
-	public partial class ImageButtonHandler : ViewHandler<IImageButton, MauiButton>
+	public partial class ImageButtonHandler : ViewHandler<IImageButton, Button>
 	{
+		Image? _image;
 
 		PointerEventHandler? _pointerPressedHandler;
-		Image? _image;
-		protected override MauiButton CreateNativeView()
+
+		protected override Button CreatePlatformView()
 		{
-			_image = new Image()
+			_image = new Image
 			{
-				VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Center,
-				HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center,
+				VerticalAlignment = VerticalAlignment.Center,
+				HorizontalAlignment = HorizontalAlignment.Center,
 				Stretch = Stretch.Uniform,
 			};
 
-			var mauiButton = new MauiButton()
+			var platformImageButton = new Button
 			{
+				VerticalAlignment = VerticalAlignment.Stretch,
+				HorizontalAlignment = HorizontalAlignment.Stretch,
 				Content = _image
 			};
 
-			mauiButton.Padding = WinUIHelpers.CreateThickness(0);
-			mauiButton.BorderThickness = WinUIHelpers.CreateThickness(0);
-			mauiButton.Background = null;
-
-			return mauiButton;
+			return platformImageButton;
 		}
 
-		protected override void ConnectHandler(MauiButton nativeView)
+		protected override void ConnectHandler(Button platformView)
 		{
 			_pointerPressedHandler = new PointerEventHandler(OnPointerPressed);
 
-			nativeView.Click += OnClick;
-			nativeView.AddHandler(UI.Xaml.UIElement.PointerPressedEvent, _pointerPressedHandler, true);
-
 			if (_image != null)
 			{
-				_image.ImageFailed += OnImageFailed;
 				_image.ImageOpened += OnImageOpened;
+				_image.ImageFailed += OnImageFailed;
 			}
 
-			base.ConnectHandler(nativeView);
+			platformView.Click += OnClick;
+			platformView.AddHandler(UIElement.PointerPressedEvent, _pointerPressedHandler, true);
 
-			nativeView.Loaded += OnNativeViewLoaded;
-			nativeView.Unloaded += OnNativeViewUnloaded;
+			base.ConnectHandler(platformView);
 		}
 
-		protected override void DisconnectHandler(MauiButton nativeView)
+		protected override void DisconnectHandler(Button platformView)
 		{
-			nativeView.Click -= OnClick;
-			nativeView.RemoveHandler(UI.Xaml.UIElement.PointerPressedEvent, _pointerPressedHandler);
+			if (_image != null)
+			{
+				_image.ImageOpened -= OnImageOpened;
+				_image.ImageFailed -= OnImageFailed;
+			}
+
+			platformView.Click -= OnClick;
+			platformView.RemoveHandler(UIElement.PointerPressedEvent, _pointerPressedHandler);
 
 			_pointerPressedHandler = null;
 
-			base.DisconnectHandler(nativeView);
-
-			if (nativeView.XamlRoot != null)
-				nativeView.XamlRoot.Changed -= OnXamlRootChanged;
-
-			nativeView.Loaded -= OnNativeViewLoaded;
-			nativeView.Unloaded -= OnNativeViewUnloaded;
+			base.DisconnectHandler(platformView);
 
 			SourceLoader.Reset();
 		}
 
-		void OnImageOpened(object sender, RoutedEventArgs e)
+		public static void MapStrokeColor(IImageButtonHandler handler, IButtonStroke buttonStroke)
 		{
-
+			(handler.PlatformView as Button)?.UpdateStrokeColor(buttonStroke);
 		}
 
-		void OnImageFailed(object sender, ExceptionRoutedEventArgs e)
+		public static void MapStrokeThickness(IImageButtonHandler handler, IButtonStroke buttonStroke)
 		{
+			(handler.PlatformView as Button)?.UpdateStrokeThickness(buttonStroke);
 		}
 
-		void OnSetImageSource(ImageSource? obj)
+		public static void MapCornerRadius(IImageButtonHandler handler, IButtonStroke buttonStroke)
 		{
-			if (NativeView.Content is Image i)
-				i.Source = obj;
+			(handler.PlatformView as Button)?.UpdateCornerRadius(buttonStroke);
 		}
 
-		void OnNativeViewLoaded(object sender = null!, RoutedEventArgs e = null!)
+		public static void MapBackground(IImageButtonHandler handler, IImageButton imageButton)
 		{
-			if (NativeView?.XamlRoot != null)
-			{
-				NativeView.XamlRoot.Changed += OnXamlRootChanged;
-			}
+			(handler.PlatformView as Button)?.UpdateBackground(imageButton);
 		}
 
-		void OnNativeViewUnloaded(object sender = null!, RoutedEventArgs e = null!)
+		public static void MapPadding(IImageButtonHandler handler, IImageButton imageButton)
 		{
-			if (NativeView?.XamlRoot != null)
-				NativeView.XamlRoot.Changed -= OnXamlRootChanged;
+			(handler.PlatformView as Button)?.UpdatePadding(imageButton);
 		}
 
-		void OnXamlRootChanged(XamlRoot sender, XamlRootChangedEventArgs args)
+		void OnSetImageSource(ImageSource? nativeImageSource)
 		{
-			UpdateValue(nameof(IImage.Source));
+			PlatformView.UpdateImageSource(nativeImageSource);
 		}
 
-		void OnClick(object sender, UI.Xaml.RoutedEventArgs e)
+		void OnClick(object sender, RoutedEventArgs e)
 		{
 			VirtualView?.Clicked();
 			VirtualView?.Released();
@@ -114,6 +104,17 @@ namespace Microsoft.Maui.Handlers
 		void OnPointerPressed(object sender, PointerRoutedEventArgs e)
 		{
 			VirtualView?.Pressed();
+		}
+
+		void OnImageOpened(object sender, RoutedEventArgs routedEventArgs)
+		{
+			VirtualView?.UpdateIsLoading(false);
+		}
+
+		protected virtual void OnImageFailed(object sender, ExceptionRoutedEventArgs exceptionRoutedEventArgs)
+		{
+			MauiContext?.CreateLogger<ImageButtonHandler>()?.LogWarning("Image failed to load: {exceptionRoutedEventArgs.ErrorMessage}", exceptionRoutedEventArgs.ErrorMessage);
+			VirtualView?.UpdateIsLoading(false);
 		}
 	}
 }

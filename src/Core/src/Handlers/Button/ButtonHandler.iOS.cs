@@ -1,8 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Foundation;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Maui.Graphics;
 using UIKit;
 
 namespace Microsoft.Maui.Handlers
@@ -11,44 +8,52 @@ namespace Microsoft.Maui.Handlers
 	{
 		static readonly UIControlState[] ControlStates = { UIControlState.Normal, UIControlState.Highlighted, UIControlState.Disabled };
 
-		static UIColor? ButtonTextColorDefaultDisabled;
-		static UIColor? ButtonTextColorDefaultHighlighted;
-		static UIColor? ButtonTextColorDefaultNormal;
+		// This appears to be the padding that Xcode has when "Default" content insets are used
+		public readonly static Thickness DefaultPadding = new Thickness(12, 7);
 
-		protected override UIButton CreateNativeView()
+		protected override UIButton CreatePlatformView()
 		{
 			var button = new UIButton(UIButtonType.System);
 			SetControlPropertiesFromProxy(button);
 			return button;
 		}
 
-		protected override void ConnectHandler(UIButton nativeView)
+		protected override void ConnectHandler(UIButton platformView)
 		{
-			nativeView.TouchUpInside += OnButtonTouchUpInside;
-			nativeView.TouchUpOutside += OnButtonTouchUpOutside;
-			nativeView.TouchDown += OnButtonTouchDown;
+			platformView.TouchUpInside += OnButtonTouchUpInside;
+			platformView.TouchUpOutside += OnButtonTouchUpOutside;
+			platformView.TouchDown += OnButtonTouchDown;
 
-			base.ConnectHandler(nativeView);
+			base.ConnectHandler(platformView);
 		}
 
-		protected override void DisconnectHandler(UIButton nativeView)
+		protected override void DisconnectHandler(UIButton platformView)
 		{
-			nativeView.TouchUpInside -= OnButtonTouchUpInside;
-			nativeView.TouchUpOutside -= OnButtonTouchUpOutside;
-			nativeView.TouchDown -= OnButtonTouchDown;
-			base.DisconnectHandler(nativeView);
+			platformView.TouchUpInside -= OnButtonTouchUpInside;
+			platformView.TouchUpOutside -= OnButtonTouchUpOutside;
+			platformView.TouchDown -= OnButtonTouchDown;
+
+			base.DisconnectHandler(platformView);
 		}
 
-		void SetupDefaults(UIButton nativeView)
+		public static void MapStrokeColor(IButtonHandler handler, IButtonStroke buttonStroke)
 		{
-			ButtonTextColorDefaultNormal = nativeView.TitleColor(UIControlState.Normal);
-			ButtonTextColorDefaultHighlighted = nativeView.TitleColor(UIControlState.Highlighted);
-			ButtonTextColorDefaultDisabled = nativeView.TitleColor(UIControlState.Disabled);
+			handler.PlatformView?.UpdateStrokeColor(buttonStroke);
+		}
+
+		public static void MapStrokeThickness(IButtonHandler handler, IButtonStroke buttonStroke)
+		{
+			handler.PlatformView?.UpdateStrokeThickness(buttonStroke);
+		}
+
+		public static void MapCornerRadius(IButtonHandler handler, IButtonStroke buttonStroke)
+		{
+			handler.PlatformView?.UpdateCornerRadius(buttonStroke);
 		}
 
 		public static void MapText(IButtonHandler handler, IText button)
 		{
-			handler.TypedNativeView?.UpdateText(button);
+			handler.PlatformView?.UpdateText(button);
 
 			// Any text update requires that we update any attributed string formatting
 			MapFormatting(handler, button);
@@ -56,52 +61,50 @@ namespace Microsoft.Maui.Handlers
 
 		public static void MapTextColor(IButtonHandler handler, ITextStyle button)
 		{
-			handler.TypedNativeView?.UpdateTextColor(button, ButtonTextColorDefaultNormal, ButtonTextColorDefaultHighlighted, ButtonTextColorDefaultDisabled);
+			handler.PlatformView?.UpdateTextColor(button);
 		}
 
 		public static void MapCharacterSpacing(IButtonHandler handler, ITextStyle button)
 		{
-			handler.TypedNativeView?.UpdateCharacterSpacing(button);
+			handler.PlatformView?.UpdateCharacterSpacing(button);
 		}
 
 		public static void MapPadding(IButtonHandler handler, IButton button)
 		{
-			handler.TypedNativeView?.UpdatePadding(button);
+			handler.PlatformView?.UpdatePadding(button, DefaultPadding);
 		}
 
 		public static void MapFont(IButtonHandler handler, ITextStyle button)
 		{
 			var fontManager = handler.GetRequiredService<IFontManager>();
 
-			handler.TypedNativeView?.UpdateFont(button, fontManager);
+			handler.PlatformView?.UpdateFont(button, fontManager);
 		}
 
 		public static void MapFormatting(IButtonHandler handler, IText button)
 		{
 			// Update all of the attributed text formatting properties
-			handler.TypedNativeView?.UpdateCharacterSpacing(button);
+			handler.PlatformView?.UpdateCharacterSpacing(button);
 		}
 
 		void OnSetImageSource(UIImage? image)
 		{
 			if (image != null)
 			{
-				NativeView.SetImage(image.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal), UIControlState.Normal);
+				PlatformView.SetImage(image.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal), UIControlState.Normal);
 			}
 			else
 			{
-				NativeView.SetImage(null, UIControlState.Normal);
+				PlatformView.SetImage(null, UIControlState.Normal);
 			}
-
-			VirtualView.ImageSourceLoaded();
 		}
 
-		public static void MapImageSource(IButtonHandler handler, IButton image) =>
+		public static void MapImageSource(IButtonHandler handler, IImage image) =>
 			MapImageSourceAsync(handler, image).FireAndForget(handler);
 
-		public static Task MapImageSourceAsync(IButtonHandler handler, IButton image)
+		public static Task MapImageSourceAsync(IButtonHandler handler, IImage image)
 		{
-			if (image.ImageSource == null)
+			if (image.Source == null)
 			{
 				return Task.CompletedTask;
 			}
@@ -109,13 +112,13 @@ namespace Microsoft.Maui.Handlers
 			return handler.ImageSourceLoader.UpdateImageSourceAsync();
 		}
 
-		static void SetControlPropertiesFromProxy(UIButton nativeView)
+		static void SetControlPropertiesFromProxy(UIButton platformView)
 		{
 			foreach (UIControlState uiControlState in ControlStates)
 			{
-				nativeView.SetTitleColor(UIButton.Appearance.TitleColor(uiControlState), uiControlState); // If new values are null, old values are preserved.
-				nativeView.SetTitleShadowColor(UIButton.Appearance.TitleShadowColor(uiControlState), uiControlState);
-				nativeView.SetBackgroundImage(UIButton.Appearance.BackgroundImageForState(uiControlState), uiControlState);
+				platformView.SetTitleColor(UIButton.Appearance.TitleColor(uiControlState), uiControlState); // If new values are null, old values are preserved.
+				platformView.SetTitleShadowColor(UIButton.Appearance.TitleShadowColor(uiControlState), uiControlState);
+				platformView.SetBackgroundImage(UIButton.Appearance.BackgroundImageForState(uiControlState), uiControlState);
 			}
 		}
 

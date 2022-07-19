@@ -14,6 +14,30 @@ namespace Microsoft.Maui.DeviceTests
 {
 	public partial class EditorHandlerTests
 	{
+		[Fact(DisplayName = "InputType Keeps MultiLine Flag")]
+		public async Task InputTypeKeepsMultiLineFlag()
+		{
+			var editor = new EditorStub();
+			var inputType = await GetValueAsync(editor, (handler) =>
+			{
+				return GetNativeEditor(handler).InputType;
+			});
+
+			Assert.True(inputType.HasFlag(InputTypes.TextFlagMultiLine));
+		}
+
+		[Fact(DisplayName = "ReadOnly Keeps MultiLine Flag")]
+		public async Task InputTypeInitializesWithMultiLineFlag()
+		{
+			var editor = new EditorStub() { IsReadOnly = true };
+			var inputType = await GetValueAsync(editor, (handler) =>
+			{
+				return GetNativeEditor(handler).InputType;
+			});
+
+			Assert.True(inputType.HasFlag(InputTypes.TextFlagMultiLine));
+		}
+
 		[Fact(DisplayName = "CharacterSpacing Initializes Correctly")]
 		public async Task CharacterSpacingInitializesCorrectly()
 		{
@@ -32,12 +56,12 @@ namespace Microsoft.Maui.DeviceTests
 				return new
 				{
 					ViewValue = editor.CharacterSpacing,
-					NativeViewValue = GetNativeCharacterSpacing(handler)
+					PlatformViewValue = GetNativeCharacterSpacing(handler)
 				};
 			});
 
 			Assert.Equal(xplatCharacterSpacing, values.ViewValue);
-			Assert.Equal(expectedValue, values.NativeViewValue, EmCoefficientPrecision);
+			Assert.Equal(expectedValue, values.PlatformViewValue, EmCoefficientPrecision);
 		}
 
 		[Fact(DisplayName = "Horizontal TextAlignment Initializes Correctly")]
@@ -56,13 +80,13 @@ namespace Microsoft.Maui.DeviceTests
 				return new
 				{
 					ViewValue = editorStub.HorizontalTextAlignment,
-					NativeViewValue = GetNativeHorizontalTextAlignment(handler)
+					PlatformViewValue = GetNativeHorizontalTextAlignment(handler)
 				};
 			});
 
 			Assert.Equal(xplatHorizontalTextAlignment, values.ViewValue);
 
-			(var gravity, var textAlignment) = values.NativeViewValue;
+			(var gravity, var textAlignment) = values.PlatformViewValue;
 
 			// Device Tests runner has RTL support enabled, so we expect TextAlignment values
 			// (If it didn't, we'd have to fall back to gravity)
@@ -72,7 +96,7 @@ namespace Microsoft.Maui.DeviceTests
 		}
 
 		static AppCompatEditText GetNativeEditor(EditorHandler editorHandler) =>
-			(AppCompatEditText)editorHandler.NativeView;
+			(AppCompatEditText)editorHandler.PlatformView;
 
 		string GetNativeText(EditorHandler editorHandler) =>
 			GetNativeEditor(editorHandler).Text;
@@ -177,6 +201,26 @@ namespace Microsoft.Maui.DeviceTests
 			var inputTypes = textView.InputType;
 
 			return inputTypes.HasFlag(InputTypes.ClassText) && inputTypes.HasFlag(InputTypes.TextFlagCapSentences) && !inputTypes.HasFlag(InputTypes.TextFlagNoSuggestions);
+		}
+
+		int GetNativeCursorPosition(EditorHandler editorHandler)
+		{
+			var textView = GetNativeEditor(editorHandler);
+
+			if (textView != null)
+				return textView.SelectionStart;
+
+			return -1;
+		}
+
+		int GetNativeSelectionLength(EditorHandler editorHandler)
+		{
+			var textView = GetNativeEditor(editorHandler);
+
+			if (textView != null)
+				return textView.SelectionEnd - textView.SelectionStart;
+
+			return -1;
 		}
 	}
 }

@@ -1,5 +1,5 @@
+using System;
 using Android.App;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Maui.Handlers
 {
@@ -7,7 +7,28 @@ namespace Microsoft.Maui.Handlers
 	{
 		public static void MapTerminate(ApplicationHandler handler, IApplication application, object? args)
 		{
-			handler.Logger?.LogWarning("Android does not support programmatically terminating the app.");
+			var currentActivity = ApplicationModel.Platform.CurrentActivity;
+
+			if (currentActivity != null)
+			{
+				currentActivity.FinishAndRemoveTask();
+
+				Environment.Exit(0);
+			}
+		}
+
+		public static void MapOpenWindow(ApplicationHandler handler, IApplication application, object? args)
+		{
+			handler.PlatformView?.RequestNewWindow(application, args as OpenWindowRequest);
+		}
+
+		public static void MapCloseWindow(ApplicationHandler handler, IApplication application, object? args)
+		{
+			if (args is IWindow window)
+			{
+				if (window.Handler?.PlatformView is Activity activity)
+					activity.Finish();
+			}
 		}
 	}
 }

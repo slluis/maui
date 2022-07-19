@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Internals;
 using Microsoft.Maui.Graphics;
 using Microsoft.UI.Xaml;
@@ -16,7 +17,7 @@ namespace Microsoft.Maui.Controls.Platform
 {
 	class GestureManager : IDisposable
 	{
-		readonly INativeViewHandler _handler;
+		readonly IPlatformViewHandler _handler;
 		readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
 		readonly List<uint> _fingers = new List<uint>();
 		FrameworkElement? _container;
@@ -32,22 +33,22 @@ namespace Microsoft.Maui.Controls.Platform
 
 		public GestureManager(IViewHandler handler)
 		{
-			_handler = (INativeViewHandler)handler;
+			_handler = (IPlatformViewHandler)handler;
 			_collectionChangedHandler = ModelGestureRecognizersOnCollectionChanged;
 
 			if (_handler.VirtualView == null)
 				throw new ArgumentNullException(nameof(handler.VirtualView));
 
-			if (_handler.NativeView == null)
-				throw new ArgumentNullException(nameof(handler.NativeView));
+			if (_handler.PlatformView == null)
+				throw new ArgumentNullException(nameof(handler.PlatformView));
 
 			Element = (VisualElement)_handler.VirtualView;
-			Control = _handler.NativeView;
+			Control = _handler.PlatformView;
 
 			if (_handler.ContainerView != null)
 				Container = _handler.ContainerView;
 			else
-				Container = _handler.NativeView;
+				Container = _handler.PlatformView;
 		}
 
 		public FrameworkElement? Container
@@ -158,7 +159,7 @@ namespace Microsoft.Maui.Controls.Platform
 				if (operationPriorToSend != dragEventArgs.AcceptedOperation)
 				{
 					var result = (int)dragEventArgs.AcceptedOperation;
-					e.AcceptedOperation = (Windows.ApplicationModel.DataTransfer.DataPackageOperation)result;
+					e.AcceptedOperation = (global::Windows.ApplicationModel.DataTransfer.DataPackageOperation)result;
 				}
 			});
 		}
@@ -172,13 +173,13 @@ namespace Microsoft.Maui.Controls.Platform
 			{
 				if (!rec.AllowDrop)
 				{
-					e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.None;
+					e.AcceptedOperation = global::Windows.ApplicationModel.DataTransfer.DataPackageOperation.None;
 					return;
 				}
 
 				rec.SendDragOver(dragEventArgs);
 				var result = (int)dragEventArgs.AcceptedOperation;
-				e.AcceptedOperation = (Windows.ApplicationModel.DataTransfer.DataPackageOperation)result;
+				e.AcceptedOperation = (global::Windows.ApplicationModel.DataTransfer.DataPackageOperation)result;
 			});
 		}
 
@@ -211,7 +212,7 @@ namespace Microsoft.Maui.Controls.Platform
 				}
 				catch (Exception dropExc)
 				{
-					Internals.Log.Warning(nameof(DropGestureRecognizer), $"{dropExc}");
+					Application.Current?.FindMauiContext()?.CreateLogger<DropGestureRecognizer>()?.LogWarning(dropExc, "Error sending event");
 				}
 			});
 		}
@@ -232,7 +233,7 @@ namespace Microsoft.Maui.Controls.Platform
 
 				if (!args.Handled && handler != null)
 				{
-					if (handler.NativeView is UI.Xaml.Controls.Image nativeImage &&
+					if (handler.PlatformView is UI.Xaml.Controls.Image nativeImage &&
 						nativeImage.Source is BitmapImage bi && bi.UriSource != null)
 					{
 						e.Data.SetBitmap(RandomAccessStreamReference.CreateFromUri(bi.UriSource));
@@ -255,7 +256,7 @@ namespace Microsoft.Maui.Controls.Platform
 				}
 
 				e.Cancel = args.Cancel;
-				e.AllowedOperations = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
+				e.AllowedOperations = global::Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
 			});
 		}
 
@@ -395,19 +396,24 @@ namespace Microsoft.Maui.Controls.Platform
 
 			_isPinching = true;
 
-			Windows.Foundation.Point translationPoint = e.Container.TransformToVisual(Container).TransformPoint(e.Position);
-
-			var scaleOriginPoint = new Point(translationPoint.X / view.Width, translationPoint.Y / view.Height);
-			IEnumerable<PinchGestureRecognizer> pinchGestures = view.GestureRecognizers.GetGesturesFor<PinchGestureRecognizer>();
-			foreach (IPinchGestureController recognizer in pinchGestures)
+			if (e.OriginalSource is UIElement container)
 			{
-				if (!_wasPinchGestureStartedSent)
+				global::Windows.Foundation.Point translationPoint = container.TransformToVisual(Container).TransformPoint(e.Position);
+				var scaleOriginPoint = new Point(translationPoint.X / view.Width, translationPoint.Y / view.Height);
+				IEnumerable<PinchGestureRecognizer> pinchGestures = view.GestureRecognizers.GetGesturesFor<PinchGestureRecognizer>();
+
+				foreach (IPinchGestureController recognizer in pinchGestures)
 				{
-					recognizer.SendPinchStarted(view, scaleOriginPoint);
+					if (!_wasPinchGestureStartedSent)
+					{
+						recognizer.SendPinchStarted(view, scaleOriginPoint);
+					}
+
+					recognizer.SendPinch(view, e.Delta.Scale, scaleOriginPoint);
 				}
-				recognizer.SendPinch(view, e.Delta.Scale, scaleOriginPoint);
+
+				_wasPinchGestureStartedSent = true;
 			}
-			_wasPinchGestureStartedSent = true;
 		}
 
 		void ModelGestureRecognizersOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
@@ -674,12 +680,13 @@ namespace Microsoft.Maui.Controls.Platform
 			//We can't handle ManipulationMode.Scale and System , so we don't support pinch/pan on a scrollview 
 			if (Element is ScrollView)
 			{
+				var logger = Application.Current?.FindMauiContext()?.CreateLogger<GestureManager>();
 				if (hasPinchGesture)
-					Log.Warning("Gestures", "PinchGestureRecognizer is not supported on a ScrollView in Windows Platforms");
+					logger?.LogWarning("PinchGestureRecognizer is not supported on a ScrollView in Windows Platforms");
 				if (hasPanGesture)
-					Log.Warning("Gestures", "PanGestureRecognizer is not supported on a ScrollView in Windows Platforms");
+					logger?.LogWarning("PanGestureRecognizer is not supported on a ScrollView in Windows Platforms");
 				if (hasSwipeGesture)
-					Log.Warning("Gestures", "SwipeGestureRecognizer is not supported on a ScrollView in Windows Platforms");
+					logger?.LogWarning("SwipeGestureRecognizer is not supported on a ScrollView in Windows Platforms");
 				return;
 			}
 

@@ -3,26 +3,53 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls.Internals;
 using Microsoft.Maui.Controls.Platform;
-using Microsoft.Maui.Controls.Xaml.Diagnostics;
 
 namespace Microsoft.Maui.Controls
 {
 	[ContentProperty(nameof(Page))]
-	public partial class Window : NavigableElement, IWindow, IVisualTreeElement
+	public partial class Window : NavigableElement, IWindow, IVisualTreeElement, IToolbarElement, IMenuBarElement, IFlowDirectionController, IWindowController
 	{
 		public static readonly BindableProperty TitleProperty = BindableProperty.Create(
 			nameof(Title), typeof(string), typeof(Window), default(string?));
 
 		public static readonly BindableProperty PageProperty = BindableProperty.Create(
 			nameof(Page), typeof(Page), typeof(Window), default(Page?),
+			propertyChanging: OnPageChanging,
 			propertyChanged: OnPageChanged);
 
+		public static readonly BindableProperty FlowDirectionProperty =
+			BindableProperty.Create(nameof(FlowDirection), typeof(FlowDirection), typeof(Window), FlowDirection.MatchParent, propertyChanging: FlowDirectionChanging, propertyChanged: FlowDirectionChanged);
+
+		HashSet<IWindowOverlay> _overlays = new HashSet<IWindowOverlay>();
 		ReadOnlyCollection<Element>? _logicalChildren;
 		List<IVisualTreeElement> _visualChildren;
+		Toolbar? _toolbar;
+		MenuBarTracker _menuBarTracker;
+		bool _isActivated;
+
+		IToolbar? IToolbarElement.Toolbar => Toolbar;
+		internal Toolbar? Toolbar
+		{
+			get => _toolbar;
+			set
+			{
+				if (_toolbar == value)
+					return;
+
+				_toolbar?.Handler?.DisconnectHandler();
+				_toolbar = value;
+				Handler?.UpdateValue(nameof(IToolbarElement.Toolbar));
+			}
+		}
+
+		public IReadOnlyCollection<IWindowOverlay> Overlays => _overlays.ToList().AsReadOnly();
+
+		public IVisualDiagnosticsOverlay VisualDiagnosticsOverlay { get; }
 
 		public Window()
 		{
@@ -31,6 +58,10 @@ namespace Microsoft.Maui.Controls
 			ModalNavigationManager = new ModalNavigationManager(this);
 			Navigation = new NavigationImpl(this);
 			InternalChildren.CollectionChanged += OnCollectionChanged;
+#pragma warning disable CA1416 // TODO: VisualDiagnosticsOverlay is supported on android 23.0 and above
+			VisualDiagnosticsOverlay = new VisualDiagnosticsOverlay(this);
+#pragma warning restore CA1416
+			_menuBarTracker = new MenuBarTracker(this, "MenuBar");
 		}
 
 		public Window(Page page)
@@ -39,11 +70,15 @@ namespace Microsoft.Maui.Controls
 			Page = page;
 		}
 
+		IMenuBar? IMenuBarElement.MenuBar => _menuBarTracker.MenuBar;
+
 		public string? Title
 		{
 			get => (string?)GetValue(TitleProperty);
 			set => SetValue(TitleProperty, value);
 		}
+
+		string? ITitledElement.Title => Title ?? (Page as Shell)?.Title;
 
 		public Page? Page
 		{
@@ -63,6 +98,8 @@ namespace Microsoft.Maui.Controls
 		public event EventHandler? Deactivated;
 		public event EventHandler? Stopped;
 		public event EventHandler? Destroying;
+		public event EventHandler<BackgroundingEventArgs>? Backgrounding;
+		public event EventHandler<DisplayDensityChangedEventArgs>? DisplayDensityChanged;
 
 		protected virtual void OnCreated() { }
 		protected virtual void OnResumed() { }
@@ -70,6 +107,8 @@ namespace Microsoft.Maui.Controls
 		protected virtual void OnDeactivated() { }
 		protected virtual void OnStopped() { }
 		protected virtual void OnDestroying() { }
+		protected virtual void OnBackgrounding(IPersistedState state) { }
+		protected virtual void OnDisplayDensityChanged(float displayDensity) { }
 
 		protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
 		{
@@ -77,6 +116,38 @@ namespace Microsoft.Maui.Controls
 
 			if (propertyName == nameof(Page))
 				Handler?.UpdateValue(nameof(IWindow.Content));
+		}
+
+		/// <inheritdoc/>
+		public bool AddOverlay(IWindowOverlay overlay)
+		{
+			if (overlay is IVisualDiagnosticsOverlay)
+				return false;
+
+			// Add the overlay. If it's added, 
+			// Initalize the native layer if it wasn't already,
+			// and call invalidate so it will be drawn.
+			var result = _overlays.Add(overlay);
+			if (result)
+			{
+				overlay.Initialize();
+				overlay.Invalidate();
+			}
+
+			return result;
+		}
+
+		/// <inheritdoc/>
+		public bool RemoveOverlay(IWindowOverlay overlay)
+		{
+			if (overlay is IVisualDiagnosticsOverlay)
+				return false;
+
+			var result = _overlays.Remove(overlay);
+			if (result)
+				overlay.Deinitialize();
+
+			return result;
 		}
 
 		internal ObservableCollection<Element> InternalChildren { get; } = new ObservableCollection<Element>();
@@ -90,6 +161,82 @@ namespace Microsoft.Maui.Controls
 
 		internal IMauiContext MauiContext =>
 			Handler?.MauiContext ?? throw new InvalidOperationException("MauiContext is null.");
+
+		internal bool IsActivated
+		{
+			get
+			{
+				return _isActivated;
+			}
+			private set
+			{
+				if (_isActivated == value)
+					return;
+
+				_isActivated = value;
+
+				if (value)
+					SendWindowAppearing();
+				else
+					SendWindowDisppearing();
+			}
+		}
+
+		IFlowDirectionController FlowController => this;
+
+		public FlowDirection FlowDirection
+		{
+			get { return (FlowDirection)GetValue(FlowDirectionProperty); }
+			set { SetValue(FlowDirectionProperty, value); }
+		}
+
+		EffectiveFlowDirection _effectiveFlowDirection = default(EffectiveFlowDirection);
+		EffectiveFlowDirection IFlowDirectionController.EffectiveFlowDirection
+		{
+			get => _effectiveFlowDirection;
+			set => SetEffectiveFlowDirection(value, true);
+		}
+
+		double IFlowDirectionController.Width => (Page as VisualElement)?.Width ?? 0;
+
+		void SetEffectiveFlowDirection(EffectiveFlowDirection value, bool fireFlowDirectionPropertyChanged)
+		{
+			if (value == _effectiveFlowDirection)
+				return;
+
+			_effectiveFlowDirection = value;
+
+			if (fireFlowDirectionPropertyChanged)
+				OnPropertyChanged(FlowDirectionProperty.PropertyName);
+
+		}
+
+		static void FlowDirectionChanging(BindableObject bindable, object oldValue, object newValue)
+		{
+			var self = (IFlowDirectionController)bindable;
+
+			if (self.EffectiveFlowDirection.IsExplicit() && oldValue == newValue)
+				return;
+
+			var newFlowDirection = ((FlowDirection)newValue).ToEffectiveFlowDirection(isExplicit: true);
+			self.EffectiveFlowDirection = newFlowDirection;
+		}
+
+		static void FlowDirectionChanged(BindableObject bindable, object oldValue, object newValue)
+		{
+			PropertyPropagationExtensions.PropagatePropertyChanged(
+				FlowDirectionProperty.PropertyName,
+				(Element)bindable,
+				((IElementController)bindable).LogicalChildren);
+		}
+
+		bool IFlowDirectionController.ApplyEffectiveFlowDirectionToChildContainer => true;
+
+		Window IWindowController.Window
+		{
+			get => this;
+			set => throw new InvalidOperationException("A window cannot set a window.");
+		}
 
 		IView IWindow.Content =>
 			Page ?? throw new InvalidOperationException("No page was set on the window.");
@@ -129,6 +276,11 @@ namespace Microsoft.Maui.Controls
 		void SendWindowAppearing()
 		{
 			Page?.SendAppearing();
+		}
+
+		void SendWindowDisppearing()
+		{
+			Page?.SendDisappearing();
 		}
 
 		void OnModalPopped(Page modalPage)
@@ -176,16 +328,19 @@ namespace Microsoft.Maui.Controls
 		{
 			Created?.Invoke(this, EventArgs.Empty);
 			OnCreated();
+			Application?.SendStart();
 		}
 
 		void IWindow.Activated()
 		{
+			IsActivated = true;
 			Activated?.Invoke(this, EventArgs.Empty);
 			OnActivated();
 		}
 
 		void IWindow.Deactivated()
 		{
+			IsActivated = false;
 			Deactivated?.Invoke(this, EventArgs.Empty);
 			OnDeactivated();
 		}
@@ -201,6 +356,8 @@ namespace Microsoft.Maui.Controls
 		{
 			Destroying?.Invoke(this, EventArgs.Empty);
 			OnDestroying();
+
+			Application?.RemoveWindow(this);
 		}
 
 		void IWindow.Resumed()
@@ -210,11 +367,83 @@ namespace Microsoft.Maui.Controls
 			Application?.SendResume();
 		}
 
+		void IWindow.Backgrounding(IPersistedState state)
+		{
+			Backgrounding?.Invoke(this, new BackgroundingEventArgs(state));
+			OnBackgrounding(state);
+		}
+
+		void IWindow.DisplayDensityChanged(float displayDensity)
+		{
+			DisplayDensityChanged?.Invoke(this, new DisplayDensityChangedEventArgs(displayDensity));
+			OnDisplayDensityChanged(displayDensity);
+		}
+
+		float IWindow.RequestDisplayDensity()
+		{
+			var request = new DisplayDensityRequest();
+			var result = Handler?.InvokeWithResult(nameof(IWindow.RequestDisplayDensity), request);
+			return result ?? 1.0f;
+		}
+
+		FlowDirection IWindow.FlowDirection
+		{
+			get
+			{
+				// If the user has set the root page to be RTL
+				// Then we want the window to also reflect RTL
+				// We don't want to force the user to reach into the window
+				// in order to enable RTL Window features on WinUI
+				if (FlowDirection == FlowDirection.MatchParent &&
+					Page is IFlowDirectionController controller &&
+					controller.EffectiveFlowDirection.IsExplicit())
+				{
+					return controller.EffectiveFlowDirection.ToFlowDirection();
+				}
+
+				return _effectiveFlowDirection.ToFlowDirection();
+			}
+		}
+
+		public float DisplayDensity => ((IWindow)this).RequestDisplayDensity();
+
+		private protected override void OnHandlerChangingCore(HandlerChangingEventArgs args)
+		{
+			base.OnHandlerChangingCore(args);
+			var mauiContext = args?.NewHandler?.MauiContext;
+
+			if (FlowDirection == FlowDirection.MatchParent && mauiContext != null)
+			{
+				FlowController.EffectiveFlowDirection = mauiContext.GetFlowDirection().ToEffectiveFlowDirection(true);
+			}
+		}
+
 		// Currently this returns MainPage + ModalStack
 		// Depending on how we want this to show up inside LVT
 		// we might want to change this to only return the currently visible page
 		IReadOnlyList<IVisualTreeElement> IVisualTreeElement.GetVisualChildren() =>
 			_visualChildren;
+
+
+		static void OnPageChanging(BindableObject bindable, object oldValue, object newValue)
+		{
+			if (bindable is not Window window)
+				return;
+
+			if (oldValue is Page oldPage)
+				oldPage.SendDisappearing();
+
+			if (newValue is IToolbarElement toolbarElement &&
+				toolbarElement.Toolbar is Toolbar tb &&
+				newValue is not Shell)
+			{
+				window.Toolbar = tb;
+			}
+			else
+			{
+				window.Toolbar = null;
+			}
+		}
 
 		static void OnPageChanged(BindableObject bindable, object oldValue, object newValue)
 		{
@@ -229,11 +458,15 @@ namespace Microsoft.Maui.Controls
 				oldPage.HandlerChanging -= OnPageHandlerChanging;
 			}
 
+			if (oldPage is Shell shell)
+				shell.PropertyChanged += ShellPropertyChanged;
+
 			var newPage = newValue as Page;
 			if (newPage != null)
 			{
 				window.InternalChildren.Add(newPage);
 				newPage.NavigationProxy.Inner = window.NavigationProxy;
+				window._menuBarTracker.Target = newPage;
 			}
 
 			window.ModalNavigationManager.SettingNewPage();
@@ -247,6 +480,11 @@ namespace Microsoft.Maui.Controls
 					OnPageHandlerChanged(newPage, EventArgs.Empty);
 			}
 
+			if (newPage is Shell newShell)
+				newShell.PropertyChanged += ShellPropertyChanged;
+
+			window?.Handler?.UpdateValue(nameof(IWindow.FlowDirection));
+
 			void OnPageHandlerChanged(object? sender, EventArgs e)
 			{
 				window.ModalNavigationManager.PageAttachedHandler();
@@ -257,10 +495,21 @@ namespace Microsoft.Maui.Controls
 			{
 				window.AlertManager.Unsubscribe();
 			}
+
+			void ShellPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+			{
+				if (e.PropertyName == nameof(Shell.Title))
+					window?.Handler?.UpdateValue(nameof(ITitledElement.Title));
+			}
 		}
 
-		bool IWindow.BackButtonPressed()
+		bool IWindow.BackButtonClicked()
 		{
+			if (Navigation.ModalStack.Count > 0)
+			{
+				return Navigation.ModalStack[Navigation.ModalStack.Count - 1].SendBackButtonPressed();
+			}
+
 			return this.Page?.SendBackButtonPressed() ?? false;
 		}
 
@@ -287,7 +536,6 @@ namespace Microsoft.Maui.Controls
 					return null;
 				}
 
-				modal.SendNavigatingFrom(new NavigatingFromEventArgs());
 				Page? nextPage;
 				if (modal.NavigationProxy.ModalStack.Count == 1)
 				{
@@ -316,7 +564,6 @@ namespace Microsoft.Maui.Controls
 
 				if (modal.NavigationProxy.ModalStack.Count == 0)
 				{
-					_owner.Page?.SendNavigatingFrom(new NavigatingFromEventArgs());
 					modal.NavigationProxy.Inner = this;
 					await _owner.ModalNavigationManager.PushModalAsync(modal, animated);
 					_owner.Page?.SendNavigatedFrom(new NavigatedFromEventArgs(modal));
@@ -325,7 +572,6 @@ namespace Microsoft.Maui.Controls
 				else
 				{
 					var previousModalPage = modal.NavigationProxy.ModalStack[modal.NavigationProxy.ModalStack.Count - 1];
-					previousModalPage.SendNavigatingFrom(new NavigatingFromEventArgs());
 					await _owner.ModalNavigationManager.PushModalAsync(modal, animated);
 					modal.NavigationProxy.Inner = this;
 					previousModalPage.SendNavigatedFrom(new NavigatedFromEventArgs(modal));

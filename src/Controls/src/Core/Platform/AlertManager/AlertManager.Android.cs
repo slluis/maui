@@ -130,9 +130,7 @@ namespace Microsoft.Maui.Controls.Platform
 				if (dialog.Window != null)
 				{
 					if (arguments.FlowDirection == FlowDirection.MatchParent && sender is IView view)
-					{
-						// TODO: Update FlowDirection			
-					}
+						dialog.Window.DecorView.UpdateFlowDirection(view);
 					else if (arguments.FlowDirection == FlowDirection.LeftToRight)
 						dialog.Window.DecorView.LayoutDirection = LayoutDirection.Ltr;
 					else if (arguments.FlowDirection == FlowDirection.RightToLeft)
@@ -177,9 +175,7 @@ namespace Microsoft.Maui.Controls.Platform
 				if (alert.Window != null)
 				{
 					if (arguments.FlowDirection == FlowDirection.MatchParent && sender is IView view)
-					{
-						// TODO: Update FlowDirection
-					}
+						alert.Window.DecorView.UpdateFlowDirection(view);
 					else if (arguments.FlowDirection == FlowDirection.LeftToRight)
 						alert.Window.DecorView.LayoutDirection = LayoutDirection.Ltr;
 					else if (arguments.FlowDirection == FlowDirection.RightToLeft)
@@ -208,8 +204,16 @@ namespace Microsoft.Maui.Controls.Platform
 					return LayoutDirection.Ltr;
 				else if (flowDirection == FlowDirection.RightToLeft)
 					return LayoutDirection.Rtl;
-
-				// TODO: Check EffectiveFlowDirection
+				else
+				{
+					if (sender is IVisualElementController visualElementController)
+					{
+						if (visualElementController.EffectiveFlowDirection.IsRightToLeft())
+							return LayoutDirection.Rtl;
+						else if (visualElementController.EffectiveFlowDirection.IsLeftToRight())
+							return LayoutDirection.Ltr;
+					}
+				}
 
 				return LayoutDirection.Ltr;
 			}
@@ -220,8 +224,16 @@ namespace Microsoft.Maui.Controls.Platform
 					return TextDirection.Ltr;
 				else if (flowDirection == FlowDirection.RightToLeft)
 					return TextDirection.Rtl;
-
-				// TODO: Check EffectiveFlowDirection
+				else
+				{
+					if (sender is IVisualElementController visualElementController)
+					{
+						if (visualElementController.EffectiveFlowDirection.IsRightToLeft())
+							return TextDirection.Rtl;
+						else if (visualElementController.EffectiveFlowDirection.IsLeftToRight())
+							return TextDirection.Ltr;
+					}
+				}
 
 				return TextDirection.Ltr;
 			}
@@ -301,14 +313,14 @@ namespace Microsoft.Maui.Controls.Platform
 
 			bool PageIsInThisContext(IView page)
 			{
-				var nativeView = page.ToNative(MauiContext);
+				var platformView = page.ToPlatform();
 
-				if (nativeView.Context == null)
+				if (platformView.Context == null)
 				{
 					return false;
 				}
 
-				return nativeView.Context.Equals(Activity);
+				return platformView.Context.GetActivity()?.Equals(Activity) ?? false;
 			}
 
 			// This is a proxy dialog builder class to support both pre-appcompat and appcompat dialogs for Alert,

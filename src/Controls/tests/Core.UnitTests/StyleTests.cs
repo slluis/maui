@@ -11,38 +11,18 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 	[TestFixture]
 	public class StyleTests : BaseTestFixture
 	{
-		internal class Logger : LogListener
-		{
-			public IReadOnlyList<string> Messages
-			{
-				get { return messages; }
-			}
-
-			public override void Warning(string category, string message)
-			{
-				messages.Add("[" + category + "] " + message);
-			}
-
-			readonly List<string> messages = new List<string>();
-		}
-
-		internal Logger log;
-
 		[SetUp]
 		public override void Setup()
 		{
 			base.Setup();
-			log = new Logger();
-			Device.PlatformServices = new MockPlatformServices();
-			Log.Listeners.Add(log);
+			ApplicationExtensions.CreateAndSetMockApplication();
 		}
 
 		[TearDown]
 		public override void TearDown()
 		{
 			base.TearDown();
-			Log.Listeners.Remove(log);
-			Application.Current = null;
+			Application.ClearCurrent();
 		}
 
 		[Test]
@@ -862,16 +842,13 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 				}
 			};
 
-			var mockApp = new MockApplication();
-			mockApp.Resources = rd0;
-			mockApp.LoadPage(new MyPage()
+			MockApplication.Current.Resources = rd0;
+			MockApplication.Current.LoadPage(new MyPage()
 			{
 				Content = new Button()
 			});
 
-			Application.Current = mockApp;
-
-			var parentPage = (ContentPage)mockApp.MainPage;
+			var parentPage = (ContentPage)MockApplication.Current.MainPage;
 			var pageContent = parentPage.Content;
 			Assert.That(Equals(pageContent?.Parent, parentPage));
 		}
@@ -923,8 +900,8 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 
 			t.Style = s;
 
-			Assert.AreEqual(log.Messages.Count, 1);
-			Assert.AreEqual(log.Messages.FirstOrDefault(), $"[Styles] Style TargetType Microsoft.Maui.Controls.Button is not compatible with element target type Microsoft.Maui.Controls.View");
+			Assert.AreEqual(MockApplication.MockLogger.Messages.Count, 1);
+			Assert.AreEqual(MockApplication.MockLogger.Messages.FirstOrDefault(), $"Style TargetType Microsoft.Maui.Controls.Button is not compatible with element target type Microsoft.Maui.Controls.View");
 		}
 
 		[Test]
@@ -935,8 +912,8 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 
 			t.Style = s;
 
-			Assert.AreEqual(log.Messages.Count, 1);
-			Assert.AreEqual(log.Messages.FirstOrDefault(), $"[Styles] Style TargetType Microsoft.Maui.Controls.Button is not compatible with element target type Microsoft.Maui.Controls.Label");
+			Assert.AreEqual(MockApplication.MockLogger.Messages.Count, 1);
+			Assert.AreEqual(MockApplication.MockLogger.Messages.FirstOrDefault(), $"Style TargetType Microsoft.Maui.Controls.Button is not compatible with element target type Microsoft.Maui.Controls.Label");
 		}
 
 		[Test]
@@ -947,8 +924,8 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 
 			t.Style = s;
 
-			Assert.That(log.Messages.Count, Is.EqualTo(0),
-				"A warning was logged: " + log.Messages.FirstOrDefault());
+			Assert.That(MockApplication.MockLogger.Messages.Count, Is.EqualTo(0),
+				"A warning was logged: " + MockApplication.MockLogger.Messages.FirstOrDefault());
 		}
 
 		[Test]
@@ -1005,6 +982,32 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 			}
 
 			await Task.WhenAll(tasks);
+		}
+
+		[Test]
+		//https://github.com/dotnet/maui/issues/4617
+		public void ClearValueShouldntUnapplyStyles()
+		{
+			var button = new Button();
+			var layout = new StackLayout
+			{
+				Resources = new ResourceDictionary {
+					{ "Pinker", Colors.HotPink},
+					new Style (typeof(Button)){ Setters = {
+						new Setter{ Property=Button.BackgroundColorProperty, Value = new DynamicResource("Pinker")}
+						}
+					}
+				},
+				Children = { button },
+			};
+
+			Assert.That(button.BackgroundColor, Is.EqualTo(Colors.HotPink));
+			button.ClearValue(Button.BackgroundColorProperty);
+			Assert.That(button.BackgroundColor, Is.EqualTo(Colors.HotPink));
+			button.BackgroundColor = Colors.Red;
+			Assert.That(button.BackgroundColor, Is.EqualTo(Colors.Red));
+			button.ClearValue(Button.BackgroundColorProperty);
+			Assert.That(button.BackgroundColor, Is.EqualTo(Colors.HotPink));
 		}
 	}
 }

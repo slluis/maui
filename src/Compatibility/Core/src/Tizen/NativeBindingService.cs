@@ -1,5 +1,5 @@
-using Microsoft.Maui.Controls.Compatibility.Internals;
-using Microsoft.Maui.Controls.Compatibility.Xaml.Internals;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Maui.Controls.Xaml.Internals;
 
 using EObject = ElmSharp.EvasObject;
 
@@ -7,8 +7,10 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.Tizen
 {
 	class NativeBindingService : INativeBindingService
 	{
+		[UnconditionalSuppressMessage("Trimming", "IL2075", Justification = TrimmerConstants.NativeBindingService)]
 		public bool TrySetBinding(object target, string propertyName, BindingBase binding)
 		{
+			Hosting.MauiAppBuilderExtensions.CheckForCompatibility();
 			var view = target as EObject;
 			if (view == null)
 				return false;
@@ -20,6 +22,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.Tizen
 
 		public bool TrySetBinding(object target, BindableProperty property, BindingBase binding)
 		{
+			Hosting.MauiAppBuilderExtensions.CheckForCompatibility();
 			var view = target as EObject;
 			if (view == null)
 				return false;
@@ -29,6 +32,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.Tizen
 
 		public bool TrySetValue(object target, BindableProperty property, object value)
 		{
+			Hosting.MauiAppBuilderExtensions.CheckForCompatibility();
 			var view = target as EObject;
 			if (view == null)
 				return false;

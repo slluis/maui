@@ -20,7 +20,8 @@ using Microsoft.Maui.Controls.Platform;
 
 namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 {
-	public class NavigationPageRenderer : IVisualElementRenderer, ITitleProvider, ITitleIconProvider, 
+	[System.Obsolete(Compatibility.Hosting.MauiAppBuilderExtensions.UseMapperInstead)]
+	public class NavigationPageRenderer : IVisualElementRenderer, ITitleProvider, ITitleIconProvider,
 		ITitleViewProvider, IToolbarProvider, IToolBarForegroundBinder
 	{
 		PageControl _container;
@@ -135,7 +136,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 
 		public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
 		{
-			var constraint = new Windows.Foundation.Size(widthConstraint, heightConstraint);
+			var constraint = new global::Windows.Foundation.Size(widthConstraint, heightConstraint);
 			IVisualElementRenderer childRenderer = Platform.GetRenderer(Element.CurrentPage);
 			FrameworkElement child = childRenderer.ContainerElement;
 
@@ -284,7 +285,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 
 			if (Element.BarBackgroundColor.IsDefault() && defaultColor != null)
 				return (WBrush)defaultColor;
-			return Maui.ColorExtensions.ToNative(Element.BarBackgroundColor);
+			return Element.BarBackgroundColor.ToPlatform();
 		}
 
 		WBrush GetBarBackgroundBrush()
@@ -306,7 +307,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 			object defaultColor = Microsoft.UI.Xaml.Application.Current.Resources["ApplicationForegroundThemeBrush"];
 			if (Element.BarTextColor.IsDefault())
 				return (WBrush)defaultColor;
-			return Maui.ColorExtensions.ToNative(Element.BarTextColor);
+			return Element.BarTextColor.ToPlatform();
 		}
 
 		bool GetIsNavBarPossible()
@@ -432,7 +433,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 			if (point == null)
 				return;
 
-			if (point.PointerDeviceType != PointerDeviceType.Mouse)
+			if (point.PointerDeviceType != Microsoft.UI.Input.PointerDeviceType.Mouse)
 				return;
 
 			if (point.Properties.IsXButton1Pressed)
@@ -515,7 +516,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 		{
 			if (isAnimated && transition == null)
 			{
-				transition  = new EntranceThemeTransition();
+				transition = new EntranceThemeTransition();
 				_transition = (EntranceThemeTransition)transition;
 				_container.ContentTransitions = new TransitionCollection();
 			}
@@ -542,7 +543,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 
 		void UpdateContainerArea()
 		{
-			Element.ContainerArea = new Rectangle(0, 0, _container.ContentWidth, _container.ContentHeight);
+			Element.ContainerArea = new Rect(0, 0, _container.ContentWidth, _container.ContentHeight);
 		}
 
 		void UpdateNavigationBarBackgroundColor()
@@ -655,7 +656,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 
 			_container.ToolbarDynamicOverflowEnabled = Element.OnThisPlatform().GetToolbarDynamicOverflowEnabled();
 		}
-		
+
 
 		void UpdateShowTitle()
 		{

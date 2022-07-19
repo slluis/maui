@@ -8,7 +8,7 @@ using Microsoft.Maui.Handlers;
 using ObjCRuntime;
 using UIKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	internal class ControlsNavigationController : UINavigationController
 	{
@@ -18,8 +18,8 @@ namespace Microsoft.Maui
 		TaskCompletionSource<bool>? _popCompletionTask;
 
 		// This holds the view controllers for each page
-		readonly Dictionary<IView, INativeViewHandler> _trackers =
-			new Dictionary<IView, INativeViewHandler>();
+		readonly Dictionary<IView, IPlatformViewHandler> _trackers =
+			new Dictionary<IView, IPlatformViewHandler>();
 
 		IReadOnlyList<IView> NavigationStack => _handler.NavigationStack;
 
@@ -167,7 +167,7 @@ namespace Microsoft.Maui
 		void PushPage(IView page, bool animated, IMauiContext mauiContext, TaskCompletionSource<bool>? completionSource = null)
 		{
 			var viewController = page.ToUIViewController(mauiContext);
-			var handler = (INativeViewHandler)page.Handler!;
+			var handler = (IPlatformViewHandler)page.Handler!;
 
 			_trackers[page] = handler;
 

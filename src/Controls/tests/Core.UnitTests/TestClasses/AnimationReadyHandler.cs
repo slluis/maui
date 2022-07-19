@@ -59,7 +59,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 			return view;
 		}
 
-		protected override object CreateNativeView() => new();
+		protected override object CreatePlatformView() => new();
 
 		public IAnimationManager AnimationManager => ((AnimationReadyMauiContext)MauiContext).AnimationManager;
 
@@ -74,7 +74,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 
 			public IServiceProvider Services => this;
 
-			public IMauiHandlersServiceProvider Handlers => throw new NotImplementedException();
+			public IMauiHandlersFactory Handlers => throw new NotImplementedException();
 
 			public IAnimationManager AnimationManager => _animationManager;
 

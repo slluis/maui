@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microsoft.Maui
+﻿namespace Microsoft.Maui.Platform
 {
 	internal static partial class MauiContextExtensions
 	{
-		public static FlowDirection GetFlowDirection(this IMauiContext mauiContext)
-		{
-			return FlowDirection.LeftToRight;
-		}
 	}
 }

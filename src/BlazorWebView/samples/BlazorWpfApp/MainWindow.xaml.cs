@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation. All rights reserved.
+﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Windows;
@@ -17,10 +17,23 @@ namespace BlazorWpfApp
 
 		public MainWindow()
 		{
-			var serviceCollection = new ServiceCollection();
-			serviceCollection.AddBlazorWebView();
-			serviceCollection.AddSingleton<AppState>(_appState);
-			Resources.Add("services", serviceCollection.BuildServiceProvider());
+			var services1 = new ServiceCollection();
+			services1.AddWpfBlazorWebView();
+#if DEBUG
+			services1.AddBlazorWebViewDeveloperTools();
+#endif
+
+			services1.AddSingleton<AppState>(_appState);
+			Resources.Add("services1", services1.BuildServiceProvider());
+
+			var services2 = new ServiceCollection();
+			services2.AddWpfBlazorWebView();
+#if DEBUG
+			services2.AddBlazorWebViewDeveloperTools();
+#endif
+
+			services2.AddSingleton<AppState>(_appState);
+			Resources.Add("services2", services2.BuildServiceProvider());
 
 			InitializeComponent();
 
@@ -40,8 +53,4 @@ namespace BlazorWpfApp
 			blazorWebView1.WebView.CoreWebView2.ExecuteScriptAsync("alert('hello from native UI')");
 		}
 	}
-
-	// Workaround for compiler error "error MC3050: Cannot find the type 'local:Main'"
-	// It seems that, although WPF's design-time build can see Razor components, its runtime build cannot.
-	public partial class Main { }
 }

@@ -18,6 +18,8 @@ namespace Microsoft.Maui.Handlers.Benchmarks
 
 		public bool IsEnabled { get; set; } = true;
 
+		public bool IsFocused { get; set; }
+
 		public Visibility Visibility { get; set; } = Visibility.Visible;
 
 		public IShape Clip { get; set; }
@@ -28,7 +30,7 @@ namespace Microsoft.Maui.Handlers.Benchmarks
 
 		public Paint Background { get; set; }
 
-		public Rectangle Frame { get; set; } = new Rectangle(0, 0, 20, 20);
+		public Rect Frame { get; set; } = new Rect(0, 0, 20, 20);
 
 		public double TranslationX { get; set; }
 
@@ -84,7 +86,11 @@ namespace Microsoft.Maui.Handlers.Benchmarks
 
 		public Semantics Semantics { get; set; } = new Semantics();
 
-		public Size Arrange(Rectangle bounds)
+		public int ZIndex { get; set; }
+
+		public bool InputTransparent { get; set; }
+
+		public Size Arrange(Rect bounds)
 		{
 			Frame = bounds;
 			DesiredSize = bounds.Size;
@@ -110,6 +116,12 @@ namespace Microsoft.Maui.Handlers.Benchmarks
 		}
 
 		public void InvalidateMeasure()
+		{
+		}
+
+		public bool Focus() => false;
+
+		public void Unfocus()
 		{
 		}
 

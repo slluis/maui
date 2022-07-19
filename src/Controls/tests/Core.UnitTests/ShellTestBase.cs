@@ -5,7 +5,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls.Internals;
+using Microsoft.Maui.Devices;
 using NUnit.Framework;
 
 namespace Microsoft.Maui.Controls.Core.UnitTests
@@ -17,7 +19,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 		public override void Setup()
 		{
 			base.Setup();
-
+			AppInfo.SetCurrent(new MockAppInfo());
 		}
 
 		[TearDown]
@@ -322,6 +324,7 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 
 			public TestShell()
 			{
+				_ = new Window() { Page = this };
 				Routing.RegisterRoute(nameof(TestPage1), typeof(TestPage1));
 				Routing.RegisterRoute(nameof(TestPage2), typeof(TestPage2));
 				Routing.RegisterRoute(nameof(TestPage3), typeof(TestPage3));
@@ -361,6 +364,8 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 				{
 					_contentPage = contentPage;
 				}
+
+				public override Element GetOrCreate(IServiceProvider services) => _contentPage;
 
 				public override Element GetOrCreate() => _contentPage;
 			}
@@ -477,5 +482,59 @@ namespace Microsoft.Maui.Controls.Core.UnitTests
 		public class TestPage1 : ContentPage { }
 		public class TestPage2 : ContentPage { }
 		public class TestPage3 : ContentPage { }
+
+		public class PageWithDependency : ContentPage
+		{
+			public Dependency TestDependency { get; set; }
+
+			public PageWithDependency(Dependency dependency)
+			{
+				TestDependency = dependency;
+			}
+		}
+
+		public class PageWithDependencyAndMultipleConstructors : ContentPage
+		{
+			public Dependency TestDependency { get; set; }
+			public UnregisteredDependency OtherTestDependency { get; set; }
+
+			public PageWithDependencyAndMultipleConstructors(Dependency dependency)
+			{
+				TestDependency = dependency;
+			}
+
+			public PageWithDependencyAndMultipleConstructors(Dependency dependency, UnregisteredDependency unregisteredDependency)
+			{
+				OtherTestDependency = unregisteredDependency;
+			}
+
+			public PageWithDependencyAndMultipleConstructors()
+			{
+				// parameterless constructor
+			}
+		}
+
+		public class PageWithUnregisteredDependencyAndParameterlessConstructor : ContentPage
+		{
+			public PageWithUnregisteredDependencyAndParameterlessConstructor(UnregisteredDependency dependency)
+			{
+
+			}
+
+			public PageWithUnregisteredDependencyAndParameterlessConstructor()
+			{
+
+			}
+		}
+
+		public class Dependency
+		{
+			public int Test { get; set; }
+		}
+
+		public class UnregisteredDependency
+		{
+			public int Test { get; set; }
+		}
 	}
 }

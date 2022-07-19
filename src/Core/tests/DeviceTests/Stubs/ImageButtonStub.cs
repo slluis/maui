@@ -1,10 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Maui.Graphics;
 
 namespace Microsoft.Maui.DeviceTests.Stubs
 {
 	public partial class ImageButtonStub : StubBase, IImageButton, IImageSourcePartEvents, IImageStub
 	{
+		public Color StrokeColor { get; set; }
+
+		public double StrokeThickness { get; set; }
+
+		public int CornerRadius { get; set; }
+
 		public Aspect Aspect { get; set; }
 
 		public bool IsOpaque { get; set; }
@@ -30,15 +37,23 @@ namespace Microsoft.Maui.DeviceTests.Stubs
 		public void UpdateIsLoading(bool isLoading) =>
 			IsLoading = isLoading;
 
-		void IImageSourcePartEvents.LoadingCompleted(bool successful) =>
+		void IImageSourcePartEvents.LoadingCompleted(bool successful)
+		{
+			IsLoading = false;
 			LoadingCompleted?.Invoke(successful);
+		}
 
-		void IImageSourcePartEvents.LoadingFailed(Exception exception) =>
+		void IImageSourcePartEvents.LoadingFailed(Exception exception)
+		{
+			IsLoading = false;
 			LoadingFailed?.Invoke(exception);
+		}
 
-		void IImageSourcePartEvents.LoadingStarted() =>
+		void IImageSourcePartEvents.LoadingStarted()
+		{
+			IsLoading = true;
 			LoadingStarted?.Invoke();
-
+		}
 
 		public event EventHandler Pressed;
 		public event EventHandler Released;
@@ -47,10 +62,5 @@ namespace Microsoft.Maui.DeviceTests.Stubs
 		void IButton.Pressed() => Pressed?.Invoke(this, EventArgs.Empty);
 		void IButton.Released() => Released?.Invoke(this, EventArgs.Empty);
 		void IButton.Clicked() => Clicked?.Invoke(this, EventArgs.Empty);
-
-		void IButton.ImageSourceLoaded()
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

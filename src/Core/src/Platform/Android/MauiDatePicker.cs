@@ -4,25 +4,25 @@ using Android.Runtime;
 using Android.Text;
 using Android.Util;
 using Android.Views;
-using Android.Widget;
+using AndroidX.AppCompat.Widget;
 using AndroidX.Core.Graphics.Drawable;
 using static Android.Views.View;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
-	public class MauiDatePicker : EditText, IOnClickListener
+	public class MauiDatePicker : AppCompatEditText, IOnClickListener
 	{
-		public MauiDatePicker(Context? context) : base(context)
+		public MauiDatePicker(Context context) : base(context)
 		{
 			Initialize();
 		}
 
-		public MauiDatePicker(Context? context, IAttributeSet attrs) : base(context, attrs)
+		public MauiDatePicker(Context context, IAttributeSet? attrs) : base(context, attrs)
 		{
 			Initialize();
 		}
 
-		public MauiDatePicker(Context? context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)
+		public MauiDatePicker(Context context, IAttributeSet? attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)
 		{
 			Initialize();
 		}
@@ -52,7 +52,8 @@ namespace Microsoft.Maui
 
 		void Initialize()
 		{
-			DrawableCompat.Wrap(Background);
+			if (Background != null)
+				DrawableCompat.Wrap(Background);
 
 			Focusable = true;
 			Clickable = true;

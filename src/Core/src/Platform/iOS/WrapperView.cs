@@ -1,15 +1,18 @@
-﻿using CoreAnimation;
+﻿using System;
+using CoreAnimation;
 using CoreGraphics;
 using Microsoft.Maui.Graphics;
-using Microsoft.Maui.Graphics.Native;
+using Microsoft.Maui.Graphics.Platform;
+using ObjCRuntime;
 using UIKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
-	public partial class WrapperView : UIView
+	public partial class WrapperView : UIView, IDisposable
 	{
 		CAShapeLayer? _maskLayer;
 		CAShapeLayer? _shadowLayer;
+		UIView? BorderView;
 
 		public WrapperView()
 		{
@@ -57,6 +60,9 @@ namespace Microsoft.Maui
 			if (Subviews.Length == 0)
 				return;
 
+			if (BorderView != null)
+				BringSubviewToFront(BorderView);
+
 			var child = Subviews[0];
 
 			child.Frame = Bounds;
@@ -67,8 +73,21 @@ namespace Microsoft.Maui
 			if (ShadowLayer != null)
 				ShadowLayer.Frame = Bounds;
 
+			if (BorderView != null)
+				BorderView.Frame = Bounds;
+
 			SetClip();
 			SetShadow();
+			SetBorder();
+		}
+
+		public new void Dispose()
+		{
+			DisposeClip();
+			DisposeShadow();
+			DisposeBorder();
+
+			base.Dispose();
 		}
 
 		public override CGSize SizeThatFits(CGSize size)
@@ -98,6 +117,8 @@ namespace Microsoft.Maui
 			SetShadow();
 		}
 
+		partial void BorderChanged() => SetBorder();
+
 		void SetClip()
 		{
 			var mask = MaskLayer;
@@ -107,11 +128,16 @@ namespace Microsoft.Maui
 
 			mask ??= MaskLayer = new CAShapeLayer();
 			var frame = Frame;
-			var bounds = new RectangleF(0, 0, (float)frame.Width, (float)frame.Height);
+			var bounds = new RectF(0, 0, (float)frame.Width, (float)frame.Height);
 
 			var path = _clip?.PathForBounds(bounds);
 			var nativePath = path?.AsCGPath();
 			mask.Path = nativePath;
+		}
+
+		void DisposeClip()
+		{
+			MaskLayer = null;
 		}
 
 		void SetShadow()
@@ -124,7 +150,7 @@ namespace Microsoft.Maui
 			shadowLayer ??= ShadowLayer = new CAShapeLayer();
 
 			var frame = Frame;
-			var bounds = new RectangleF(0, 0, (float)frame.Width, (float)frame.Height);
+			var bounds = new RectF(0, 0, (float)frame.Width, (float)frame.Height);
 
 			shadowLayer.FillColor = new CGColor(0, 0, 0, 1);
 
@@ -136,6 +162,32 @@ namespace Microsoft.Maui
 				shadowLayer.ClearShadow();
 			else
 				shadowLayer.SetShadow(Shadow);
+		}
+
+		void DisposeShadow()
+		{
+			ShadowLayer = null;
+		}
+
+		void SetBorder()
+		{
+			if (Border == null)
+			{
+				BorderView?.RemoveFromSuperview();
+				return;
+			}
+
+			if (BorderView == null)
+			{
+				AddSubview(BorderView = new UIView(Bounds) { UserInteractionEnabled = false });
+			}
+
+			BorderView.UpdateMauiCALayer(Border);
+		}
+
+		void DisposeBorder()
+		{
+			BorderView?.RemoveFromSuperview();
 		}
 
 		CALayer? GetLayer()

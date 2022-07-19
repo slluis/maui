@@ -5,15 +5,16 @@ using Windows.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.Maui.Controls.Internals;
 using Microsoft.Maui.Controls.PlatformConfiguration.WindowsSpecific;
 using WBrush = Microsoft.UI.Xaml.Media.Brush;
 using Specifics = Microsoft.Maui.Controls.PlatformConfiguration.WindowsSpecific.InputView;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Controls.Platform;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 {
+	[System.Obsolete(Compatibility.Hosting.MauiAppBuilderExtensions.UseMapperInstead)]
 	public class EntryRenderer : ViewRenderer<Entry, FormsTextBox>
 	{
 		bool _fontApplied;
@@ -192,7 +193,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 			else
 			{
 				// Hide the soft keyboard; this matches the behavior of Forms on Android/iOS
-				Windows.UI.ViewManagement.InputPane.GetForCurrentView().TryHide();
+				global::Windows.UI.ViewManagement.InputPane.GetForCurrentView().TryHide();
 			}
 
 			((IEntryController)Element).SendCompleted();
@@ -201,13 +202,13 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 		[PortHandler]
 		void UpdateHorizontalTextAlignment()
 		{
-			Control.TextAlignment = Element.HorizontalTextAlignment.ToNativeTextAlignment(((IVisualElementController)Element).EffectiveFlowDirection);
+			Control.TextAlignment = Element.HorizontalTextAlignment.ToPlatformTextAlignment(((IVisualElementController)Element).EffectiveFlowDirection);
 		}
 
 		[PortHandler]
 		void UpdateVerticalTextAlignment()
 		{
-			Control.VerticalContentAlignment = Element.VerticalTextAlignment.ToNativeVerticalAlignment();
+			Control.VerticalContentAlignment = Element.VerticalTextAlignment.ToPlatformVerticalAlignment();
 		}
 
 		void UpdateFont()
@@ -220,7 +221,12 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 			if (entry == null)
 				return;
 
-			bool entryIsDefault = entry.FontFamily == null && entry.FontSize == Device.GetNamedSize(NamedSize.Default, typeof(Entry), true) && entry.FontAttributes == FontAttributes.None;
+			bool entryIsDefault =
+				entry.FontFamily == null &&
+#pragma warning disable CS0612 // Type or member is obsolete
+				entry.FontSize == Device.GetNamedSize(NamedSize.Default, typeof(Entry), true) &&
+#pragma warning restore CS0612 // Type or member is obsolete
+				entry.FontAttributes == FontAttributes.None;
 
 			if (entryIsDefault && !_fontApplied)
 				return;
@@ -406,7 +412,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 				}
 				catch (Exception ex)
 				{
-					Log.Warning("Entry", $"Failed to set Control.SelectionLength from SelectionLength: {ex}");
+					Application.Current?.FindMauiContext()?.CreateLogger<EntryRenderer>()?.LogWarning(ex, $"Failed to set Control.SelectionLength from SelectionLength");
 				}
 				finally
 				{
@@ -441,7 +447,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 				}
 				catch (Exception ex)
 				{
-					Log.Warning("Entry", $"Failed to set Control.SelectionStart from CursorPosition: {ex}");
+					Application.Current?.FindMauiContext()?.CreateLogger<EntryRenderer>()?.LogWarning(ex, $"Failed to set Control.SelectionStart from CursorPosition");
 				}
 				finally
 				{
@@ -460,7 +466,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 			}
 			catch (Exception ex)
 			{
-				Log.Warning("Entry", $"Failed to set CursorPosition from renderer: {ex}");
+				Application.Current?.FindMauiContext()?.CreateLogger<EntryRenderer>()?.LogWarning(ex, $"Failed to set CursorPosition from renderer");
 			}
 			finally
 			{
@@ -478,7 +484,7 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 			}
 			catch (Exception ex)
 			{
-				Log.Warning("Entry", $"Failed to set SelectionLength from renderer: {ex}");
+				Application.Current?.FindMauiContext()?.CreateLogger<EntryRenderer>()?.LogWarning(ex, $"Failed to set SelectionLength from renderer");
 			}
 			finally
 			{
@@ -499,8 +505,8 @@ namespace Microsoft.Maui.Controls.Compatibility.Platform.UWP
 			if (Children.Count == 0 || child == null)
 				return new SizeRequest();
 
-			var constraint = new Windows.Foundation.Size(widthConstraint, heightConstraint);
-            child.Measure(constraint);
+			var constraint = new global::Windows.Foundation.Size(widthConstraint, heightConstraint);
+			child.Measure(constraint);
 			var result = FormsTextBox.GetCopyOfSize(child, constraint);
 			return new SizeRequest(result);
 		}

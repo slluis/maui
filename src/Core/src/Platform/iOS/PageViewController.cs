@@ -1,7 +1,8 @@
 ﻿using Microsoft.Maui.Handlers;
+using ObjCRuntime;
 using UIKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public class PageViewController : ContainerViewController
 	{
@@ -13,7 +14,7 @@ namespace Microsoft.Maui
 			LoadFirstView(page);
 		}
 
-		protected override UIView CreateNativeView(IElement view)
+		protected override UIView CreatePlatformView(IElement view)
 		{
 			return new ContentView
 			{

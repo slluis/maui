@@ -1,49 +1,65 @@
-﻿#nullable enable
-
-using System;
+﻿using System;
 using Android.Runtime;
 using Android.Views;
+using AndroidX.Fragment.App;
 
 namespace Microsoft.Maui.Handlers
 {
-	public partial class NavigationViewHandler :
-		ViewHandler<INavigationView, NavigationLayout>
+	public partial class NavigationViewHandler : ViewHandler<IStackNavigationView, View>
 	{
-		NavigationManager? _navigationManager;
+		StackNavigationManager? _stackNavigationManager;
+		internal StackNavigationManager? StackNavigationManager => _stackNavigationManager;
 
-		protected override NavigationLayout CreateNativeView()
+		protected override View CreatePlatformView()
 		{
-			LayoutInflater? li = MauiContext?.GetLayoutInflater();
+			LayoutInflater? li = CreateNavigationManager().MauiContext?.GetLayoutInflater();
 			_ = li ?? throw new InvalidOperationException($"LayoutInflater cannot be null");
 
-			var view = li.Inflate(Resource.Layout.navigationlayout, null).JavaCast<NavigationLayout>();
+			var view = li.Inflate(Resource.Layout.fragment_backstack, null).JavaCast<FragmentContainerView>();
 			_ = view ?? throw new InvalidOperationException($"Resource.Layout.navigationlayout view not found");
 
 			return view;
 		}
 
-		public override void SetVirtualView(IView view)
+		public override Graphics.Size GetDesiredSize(double widthConstraint, double heightConstraint)
 		{
-			_navigationManager ??= CreateNavigationManager();
-			base.SetVirtualView(view);
+			return base.GetDesiredSize(widthConstraint, heightConstraint);
 		}
 
-		protected virtual NavigationManager CreateNavigationManager() =>
-			new NavigationManager(MauiContext!);
-
-		protected override void ConnectHandler(NavigationLayout nativeView)
+		public override void PlatformArrange(Graphics.Rect frame)
 		{
-			_navigationManager ??= CreateNavigationManager();
-			nativeView.NavigationManager = _navigationManager;
-
-			base.ConnectHandler(nativeView);
-			_navigationManager.Connect(VirtualView, nativeView);
+			base.PlatformArrange(frame);
 		}
 
-		public static void RequestNavigation(NavigationViewHandler arg1, INavigationView arg2, object? arg3)
+		StackNavigationManager CreateNavigationManager()
 		{
-			if (arg3 is NavigationRequest ea)
-				arg1._navigationManager?.RequestNavigation(ea);
+			_ = MauiContext ?? throw new InvalidOperationException($"{nameof(MauiContext)} should have been set by base class.");
+			return _stackNavigationManager ??= new StackNavigationManager(MauiContext);
+		}
+
+		protected override void ConnectHandler(View platformView)
+		{
+			base.ConnectHandler(platformView);
+			_stackNavigationManager?.Connect(VirtualView);
+			PlatformView.LayoutChange += OnLayoutChanged;
+		}
+
+		void OnLayoutChanged(object? sender, View.LayoutChangeEventArgs e)
+		{
+			VirtualView.Arrange(e);
+		}
+
+		private protected override void OnDisconnectHandler(View platformView)
+		{
+			_stackNavigationManager?.Disconnect();
+			base.OnDisconnectHandler(platformView);
+			platformView.LayoutChange -= OnLayoutChanged;
+		}
+
+		public static void RequestNavigation(INavigationViewHandler arg1, IStackNavigation arg2, object? arg3)
+		{
+			if (arg1 is NavigationViewHandler platformHandler && arg3 is NavigationRequest ea)
+				platformHandler._stackNavigationManager?.RequestNavigation(ea);
 		}
 	}
 }
