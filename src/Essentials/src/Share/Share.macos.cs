@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AppKit;
+using CoreGraphics;
 using Foundation;
 using Microsoft.Maui.Graphics.Platform;
 
@@ -39,10 +40,11 @@ namespace Microsoft.Maui.ApplicationModel.DataTransfer
 
 		static Task PlatformShowRequestAsync(ShareRequestBase request, List<NSObject> items)
 		{
-			var window = Platform.GetCurrentWindow();
-			var view = window.ContentView;
+			var controller = Platform.GetCurrentUIViewController();
+			var view = controller.View;
 
-			var rect = request.PresentationSourceBounds.AsCGRect();
+			var r = request.PresentationSourceBounds;
+			var rect = new CGRect(r.X, r.Y, r.Width, r.Height);
 			rect.Y = view.Bounds.Height - rect.Bottom;
 
 			var picker = new NSSharingServicePicker(items.ToArray());

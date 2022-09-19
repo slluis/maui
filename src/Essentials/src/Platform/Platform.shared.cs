@@ -68,6 +68,20 @@ namespace Microsoft.Maui.ApplicationModel
 		public static UIKit.UIViewController? GetCurrentUIViewController() =>
 			WindowStateManager.Default.GetCurrentUIViewController(true);
 
+#elif MACOS
+
+		public static bool OpenUrl(AppKit.NSApplication app, Foundation.NSUrl url, Foundation.NSDictionary options) =>
+			WebAuthenticator.Default.OpenUrl(app, url, options);
+
+		public static void Init(Func<AppKit.NSViewController>? getCurrentUIViewController) =>
+			WindowStateManager.Default.Init(getCurrentUIViewController);
+
+		public static AppKit.NSViewController? GetCurrentUIViewController() =>
+			WindowStateManager.Default.GetCurrentUIViewController(true);
+
+		public static AppKit.NSWindow? GetCurrentWindow() =>
+			WindowStateManager.Default.GetCurrentUIWindow(true);
+
 #elif WINDOWS
 
 		public static string? MapServiceToken

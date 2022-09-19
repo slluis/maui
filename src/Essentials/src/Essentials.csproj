@@ -8,7 +8,7 @@
     <IsPackable>false</IsPackable>
     <IsTrimmable>true</IsTrimmable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);CS1591;NU5104;RS0041;RS0026</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;NU5104;RS0041;RS0026;RS0016;RS0037</NoWarn>
   </PropertyGroup>
   <Import Project="$(MauiNuSpecDirectory)Microsoft.Maui.Controls.MultiTargeting.targets" />
   <ItemGroup>
@@ -59,9 +59,9 @@
     <Compile Include="**\*.tizen.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
     <Compile Include="**\*.tizen.*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
   </ItemGroup>
-  <!-- <ItemGroup Condition=" '$(TargetPlatformIdentifier)' == 'macos' ">
+  <ItemGroup Condition=" '$(TargetPlatformIdentifier)' == 'macos' ">
     <Compile Include="**\*.macos.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
     <Compile Include="**\*.macos.*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-  </ItemGroup> -->
+  </ItemGroup>
   <Import Project="$(MauiSrcDirectory)PublicAPI.targets" />
 </Project>

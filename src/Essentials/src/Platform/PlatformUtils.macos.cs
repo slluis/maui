@@ -4,6 +4,7 @@ using AppKit;
 using CoreFoundation;
 using CoreVideo;
 using Foundation;
+using Microsoft.Maui.Devices;
 using ObjCRuntime;
 
 namespace Microsoft.Maui.ApplicationModel
@@ -58,17 +59,20 @@ namespace Microsoft.Maui.ApplicationModel
 
 		public static double GetRefreshRate(uint display)
 		{
-			var result = CVDisplayLinkCreateWithCGDisplay(display, out var handle);
-			if (result != 0 || handle == IntPtr.Zero)
+			if (OperatingSystem.IsMacOSVersionAtLeast(12))
+			{
+				using var dl = CVDisplayLink.CreateFromDisplayId(display, out var result);
+				if (result != CVReturn.Success)
+					return 0.0;
+
+				var period = dl.NominalOutputVideoRefreshPeriod;
+				if (((CVTimeFlags)period.Flags).HasFlag(CVTimeFlags.IsIndefinite) || period.TimeValue == 0)
+					return 0.0;
+
+				return period.TimeScale / (double)period.TimeValue;
+			}
+			else
 				return 0.0;
-
-			using var dl = new CVDisplayLink(handle);
-
-			var period = dl.NominalOutputVideoRefreshPeriod;
-			if (((CVTimeFlags)period.Flags).HasFlag(CVTimeFlags.IsIndefinite) || period.TimeValue == 0)
-				return 0.0;
-
-			return period.TimeScale / (double)period.TimeValue;
 		}
 	}
 
@@ -322,11 +326,13 @@ namespace Microsoft.Maui.ApplicationModel
 		internal static CFRunLoopSource CreatePowerSourceNotification(Action callback)
 		{
 			var sourceRef = IOPSNotificationCreateRunLoopSource(new IOPowerSourceCallback(_ => callback()), IntPtr.Zero);
-
+			
 			if (sourceRef == default)
 				return null;
-
-			return new CFRunLoopSource(sourceRef, true);
+			 
+			// TODO
+			throw new NotImplementedException();
+//			return new CFRunLoopSource(sourceRef, true);
 		}
 
 		delegate void IOPowerSourceCallback(IntPtr context);

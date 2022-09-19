@@ -16,7 +16,7 @@ namespace Microsoft.Maui
 			get
 			{
 				if (NativeVersion.IsAtLeast(13))
-					return NSColor.LabelColor;
+					return NSColor.Label;
 
 				return NSColor.Black;
 			}
@@ -26,7 +26,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				return NSColor.PlaceholderTextColor;
+				return NSColor.PlaceholderText;
 			}
 		}
 
@@ -36,7 +36,7 @@ namespace Microsoft.Maui
 			{
 
 				if (NativeVersion.IsAtLeast(13))
-					return NSColor.SecondaryLabelColor;
+					return NSColor.SecondaryLabel;
 
 				return new Color(.32f, .4f, .57f).ToNative();
 			}
@@ -54,7 +54,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				return NSColor.SeparatorColor;
+				return NSColor.Separator;
 			}
 		}
 
@@ -62,7 +62,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				return NSColor.SeparatorColor;
+				return NSColor.Separator;
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				return NSColor.SystemBlueColor;
+				return NSColor.SystemBlue;
 			}
 		}
 
@@ -91,7 +91,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				return NSColor.SystemRedColor;
+				return NSColor.SystemRed;
 			}
 		}
 
@@ -99,7 +99,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				return NSColor.SystemGrayColor;
+				return NSColor.SystemGray;
 			}
 		}
 
@@ -107,7 +107,7 @@ namespace Microsoft.Maui
 		{
 			get
 			{
-				return NSColor.SystemGrayColor;
+				return NSColor.SystemGray;
 			}
 		}
 

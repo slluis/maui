@@ -3,7 +3,7 @@ using AppKit;
 
 namespace Microsoft.Maui
 {
-	public interface IFontManager
+	public partial interface IFontManager
 	{
 		NSFont DefaultFont { get; }
 

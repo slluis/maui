@@ -1,8 +1,8 @@
-﻿using Microsoft.Maui.Graphics.Native;
+﻿using Microsoft.Maui.Graphics.Platform;
 
 namespace Microsoft.Maui.Handlers
 {
-	public partial class GraphicsViewHandler : ViewHandler<IGraphicsView, NativeGraphicsView>
+	public partial class GraphicsViewHandler : ViewHandler<IGraphicsView, PlatformTouchGraphicsView>
 	{
 		protected override NativeGraphicsView CreateNativeView()
 		{

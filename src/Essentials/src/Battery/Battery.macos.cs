@@ -1,5 +1,6 @@
 using System;
 using CoreFoundation;
+using Microsoft.Maui.ApplicationModel;
 
 namespace Microsoft.Maui.Devices
 {

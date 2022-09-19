@@ -2,7 +2,9 @@ using System;
 using System.Threading.Tasks;
 using AppKit;
 using AuthenticationServices;
+using AVFoundation;
 using Foundation;
+using Microsoft.Maui.ApplicationModel;
 
 namespace Microsoft.Maui.Authentication
 {
@@ -18,9 +20,9 @@ namespace Microsoft.Maui.Authentication
 
 		ASWebAuthenticationSession was;
 
-		WebAuthenticatorImplementation()
+		internal WebAuthenticatorImplementation()
 		{
-			callbackHelper.Register();
+			callbackHelper.Register(this);
 		}
 
 		public async Task<WebAuthenticatorResult> AuthenticateAsync(WebAuthenticatorOptions webAuthenticatorOptions)
@@ -28,7 +30,7 @@ namespace Microsoft.Maui.Authentication
 			var url = webAuthenticatorOptions?.Url;
 			var callbackUrl = webAuthenticatorOptions?.CallbackUrl;
 
-			if (!AppInfo.VerifyHasUrlScheme(callbackUrl.Scheme))
+			if (!AppInfoImplementation.VerifyHasUrlScheme(callbackUrl.Scheme))
 				throw new InvalidOperationException("You must register your URL Scheme handler in your app's Info.plist!");
 
 			// Cancel any previous task that's still pending
@@ -41,7 +43,7 @@ namespace Microsoft.Maui.Authentication
 
 			if (OperatingSystem.IsMacOSVersionAtLeast(10, 15))
 			{
-				static void AuthSessionCallback(NSUrl cbUrl, NSError error)
+				void AuthSessionCallback(NSUrl cbUrl, NSError error)
 				{
 					if (error == null)
 						OpenUrlCallback(cbUrl);
@@ -108,8 +110,11 @@ namespace Microsoft.Maui.Authentication
 
 		class CallBackHelper : NSObject
 		{
-			public void Register()
+			WebAuthenticatorImplementation impl;
+
+			public void Register(WebAuthenticatorImplementation impl)
 			{
+				this.impl = impl;
 				NSAppleEventManager.SharedAppleEventManager.SetEventHandler(
 					this,
 					new ObjCRuntime.Selector("handleAppleEvent:withReplyEvent:"),
@@ -122,7 +127,7 @@ namespace Microsoft.Maui.Authentication
 			{
 				var url = evt.ParamDescriptorForKeyword(DirectObject).StringValue;
 				var uri = new Uri(url);
-				OpenUrlCallback(WebUtils.GetNativeUrl(uri));
+				impl.OpenUrlCallback(WebUtils.GetNativeUrl(uri));
 			}
 
 			static uint GetDescriptor(string s) =>

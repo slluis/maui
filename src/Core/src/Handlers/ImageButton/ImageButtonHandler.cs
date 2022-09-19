@@ -62,16 +62,11 @@ namespace Microsoft.Maui.Handlers
 
 		IImage IImageHandler.VirtualView => VirtualView;
 
-<<<<<<< HEAD
-#if __IOS__
-		UIKit.UIImageView IImageHandler.TypedNativeView => NativeView.ImageView;
-#elif __MACOS__
-		// Implemented in .Mac file
-=======
 		PlatformImageView IImageHandler.PlatformView =>
 #if __IOS__ || TIZEN
 			PlatformView.ImageView;
->>>>>>> main
+#elif MACOS
+			null; // TODO
 #elif WINDOWS
 			PlatformView.GetContent<PlatformImageView>() ?? throw new InvalidOperationException("ImageButton did not contain an Image element.");
 #else

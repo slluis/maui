@@ -1,5 +1,10 @@
 ﻿#nullable enable
 #if __IOS__ || MACCATALYST || __MACOS__
+using System;
+using System.Runtime.Serialization;
+using AVFoundation;
+using CoreGraphics;
+using ScriptingBridge;
 using PlatformView = Microsoft.Maui.Platform.ContentView;
 #elif __ANDROID__
 using PlatformView = Microsoft.Maui.Platform.ContentViewGroup;
@@ -39,8 +44,9 @@ namespace Microsoft.Maui.Handlers
 
 		public BorderHandler() : base(Mapper, CommandMapper)
 		{
-
+			
 		}
+
 
 		protected BorderHandler(IPropertyMapper mapper, CommandMapper? commandMapper = null)
 			: base(mapper, commandMapper ?? ViewCommandMapper)
@@ -49,7 +55,7 @@ namespace Microsoft.Maui.Handlers
 
 		public BorderHandler(IPropertyMapper? mapper = null) : base(mapper ?? Mapper)
 		{
-
+			
 		}
 
 		IBorderView IBorderHandler.VirtualView => VirtualView;

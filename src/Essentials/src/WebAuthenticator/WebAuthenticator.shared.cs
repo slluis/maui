@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Threading.Tasks;
+using Microsoft.Maui.ApplicationModel;
 
 namespace Microsoft.Maui.Authentication
 {
@@ -52,7 +53,7 @@ namespace Microsoft.Maui.Authentication
 		public static Task<WebAuthenticatorResult> AuthenticateAsync(this IWebAuthenticator webAuthenticator, Uri url, Uri callbackUrl) =>
 			webAuthenticator.AuthenticateAsync(new WebAuthenticatorOptions { Url = url, CallbackUrl = callbackUrl });
 
-#if IOS || MACCATALYST || MACOS
+#if IOS || MACCATALYST
 
 		public static bool OpenUrl(this IWebAuthenticator webAuthenticator, Uri uri) =>
 			webAuthenticator.AsPlatformCallback().OpenUrlCallback(uri);
@@ -68,6 +69,14 @@ namespace Microsoft.Maui.Authentication
 
 			return webAuthenticator.OpenUrl(new Uri(uri));
 		}
+
+#elif MACOS
+
+		public static bool OpenUrl(this IWebAuthenticator webAuthenticator, Uri uri) =>
+			webAuthenticator.AsPlatformCallback().OpenUrlCallback(uri);
+
+		public static bool OpenUrl(this IWebAuthenticator webAuthenticator, AppKit.NSApplication app, Foundation.NSUrl url, Foundation.NSDictionary options) =>
+			webAuthenticator.OpenUrl(new Uri(url.AbsoluteString));
 
 #elif ANDROID
 
