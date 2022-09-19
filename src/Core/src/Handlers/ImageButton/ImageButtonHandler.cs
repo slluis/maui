@@ -16,8 +16,8 @@ using PlatformImage = Microsoft.UI.Xaml.Media.ImageSource;
 using PlatformImageView = Microsoft.UI.Xaml.Controls.Image;
 using PlatformView = Microsoft.UI.Xaml.Controls.Button;
 #elif TIZEN
-using PlatformImage = Tizen.UIExtensions.ElmSharp.Image;
-using PlatformImageView = Tizen.UIExtensions.ElmSharp.Image;
+using PlatformImage = Microsoft.Maui.Platform.MauiImageSource;
+using PlatformImageView = Tizen.UIExtensions.NUI.Image;
 using PlatformView = Microsoft.Maui.Platform.MauiImageButton;
 #elif (NETSTANDARD || !PLATFORM) || (NET6_0_OR_GREATER && !IOS && !ANDROID && !TIZEN)
 using PlatformImage = System.Object;
@@ -63,7 +63,7 @@ namespace Microsoft.Maui.Handlers
 		IImage IImageHandler.VirtualView => VirtualView;
 
 		PlatformImageView IImageHandler.PlatformView =>
-#if __IOS__ || TIZEN
+#if __IOS__
 			PlatformView.ImageView;
 #elif MACOS
 			null; // TODO

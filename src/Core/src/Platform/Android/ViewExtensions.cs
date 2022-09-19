@@ -7,7 +7,9 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.Widget;
 using AndroidX.Core.Content;
+using AndroidX.Window.Layout;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Primitives;
@@ -340,6 +342,12 @@ namespace Microsoft.Maui.Platform
 			}
 		}
 
+		public static void UpdateToolTip(this AView view, ToolTip? tooltip)
+		{
+			string? text = tooltip?.Content?.ToString();
+			TooltipCompat.SetTooltipText(view, text);
+		}
+
 		public static void RemoveFromParent(this AView view)
 		{
 			if (view != null)
@@ -441,8 +449,16 @@ namespace Microsoft.Maui.Platform
 				context.FromPixels((float)rect.Height()));
 		}
 
-		internal static bool IsLoaded(this View frameworkElement) =>
-			frameworkElement.IsAttachedToWindow;
+		internal static bool IsLoaded(this View frameworkElement)
+		{
+			if (frameworkElement == null)
+				return false;
+
+			if (frameworkElement.IsDisposed())
+				return false;
+
+			return frameworkElement.IsAttachedToWindow;
+		}
 
 		internal static IDisposable OnLoaded(this View frameworkElement, Action action)
 		{
@@ -564,25 +580,7 @@ namespace Microsoft.Maui.Platform
 			=> GetHostedWindow(view?.Handler?.PlatformView as View);
 
 		internal static IWindow? GetHostedWindow(this View? view)
-			=> GetWindowFromActivity(view?.Context?.GetActivity());
-
-		internal static IWindow? GetWindowFromActivity(this Android.App.Activity? activity)
-		{
-			if (activity is null)
-				return null;
-
-			var windows = WindowExtensions.GetWindows();
-			foreach (var window in windows)
-			{
-				if (window.Handler?.PlatformView is Android.App.Activity active)
-				{
-					if (active == activity)
-						return window;
-				}
-			}
-
-			return null;
-		}
+			=> view?.Context?.GetWindow();
 
 		internal static Rect GetFrameRelativeTo(this View view, View relativeTo)
 		{
