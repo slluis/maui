@@ -2,7 +2,7 @@
 using AppKit;
 using System;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public class MauiActivityIndicator : NSView
 	{

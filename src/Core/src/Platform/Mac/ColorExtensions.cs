@@ -4,7 +4,7 @@ using Microsoft.Maui.Graphics;
 using AppKit;
 using NSColor = AppKit.NSColor;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static class ColorExtensions
 	{
@@ -38,7 +38,7 @@ namespace Microsoft.Maui
 				if (NativeVersion.IsAtLeast(13))
 					return NSColor.SecondaryLabel;
 
-				return new Color(.32f, .4f, .57f).ToNative();
+				return new Color(.32f, .4f, .57f).ToPlatform();
 			}
 		}
 
@@ -113,7 +113,7 @@ namespace Microsoft.Maui
 
 		public static CGColor ToCGColor(this Color color)
 		{
-			return color.ToNative().CGColor;
+			return color.ToPlatform().CGColor;
 		}
 
 		public static NSColor FromPatternImageFromBundle(string bgImage)
@@ -135,15 +135,15 @@ namespace Microsoft.Maui
 			return new Color((float)red, (float)green, (float)blue, (float)alpha);
 		}
 
-		public static NSColor ToNative(this Color color)
+		public static NSColor ToPlatform(this Color color)
 		{
 			return NSColor.FromRgba(color.Red, color.Green, color.Blue, color.Alpha);
 		}
 
-		public static NSColor? ToNative(this Color? color, Color? defaultColor)
-			=> color?.ToNative() ?? defaultColor?.ToNative();
+		public static NSColor? ToPlatform(this Color? color, Color? defaultColor)
+			=> color?.ToPlatform() ?? defaultColor?.ToPlatform();
 
-		public static NSColor ToNative(this Color? color, NSColor defaultColor)
-			=> color?.ToNative() ?? defaultColor;
+		public static NSColor ToPlatform(this Color? color, NSColor defaultColor)
+			=> color?.ToPlatform() ?? defaultColor;
 	}
 }

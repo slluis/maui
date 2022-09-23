@@ -29,7 +29,7 @@ namespace Microsoft.Maui
 				if (stream == null)
 					throw new InvalidOperationException($"Unable to load image stream from URI '{imageSource.Uri}'.");
 
-				var image = new NSImage(NSData.FromStream(stream));
+				var image = new NSImage(NSData.FromStream(stream) ?? throw new Exception("Can't read from stream"));
 
 				//FIXME_NATIVE to implement size
 				//var image = UIImage.LoadFromData(, scale);

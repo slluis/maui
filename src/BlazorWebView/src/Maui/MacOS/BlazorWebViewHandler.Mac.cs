@@ -47,7 +47,7 @@ namespace Microsoft.AspNetCore.Components.WebView.Maui
 			})();
 		";
 
-		protected override NSView CreateNativeView()
+		protected override NSView CreatePlatformView()
 		{
 			return new NSView();
 			//var config = new WKWebViewConfiguration();

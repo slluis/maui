@@ -1,9 +1,9 @@
-﻿using Microsoft.Maui.Graphics.Native;
+﻿using Microsoft.Maui.Graphics.Platform;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
-	public class MauiBoxView : NativeGraphicsView
+	public class MauiBoxView : PlatformGraphicsView
 	{
 		public MauiBoxView()
 		{

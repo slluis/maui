@@ -4,9 +4,14 @@ using System.IO;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.FileProviders;
+using WebKit;
 
 namespace Microsoft.AspNetCore.Components.WebView.Maui
 {
+	/// <summary>
+	/// An implementation of <see cref="WebViewManager"/> that uses the <see cref="WKWebView"/> browser control
+	/// to render web content.
+	/// </summary>
 	public class MacOSWebViewManager : WebViewManager
 	{
 		private const string AppOrigin = "app://0.0.0.0/";
@@ -14,6 +19,15 @@ namespace Microsoft.AspNetCore.Components.WebView.Maui
 		//private readonly BlazorWebViewHandler _blazorMauiWebViewHandler;
 		//private readonly WKWebView _webview;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="MacOSWebViewManager"/>
+		/// </summary>
+		/// <param name="blazorMauiWebViewHandler">The <see cref="BlazorWebViewHandler"/>.</param>
+		/// <param name="services"></param>
+		/// <param name="dispatcher"></param>
+		/// <param name="fileProvider"></param>
+		/// <param name="jsComponents"></param>
+		/// <param name="hostPageRelativePath"></param>
 		public MacOSWebViewManager(BlazorWebViewHandler blazorMauiWebViewHandler,IServiceProvider services, Dispatcher dispatcher, IFileProvider fileProvider, JSComponentConfigurationStore jsComponents, string hostPageRelativePath)
 			: base(services, dispatcher, new Uri(AppOrigin), fileProvider, jsComponents, hostPageRelativePath)
 		{

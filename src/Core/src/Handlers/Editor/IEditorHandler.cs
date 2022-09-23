@@ -1,4 +1,4 @@
-﻿#if __IOS__ || MACCATALYST
+﻿#if __IOS__ || MACCATALYST || MACOS
 using PlatformView = Microsoft.Maui.Platform.MauiTextView;
 #elif MONOANDROID
 using PlatformView = AndroidX.AppCompat.Widget.AppCompatEditText;

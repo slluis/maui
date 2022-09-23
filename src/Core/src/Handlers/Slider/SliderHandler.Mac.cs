@@ -9,7 +9,7 @@ namespace Microsoft.Maui.Handlers
 		//static NSColor? DefaultMaxTrackColor;
 		//static NSColor? DefaultThumbColor;
 
-		protected override NSSlider CreateNativeView() => new NSSlider { Continuous = true };
+		protected override NSSlider CreatePlatformView() => new NSSlider { Continuous = true };
 
 		protected override void ConnectHandler(NSSlider nativeView)
 		{
@@ -36,37 +36,37 @@ namespace Microsoft.Maui.Handlers
 			DefaultThumbColor = nativeView.ThumbTintColor;*/
 		}
 
-		public static void MapMinimum(SliderHandler handler, ISlider slider)
+		public static void MapMinimum(ISliderHandler handler, ISlider slider)
 		{
 //			handler.NativeView?.UpdateMinimum(slider);
 		}
 
-		public static void MapMaximum(SliderHandler handler, ISlider slider)
+		public static void MapMaximum(ISliderHandler handler, ISlider slider)
 		{
 //			handler.NativeView?.UpdateMaximum(slider);
 		}
 
-		public static void MapValue(SliderHandler handler, ISlider slider)
+		public static void MapValue(ISliderHandler handler, ISlider slider)
 		{
 //			handler.NativeView?.UpdateValue(slider);
 		}
 
-		public static void MapMinimumTrackColor(SliderHandler handler, ISlider slider)
+		public static void MapMinimumTrackColor(ISliderHandler handler, ISlider slider)
 		{
 //			handler.NativeView?.UpdateMinimumTrackColor(slider, DefaultMinTrackColor);
 		}
 
-		public static void MapMaximumTrackColor(SliderHandler handler, ISlider slider)
+		public static void MapMaximumTrackColor(ISliderHandler handler, ISlider slider)
 		{
 //			handler.NativeView?.UpdateMaximumTrackColor(slider, DefaultMaxTrackColor);
 		}
 
-		public static void MapThumbColor(SliderHandler handler, ISlider slider)
+		public static void MapThumbColor(ISliderHandler handler, ISlider slider)
 		{
 //			handler.NativeView?.UpdateThumbColor(slider, DefaultThumbColor);
 		}
 
-		public static void MapThumbImageSource(SliderHandler handler, ISlider slider)
+		public static void MapThumbImageSource(ISliderHandler handler, ISlider slider)
 		{
 /*			var provider = handler.GetRequiredService<IImageSourceServiceProvider>();
 

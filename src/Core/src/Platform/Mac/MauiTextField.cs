@@ -3,7 +3,7 @@ using CoreGraphics;
 using Foundation;
 using AppKit;
 
-namespace Microsoft.Maui.Platform.Mac
+namespace Microsoft.Maui.Platform
 {
 	public class MauiTextField : NSTextField
 	{

@@ -22,6 +22,9 @@ namespace Microsoft.Maui.Media
 		Task<IScreenshotResult> CaptureAsync(UIKit.UIWindow window);
 		Task<IScreenshotResult> CaptureAsync(UIKit.UIView view);
 		//Task<IScreenshotResult> CaptureAsync(CoreAnimation.CALayer layer, bool skipChildren);
+#elif MACOS
+		Task<IScreenshotResult> CaptureAsync(AppKit.NSWindow window);
+		Task<IScreenshotResult> CaptureAsync(AppKit.NSView view);
 #elif WINDOWS
 		Task<IScreenshotResult> CaptureAsync(UI.Xaml.Window window);
 		Task<IScreenshotResult> CaptureAsync(UI.Xaml.UIElement element);
@@ -102,6 +105,14 @@ namespace Microsoft.Maui.Media
 
 		//public static Task<IScreenshotResult> CaptureAsync(this IScreenshot screenshot, CoreAnimation.CALayer layer, bool skipChildren) =>
 		//	screenshot.AsPlatform().CaptureAsync(layer, skipChildren);
+
+#elif MACOS
+
+		public static Task<IScreenshotResult> CaptureAsync(this IScreenshot screenshot, AppKit.NSWindow window) =>
+			screenshot.AsPlatform().CaptureAsync(window);
+
+		public static Task<IScreenshotResult> CaptureAsync(this IScreenshot screenshot, AppKit.NSView view) =>
+			screenshot.AsPlatform().CaptureAsync(view);
 
 #elif WINDOWS
 

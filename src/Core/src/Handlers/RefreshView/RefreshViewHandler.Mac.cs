@@ -8,7 +8,7 @@ namespace Microsoft.Maui.Handlers
 {
 	public partial class RefreshViewHandler : ViewHandler<IRefreshView, MauiRefreshView>
 	{
-		protected override MauiRefreshView CreateNativeView()
+		protected override MauiRefreshView CreatePlatformView()
 		{
 			return new MauiRefreshView();
 		}
@@ -31,41 +31,38 @@ namespace Microsoft.Maui.Handlers
 			//handler.NativeView.RefreshControl.UpdateBackground(view);
 		}
 
-		public static void MapIsRefreshing(RefreshViewHandler handler, IRefreshView refreshView)
-			=> handler.UpdateIsRefreshing();
+		public static void MapIsRefreshing(IRefreshViewHandler handler, IRefreshView refreshView)
+			=> UpdateIsRefreshing(handler);
 
-		public static void MapContent(RefreshViewHandler handler, IRefreshView refreshView)
-			=> handler.UpdateContent();
+		public static void MapContent(IRefreshViewHandler handler, IRefreshView refreshView)
+			=> UpdateContent(handler);
 
-		public static void MapRefreshColor(RefreshViewHandler handler, IRefreshView refreshView)
-			=> handler.UpdateRefreshColor();
+		public static void MapRefreshColor(IRefreshViewHandler handler, IRefreshView refreshView)
+			=> UpdateRefreshColor(handler);
 
 		public static void MapIsEnabled(RefreshViewHandler handler, IRefreshView refreshView)
-			=> handler.NativeView?.UpdateIsEnabled(refreshView);
+			=> handler.PlatformView?.UpdateIsEnabled(refreshView);
 
 		void OnRefresh(object? sender, EventArgs e)
 		{
 			VirtualView.IsRefreshing = true;
 		}
 
-		void UpdateIsRefreshing()
+		static void UpdateIsRefreshing(IRefreshViewHandler handler)
 		{
-			NativeView.IsRefreshing = VirtualView.IsRefreshing;
+			handler.PlatformView.IsRefreshing = handler.VirtualView.IsRefreshing;
 		}
 
-		void UpdateContent() =>
-			NativeView.UpdateContent(VirtualView.Content, MauiContext);
+		static void UpdateContent(IRefreshViewHandler handler) =>
+			handler.PlatformView.UpdateContent(handler.VirtualView.Content, handler.MauiContext);
 
-		void UpdateRefreshColor()
+		static void UpdateRefreshColor(IRefreshViewHandler handler)
 		{
-			var color = VirtualView?.RefreshColor?.ToColor()?.ToNative();
+			// TODO
+/*			var color = handler.VirtualView?.RefreshColor?.ToColor()?.ToPlatform();
 
 			if (color != null)
-			{
-				throw new NotImplementedException();
-				//NativeView.RefreshControl.TintColor = color;
-			}
+				handler.PlatformView.RefreshControl.TintColor = color;*/
 		}
-
 	}
 }

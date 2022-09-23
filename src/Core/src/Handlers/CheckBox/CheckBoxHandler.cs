@@ -1,5 +1,5 @@
 ﻿#nullable enable
-#if __IOS__ || MACCATALYST
+#if __IOS__ || MACCATALYST || MACOS
 using PlatformView = Microsoft.Maui.Platform.MauiCheckBox;
 #elif __ANDROID__
 using PlatformView = AndroidX.AppCompat.Widget.AppCompatCheckBox;

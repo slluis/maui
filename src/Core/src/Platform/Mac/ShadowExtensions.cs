@@ -3,7 +3,7 @@ using CoreGraphics;
 using Microsoft.Maui.Graphics;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	internal static class ShadowExtensions
 	{
@@ -23,7 +23,7 @@ namespace Microsoft.Maui
 
 			var radius = shadow.Radius;
 			var opacity = shadow.Opacity;
-			var color = shadow.Paint.ToColor()?.ToNative();
+			var color = shadow.Paint.ToColor()?.ToPlatform();
 
 			var offset = new CGSize((double)shadow.Offset.X, (double)shadow.Offset.Y);
 

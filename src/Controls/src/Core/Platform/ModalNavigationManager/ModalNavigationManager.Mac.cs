@@ -16,7 +16,7 @@ namespace Microsoft.Maui.Controls.Platform
 		{
 			get
 			{
-				if (_window?.Page?.Handler?.NativeView is NSView view)
+				if (_window?.Page?.Handler?.PlatformView is NSView view)
 				{
 					return view.Window.ContentViewController;
 				}

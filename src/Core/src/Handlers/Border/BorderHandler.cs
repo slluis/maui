@@ -1,5 +1,5 @@
 ﻿#nullable enable
-#if __IOS__ || MACCATALYST || __MACOS__
+#if __IOS__ || MACCATALYST || MACOS
 using System;
 using System.Runtime.Serialization;
 using AVFoundation;

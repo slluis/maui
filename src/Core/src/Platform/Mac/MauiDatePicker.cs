@@ -1,6 +1,6 @@
 ﻿using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public class MauiDatePicker : NoCaretField
 	{

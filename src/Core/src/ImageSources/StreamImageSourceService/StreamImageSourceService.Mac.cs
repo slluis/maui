@@ -26,6 +26,8 @@ namespace Microsoft.Maui
 					throw new InvalidOperationException("Unable to load image stream.");
 
 				using var data = NSData.FromStream(stream);
+				if (data == null)
+					throw new Exception("Can't read from stream");
 				var image = new NSImage(data);
 				//FIXME_NATIVE: add scale
 				//image.Scale = scale;

@@ -9,7 +9,7 @@ namespace Microsoft.Maui.Handlers
 {
 	public partial class ButtonHandler : ViewHandler<IButton, NSButton>
 	{
-		protected override NSButton CreateNativeView()
+		protected override NSButton CreatePlatformView()
 		{
 			var button = new MauiButton();
 			return button;
@@ -39,60 +39,58 @@ namespace Microsoft.Maui.Handlers
 
 		public static void MapText(IButtonHandler handler, IText button)
 		{
-			handler.TypedNativeView?.UpdateText(button);
+			handler.PlatformView?.UpdateText(button);
 			// Any text update requires that we update any attributed string formatting
 			MapFormatting(handler, button);
 		}
 
 		public static void MapTextColor(IButtonHandler handler, ITextStyle button)
 		{
-			handler.TypedNativeView?.UpdateTextColor(button);
+			handler.PlatformView?.UpdateTextColor(button);
 		}
 
 		public static void MapCharacterSpacing(IButtonHandler handler, ITextStyle button)
 		{
-			handler.TypedNativeView?.UpdateCharacterSpacing(button);
+			handler.PlatformView?.UpdateCharacterSpacing(button);
 		}
 
 		public static void MapPadding(IButtonHandler handler, IButton button)
 		{
-			handler.TypedNativeView?.UpdatePadding(button);
+			handler.PlatformView?.UpdatePadding(button);
 		}
 
 		public static void MapFont(IButtonHandler handler, ITextStyle button)
 		{
 			var fontManager = handler.GetRequiredService<IFontManager>();
-			handler.TypedNativeView?.UpdateFont(button, fontManager);
+			handler.PlatformView?.UpdateFont(button, fontManager);
 		}
 
 		public static void MapFormatting(IButtonHandler handler, IText button)
 		{
 			// Update all of the attributed text formatting properties
-			handler.TypedNativeView?.UpdateCharacterSpacing(button);
+			handler.PlatformView?.UpdateCharacterSpacing(button);
 		}
 
 		void OnSetImageSource(NSImage? image)
 		{
 			if (image != null)
 			{
-				NativeView.Image = image;
+				PlatformView.Image = image;
 				//TODO: Improve
 				//SetImage(image.ImageWithRenderingMode(NSImageRenderingMode.AlwaysOriginal), UIControlState.Normal);
 			}
 			else
 			{
-				NativeView.Image = null;
+				PlatformView.Image = null;
 			}
-
-			VirtualView.ImageSourceLoaded();
 		}
 
-		public static void MapImageSource(IButtonHandler handler, IButton image) =>
+		public static void MapImageSource(IButtonHandler handler, IImage image) =>
 			MapImageSourceAsync(handler, image).FireAndForget(handler);
 
-		public static Task MapImageSourceAsync(IButtonHandler handler, IButton image)
+		public static Task MapImageSourceAsync(IButtonHandler handler, IImage image)
 		{
-			if (image.ImageSource == null)
+			if (image.Source == null)
 			{
 				return Task.CompletedTask;
 			}
@@ -114,6 +112,21 @@ namespace Microsoft.Maui.Handlers
 		void OnButtonTouchDown(object? sender, EventArgs e)
 		{
 			VirtualView?.Pressed();
+		}
+
+		public static void MapStrokeColor(IButtonHandler handler, IButtonStroke buttonStroke)
+		{
+			handler.PlatformView?.UpdateStrokeColor(buttonStroke);
+		}
+
+		public static void MapStrokeThickness(IButtonHandler handler, IButtonStroke buttonStroke)
+		{
+			handler.PlatformView?.UpdateStrokeThickness(buttonStroke);
+		}
+
+		public static void MapCornerRadius(IButtonHandler handler, IButtonStroke buttonStroke)
+		{
+			handler.PlatformView?.UpdateCornerRadius(buttonStroke);
 		}
 	}
 }

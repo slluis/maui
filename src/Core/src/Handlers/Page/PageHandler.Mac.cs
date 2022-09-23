@@ -2,9 +2,9 @@
 
 namespace Microsoft.Maui.Handlers
 {
-	public partial class PageHandler : ContentViewHandler, INativeViewHandler
+	public partial class PageHandler : ContentViewHandler, IPlatformViewHandler
 	{
-		protected override ContentView CreateNativeView()
+		protected override ContentView CreatePlatformView()
 		{
 			_ = VirtualView ?? throw new InvalidOperationException($"{nameof(VirtualView)} must be set to create a LayoutView");
 			_ = MauiContext ?? throw new InvalidOperationException($"{nameof(MauiContext)} cannot be null");
@@ -21,9 +21,9 @@ namespace Microsoft.Maui.Handlers
 			throw new InvalidOperationException($"PageViewController.View must be a {nameof(ContentView)}");
 		}
 
-		public static void MapTitle(PageHandler handler, IContentView page)
+		public static void MapTitle(IPageHandler handler, IContentView page)
 		{
-			if (handler is INativeViewHandler invh && invh.ViewController != null)
+			if (handler is IPlatformViewHandler invh && invh.ViewController != null)
 			{
 				if (page is ITitledElement titled)
 				{

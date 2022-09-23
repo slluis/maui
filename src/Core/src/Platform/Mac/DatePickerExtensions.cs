@@ -1,6 +1,6 @@
 ﻿using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static class DatePickerExtensions
 	{
@@ -26,7 +26,7 @@ namespace Microsoft.Maui
 			if (textColor == null)
 				nativeDatePicker.TextColor = defaultTextColor ?? NSColor.Text;
 			else
-				nativeDatePicker.TextColor = textColor.ToNative();
+				nativeDatePicker.TextColor = textColor.ToPlatform();
 
 			// HACK This forces the color to update; there's probably a more elegant way to make this happen
 			nativeDatePicker.UpdateDate(datePicker);

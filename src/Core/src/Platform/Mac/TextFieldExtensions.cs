@@ -3,10 +3,33 @@ using Foundation;
 using Microsoft.Maui.Graphics;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static class TextFieldExtensions
 	{
+		internal static int GetCursorPosition(this NSTextField platformView, int cursorOffset = 0)
+		{
+			return Math.Max(0, cursorOffset + (int)platformView.CurrentEditor.SelectedRange.Location);
+		}
+
+		internal static void SetTextRange(this NSTextField platformView, int start, int selectedTextLength)
+		{
+			int end = start + selectedTextLength;
+
+			// Let's be sure we have positive positions
+			start = Math.Max(start, 0);
+			end = Math.Max(end, 0);
+
+			// Switch start and end positions if necessary
+			start = Math.Min(start, end);
+			end = Math.Max(start, end);
+
+			// TODO COCOA
+/*			var startPosition = platformView.GetPosition(platformView.BeginningOfDocument, start);
+			var endPosition = platformView.GetPosition(platformView.BeginningOfDocument, end);
+			platformView.SelectedTextRange = platformView.GetTextRange(startPosition, endPosition);*/
+		}
+
 		public static void UpdateText(this NSTextField textField, IEntry entry)
 		{
 			textField.StringValue = entry.Text ?? string.Empty;
@@ -15,13 +38,13 @@ namespace Microsoft.Maui
 		public static void UpdateTextColor(this NSTextField textField, ITextStyle textStyle, NSColor? defaultTextColor = null)
 		{
 			var textColor = textStyle.TextColor;
-			SetColor(textField, textColor.ToNative(defaultTextColor ?? ColorExtensions.LabelColor));
+			SetColor(textField, textColor.ToPlatform(defaultTextColor ?? ColorExtensions.LabelColor));
 		}
 
-		public static void UpdateTextColorWithEntry(this Platform.Mac.MauiTextField textField, IEntry entry, NSColor? defaultTextColor = null)
+		public static void UpdateTextColorWithEntry(this Platform.MauiTextField textField, IEntry entry, NSColor? defaultTextColor = null)
 		{
 			var textColor = entry.TextColor;
-			SetColor(textField, textColor.ToNative(defaultTextColor ?? ColorExtensions.LabelColor));
+			SetColor(textField, textColor.ToPlatform(defaultTextColor ?? ColorExtensions.LabelColor));
 		}
 
 		static bool SetColor(NSTextField textView, NSColor? textColor)
@@ -99,7 +122,7 @@ namespace Microsoft.Maui
 
 			textField.PlaceholderAttributedString = foregroundColor == null
  				? new NSAttributedString(placeholder)
- 				: new NSAttributedString(str: placeholder, foregroundColor: foregroundColor.ToNative());
+ 				: new NSAttributedString(str: placeholder, foregroundColor: foregroundColor.ToPlatform());
 
 			var placeHolderString = textField.PlaceholderAttributedString.WithCharacterSpacing(entry.CharacterSpacing);
 			if (placeHolderString != null)

@@ -3,7 +3,7 @@ using CoreGraphics;
 using Microsoft.Maui.Graphics;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public class LayoutView : MauiView
 	{
@@ -46,7 +46,10 @@ namespace Microsoft.Maui
 				Superview.NeedsLayout = true;
 		}
 
+		// TODO COCOA
+		public bool ClipsToBounds { get; set; }
+
 		internal Func<double, double, Size>? CrossPlatformMeasure { get; set; }
-		internal Func<Rectangle, Size>? CrossPlatformArrange { get; set; }
+		internal Func<Rect, Size>? CrossPlatformArrange { get; set; }
 	}
 }

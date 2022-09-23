@@ -1,7 +1,7 @@
 ﻿using System;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	/// <summary>
 	/// Constraint which forces a NSView's height to zero

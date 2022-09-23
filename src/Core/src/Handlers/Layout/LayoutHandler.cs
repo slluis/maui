@@ -1,8 +1,6 @@
 #nullable enable
-#if __IOS__ || MACCATALYST
+#if __IOS__ || MACCATALYST || MACOS
 using PlatformView = Microsoft.Maui.Platform.LayoutView;
-#elif __MACOS__
-using PlatformView = AppKit.NSView;
 #elif __ANDROID__
 using PlatformView = Microsoft.Maui.Platform.LayoutViewGroup;
 #elif WINDOWS

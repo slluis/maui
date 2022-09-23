@@ -1,5 +1,7 @@
 ﻿#if __IOS__ || MACCATALYST
 using PlatformView = Microsoft.Maui.Platform.MauiSwipeView;
+#elif MACOS
+using PlatformView = AppKit.NSView;
 #elif MONOANDROID
 using PlatformView = Microsoft.Maui.Platform.MauiSwipeView;
 #elif WINDOWS

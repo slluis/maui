@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static class ImageViewExtensions
 	{

@@ -4,17 +4,8 @@ using Foundation;
 using AppKit;
 using RectangleF = CoreGraphics.CGRect;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
-	public class MauiPopUpButton : NSPopUpButton
-	{
-		public override bool IsFlipped => true;
-
-		public MauiPopUpButton()
-		{
-		}
-	}
-
 	public class NoCaretField : NSTextField
 	{
 		public NoCaretField() : base(new RectangleF())

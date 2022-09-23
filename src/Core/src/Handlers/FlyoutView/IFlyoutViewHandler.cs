@@ -1,5 +1,7 @@
 ﻿#if __IOS__ || MACCATALYST
 using PlatformView = UIKit.UIView;
+#elif MACOS
+using PlatformView = AppKit.NSView;
 #elif MONOANDROID
 using PlatformView = Android.Views.View;
 #elif WINDOWS

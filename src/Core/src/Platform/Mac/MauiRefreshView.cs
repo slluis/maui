@@ -5,7 +5,7 @@ using Microsoft.Maui.Graphics;
 using AppKit;
 using WebKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public class MauiRefreshView : NSView
 	{

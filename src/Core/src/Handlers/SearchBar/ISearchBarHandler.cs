@@ -2,6 +2,9 @@
 #if __IOS__ || MACCATALYST
 using PlatformView = Microsoft.Maui.Platform.MauiSearchBar;
 using QueryEditor = UIKit.UITextField;
+#elif MACOS
+using PlatformView = Microsoft.Maui.Platform.MauiSearchBar;
+using QueryEditor = AppKit.NSTextField;
 #elif MONOANDROID
 using PlatformView = AndroidX.AppCompat.Widget.SearchView;
 using QueryEditor = Android.Widget.EditText;

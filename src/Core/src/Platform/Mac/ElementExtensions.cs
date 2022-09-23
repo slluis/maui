@@ -2,20 +2,20 @@ using System;
 using Foundation;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
-	public static class HandlerExtensions
+	public static partial class ElementExtensions
 	{
 		public static NSViewController ToNSViewController(this IElement view, IMauiContext context)
 		{
-			var nativeView = view.ToNative(context);
-			if (view?.Handler is INativeViewHandler nvh && nvh.ViewController != null)
+			var nativeView = view.ToPlatform(context);
+			if (view?.Handler is IPlatformViewHandler nvh && nvh.ViewController != null)
 				return nvh.ViewController;
 
 			return new ContainerViewController { CurrentView = view, Context = context };
 		}
 
-		public static NSView ToNative(this IElement view, IMauiContext context)
+/*		public static NSView ToNative(this IElement view, IMauiContext context)
 		{
 			return ToNative(view, context, false);
 		}
@@ -53,7 +53,7 @@ namespace Microsoft.Maui
 			if (handler.VirtualView != view)
 				handler.SetVirtualView(view);
 
-			if (((INativeViewHandler)handler).NativeView is not NSView result)
+			if (((IPlatformViewHandler)handler).PlatformView is not NSView result)
 			{
 				throw new InvalidOperationException($"Unable to convert {view} to {typeof(NSView)}");
 			}
@@ -90,6 +90,6 @@ namespace Microsoft.Maui
 
 			if (handler.VirtualView != element)
 				handler.SetVirtualView(element);
-		}
+		}*/
 	}
 }

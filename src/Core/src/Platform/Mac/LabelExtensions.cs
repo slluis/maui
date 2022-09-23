@@ -1,14 +1,13 @@
 using Microsoft.Maui.Graphics;
-using Microsoft.Maui.Platform.iOS;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static class LabelExtensions
 	{
 		static bool SetColor(MauiLabel textView, Graphics.Color color)
 		{
-			var textColor = color?.ToNative();
+			var textColor = color?.ToPlatform();
 			if (textColor != null)
 			{
 				var attributedValue = textView.AttributedStringValue?.WithColor(textColor);
@@ -60,16 +59,6 @@ namespace Microsoft.Maui
 			nativeLabel.Alignment = label.HorizontalTextAlignment.ToNative(label);
 		}
 
-		public static void UpdateLineBreakMode(this MauiLabel nativeLabel, ILabel label)
-		{
-			nativeLabel.SetLineBreakMode(label);
-		}
-
-		public static void UpdateMaxLines(this MauiLabel nativeLabel, ILabel label)
-		{
-			nativeLabel.MaximumNumberOfLines = label.MaxLines;
-		}
-
 		public static void UpdatePadding(this MauiLabel nativeLabel, ILabel label)
 		{
 			//nativeLabel.TextInsets = new UIEdgeInsets(
@@ -103,41 +92,6 @@ namespace Microsoft.Maui
 		public static void UpdateTextHtml(this MauiLabel textView, ILabel label)
 		{
 			//throw new System.NotImplementedException();
-		}
-
-		internal static void SetLineBreakMode(this MauiLabel nativeLabel, ILabel label)
-		{
-			int maxLines = label.MaxLines;
-			if (maxLines < 0)
-				maxLines = 0;
-
-			switch (label.LineBreakMode)
-			{
-				case LineBreakMode.NoWrap:
-					nativeLabel.LineBreakMode = NSLineBreakMode.Clipping;
-					maxLines = 1;
-					break;
-				case LineBreakMode.WordWrap:
-					nativeLabel.LineBreakMode = NSLineBreakMode.ByWordWrapping;
-					break;
-				case LineBreakMode.CharacterWrap:
-					nativeLabel.LineBreakMode = NSLineBreakMode.CharWrapping;
-					break;
-				case LineBreakMode.HeadTruncation:
-					nativeLabel.LineBreakMode = NSLineBreakMode.TruncatingHead;
-					maxLines = 1;
-					break;
-				case LineBreakMode.MiddleTruncation:
-					nativeLabel.LineBreakMode = NSLineBreakMode.TruncatingMiddle;
-					maxLines = 1;
-					break;
-				case LineBreakMode.TailTruncation:
-					nativeLabel.LineBreakMode = NSLineBreakMode.TruncatingTail;
-					maxLines = 1;
-					break;
-			}
-
-			nativeLabel.MaximumNumberOfLines = maxLines;
 		}
 	}
 }

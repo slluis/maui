@@ -1,5 +1,5 @@
 #nullable enable
-#if __IOS__ || MACCATALYST
+#if __IOS__ || MACCATALYST || MACOS
 using PlatformView = Microsoft.Maui.Platform.MauiLabel;
 #elif MONOANDROID
 using PlatformView = AndroidX.AppCompat.Widget.AppCompatTextView;

@@ -1,14 +1,14 @@
 ﻿using System;
 using Foundation;
 using Microsoft.Maui.Graphics;
-using Microsoft.Maui.Platform.Mac;
+using Microsoft.Maui.Platform;
 using AppKit;
 
 namespace Microsoft.Maui.Handlers
 {
 	public partial class EntryHandler : ViewHandler<IEntry, MauiTextField>
 	{
-		protected override MauiTextField CreateNativeView()
+		protected override MauiTextField CreatePlatformView()
 		{
 			var nativeEntry = new MauiTextField();
 			return nativeEntry;
@@ -40,114 +40,114 @@ namespace Microsoft.Maui.Handlers
 						nativeView.ShouldChangeCharacters -= OnShouldChangeCharacters;*/
 		}
 
-		public static void MapText(EntryHandler handler, IEntry entry)
+		public static void MapText(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateText(entry);
+			handler.PlatformView?.UpdateText(entry);
 
 			// Any text update requires that we update any attributed string formatting
 			MapFormatting(handler, entry);
 		}
 
-		public static void MapTextColor(EntryHandler handler, IEntry entry)
+		public static void MapTextColor(IEntryHandler handler, IEntry entry)
 		{
-			var _defaultTextColor = handler.NativeView.AttributedStringValue?.GetColor();
+			var _defaultTextColor = handler.PlatformView.AttributedStringValue?.GetColor();
 			if (_defaultTextColor != null)
 			{
-				handler.NativeView?.UpdateTextColorWithEntry(entry, _defaultTextColor);
+				handler.PlatformView?.UpdateTextColorWithEntry(entry, _defaultTextColor);
 			}
 		}
 
-		public static void MapIsPassword(EntryHandler handler, IEntry entry)
+		public static void MapIsPassword(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateIsPassword(entry);
+			handler.PlatformView?.UpdateIsPassword(entry);
 		}
 
-		public static void MapHorizontalTextAlignment(EntryHandler handler, IEntry entry)
+		public static void MapHorizontalTextAlignment(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateHorizontalTextAlignment(entry);
+			handler.PlatformView?.UpdateHorizontalTextAlignment(entry);
 		}
 
-		public static void MapVerticalTextAlignment(EntryHandler handler, IEntry entry)
+		public static void MapVerticalTextAlignment(IEntryHandler handler, IEntry entry)
 		{
-			handler?.NativeView?.UpdateVerticalTextAlignment(entry);
+			handler?.PlatformView?.UpdateVerticalTextAlignment(entry);
 		}
 
-		public static void MapIsTextPredictionEnabled(EntryHandler handler, IEntry entry)
+		public static void MapIsTextPredictionEnabled(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateIsTextPredictionEnabled(entry);
+			handler.PlatformView?.UpdateIsTextPredictionEnabled(entry);
 		}
 
-		public static void MapMaxLength(EntryHandler handler, IEntry entry)
+		public static void MapMaxLength(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateMaxLength(entry);
+			handler.PlatformView?.UpdateMaxLength(entry);
 		}
 
-		public static void MapPlaceholder(EntryHandler handler, IEntry entry)
+		public static void MapPlaceholder(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdatePlaceholder(entry);
+			handler.PlatformView?.UpdatePlaceholder(entry);
 		}
 
-		public static void MapPlaceholderColor(EntryHandler handler, IEntry entry)
+		public static void MapPlaceholderColor(IEntryHandler handler, IEntry entry)
 		{
-			var _defaultTextColor = handler.NativeView.AttributedStringValue?.GetColor();
+			var _defaultTextColor = handler.PlatformView.AttributedStringValue?.GetColor();
 			if (_defaultTextColor != null)
 			{
-				handler.NativeView?.UpdatePlaceholder(entry, _defaultTextColor.ToColor());
+				handler.PlatformView?.UpdatePlaceholder(entry, _defaultTextColor.ToColor());
 			}
 		}
 
-		public static void MapIsReadOnly(EntryHandler handler, IEntry entry)
+		public static void MapIsReadOnly(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateIsReadOnly(entry);
+			handler.PlatformView?.UpdateIsReadOnly(entry);
 		}
 
-		public static void MapKeyboard(EntryHandler handler, IEntry entry)
+		public static void MapKeyboard(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateKeyboard(entry);
+			handler.PlatformView?.UpdateKeyboard(entry);
 		}
 
-		public static void MapReturnType(EntryHandler handler, IEntry entry)
+		public static void MapReturnType(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateReturnType(entry);
+			handler.PlatformView?.UpdateReturnType(entry);
 		}
 
-		public static void MapFont(EntryHandler handler, IEntry entry)
+		public static void MapFont(IEntryHandler handler, IEntry entry)
 		{
 			var fontManager = handler.GetRequiredService<IFontManager>();
 
-			handler.NativeView?.UpdateFont(entry, fontManager);
+			handler.PlatformView?.UpdateFont(entry, fontManager);
 		}
 
-		public static void MapFormatting(EntryHandler handler, IEntry entry)
+		public static void MapFormatting(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateMaxLength(entry);
+			handler.PlatformView?.UpdateMaxLength(entry);
 
 			// Update all of the attributed text formatting properties
-			handler.NativeView?.UpdateCharacterSpacing(entry);
+			handler.PlatformView?.UpdateCharacterSpacing(entry);
 
 			// Setting any of those may have removed text alignment settings,
 			// so we need to make sure those are applied, too
-			handler.NativeView?.UpdateHorizontalTextAlignment(entry);
+			handler.PlatformView?.UpdateHorizontalTextAlignment(entry);
 		}
 
-		public static void MapCharacterSpacing(EntryHandler handler, IEntry entry)
+		public static void MapCharacterSpacing(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateCharacterSpacing(entry);
+			handler.PlatformView?.UpdateCharacterSpacing(entry);
 		}
 
-		public static void MapCursorPosition(EntryHandler handler, IEntry entry)
+		public static void MapCursorPosition(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateCursorPosition(entry);
+			handler.PlatformView?.UpdateCursorPosition(entry);
 		}
 
-		public static void MapSelectionLength(EntryHandler handler, IEntry entry)
+		public static void MapSelectionLength(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateSelectionLength(entry);
+			handler.PlatformView?.UpdateSelectionLength(entry);
 		}
 
-		public static void MapClearButtonVisibility(EntryHandler handler, IEntry entry)
+		public static void MapClearButtonVisibility(IEntryHandler handler, IEntry entry)
 		{
-			handler.NativeView?.UpdateClearButtonVisibility(entry);
+			handler.PlatformView?.UpdateClearButtonVisibility(entry);
 		}
 
 		protected virtual bool OnShouldReturn(NSTextField view)
@@ -165,10 +165,10 @@ namespace Microsoft.Maui.Handlers
 
 		void OnTextChanged()
 		{
-			if (VirtualView == null || NativeView == null)
+			if (VirtualView == null || PlatformView == null)
 				return;
 
-			VirtualView.UpdateText(NativeView.StringValue);
+			VirtualView.UpdateText(PlatformView.StringValue);
 		}
 
 		bool OnShouldChangeCharacters(NSTextField textField, NSRange range, string replacementString)
@@ -179,7 +179,7 @@ namespace Microsoft.Maui.Handlers
 			if (range.Length + range.Location > currLength)
 				return false;
 
-			if (VirtualView == null || NativeView == null)
+			if (VirtualView == null || PlatformView == null)
 				return false;
 
 			if (VirtualView.MaxLength < 0)

@@ -3,10 +3,30 @@ using CoreGraphics;
 using Foundation;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static class ButtonExtensions
 	{
+		public const double AlmostZero = 0.00001;
+
+		public static void UpdateStrokeColor(this NSButton platformButton, IButtonStroke buttonStroke)
+		{
+			if (buttonStroke.StrokeColor != null && platformButton.Layer != null)
+				platformButton.Layer.BorderColor = buttonStroke.StrokeColor.ToCGColor();
+		}
+
+		public static void UpdateStrokeThickness(this NSButton platformButton, IButtonStroke buttonStroke)
+		{
+			if (buttonStroke.StrokeThickness >= 0 && platformButton.Layer != null)
+				platformButton.Layer.BorderWidth = (float)buttonStroke.StrokeThickness;
+		}
+
+		public static void UpdateCornerRadius(this NSButton platformButton, IButtonStroke buttonStroke)
+		{
+			if (buttonStroke.CornerRadius >= 0 && platformButton.Layer != null)
+				platformButton.Layer.CornerRadius = buttonStroke.CornerRadius;
+		}
+
 		public static void UpdateText(this NSButton nativeButton, IText button)
 		{
 			nativeButton.Title = button.Text;
@@ -14,7 +34,7 @@ namespace Microsoft.Maui
 
 		static bool SetColor (NSButton textView, Graphics.Color color)
 		{
-			var textColor = color?.ToNative();
+			var textColor = color?.ToPlatform();
 			if (textColor != null)
 			{
 				var attributedValue = textView.AttributedStringValue?.WithColor(textColor);

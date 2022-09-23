@@ -22,7 +22,7 @@ namespace Microsoft.Maui
 				textInput.Text = platformText;
 		}
 
-#if __IOS__
+#if __IOS__ || MACOS
 		public static bool TextWithinMaxLength(this ITextInput textInput, string? text, Foundation.NSRange range, string replacementString)
 		{
 			var currLength = text?.Length ?? 0;

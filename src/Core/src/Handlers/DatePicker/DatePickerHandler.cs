@@ -2,6 +2,8 @@
 using PlatformView = Microsoft.Maui.Platform.MauiDatePicker;
 #elif MACCATALYST
 using PlatformView = UIKit.UIDatePicker;
+#elif MACOS
+using PlatformView = Microsoft.Maui.Platform.MauiDatePicker;
 #elif MONOANDROID
 using PlatformView = Microsoft.Maui.Platform.MauiDatePicker;
 #elif WINDOWS

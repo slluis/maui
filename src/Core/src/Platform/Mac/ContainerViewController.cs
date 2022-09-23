@@ -3,7 +3,7 @@ using Microsoft.Maui.HotReload;
 using AppKit;
 using Foundation;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public class ContainerViewController : NSViewController, IReloadHandler
 	{
@@ -79,7 +79,7 @@ namespace Microsoft.Maui
 			_ = Context ?? throw new ArgumentNullException(nameof(Context));
 			_ = _view ?? throw new ArgumentNullException(nameof(view));
 
-			return _view.ToNative(Context);
+			return _view.ToPlatform(Context);
 		}
 
 		public override void ViewDidLayout()

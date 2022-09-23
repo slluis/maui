@@ -3,7 +3,7 @@ using CoreGraphics;
 using Microsoft.Maui.Graphics;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public class MauiCheckBox : NSButton
 	{

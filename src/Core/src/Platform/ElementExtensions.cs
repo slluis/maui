@@ -5,6 +5,11 @@ using PlatformView = UIKit.UIView;
 using BasePlatformType = ObjCRuntime.INativeObject;
 using PlatformWindow = UIKit.UIWindow;
 using PlatformApplication = UIKit.IUIApplicationDelegate;
+#elif MACOS
+using PlatformView = AppKit.NSView;
+using BasePlatformType = ObjCRuntime.INativeObject;
+using PlatformWindow = AppKit.NSWindow;
+using PlatformApplication = AppKit.NSApplicationDelegate;
 #elif MONOANDROID
 using PlatformView = Android.Views.View;
 using BasePlatformType = Android.Content.Context;

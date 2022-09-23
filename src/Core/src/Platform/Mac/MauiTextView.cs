@@ -1,70 +1,71 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using CoreGraphics;
 using Foundation;
+using ObjCRuntime;
 using AppKit;
 
-namespace Microsoft.Maui.Platform.Mac
+namespace Microsoft.Maui.Platform
 {
 	public class MauiTextView : NSTextView
 	{
-		NSTextView PlaceholderLabel { get; } = new NSTextView
-		{
-			BackgroundColor = NSColor.Clear,
-			// TODO COCOA
-//			Lines = 0
-		};
+		readonly NSTextField _placeholderLabel;
 
-		public MauiTextView(CGRect frame) : base(frame)
+		public MauiTextView()
 		{
-			InitPlaceholderLabel();
+			_placeholderLabel = InitPlaceholderLabel();
+			TextDidChange += OnChanged;
 		}
 
-		public string? PlaceholderText
+		public MauiTextView(CGRect frame)
+			: base(frame)
 		{
-			get => PlaceholderLabel.Value;
+			_placeholderLabel = InitPlaceholderLabel();
+			TextDidChange += OnChanged;
+		}
+
+		public override bool ShouldChangeText(NSRange affectedCharRange, string replacementString)
+		{
+			if (ShouldChangeTextEvent != null)
+				return ShouldChangeTextEvent.Invoke(this, affectedCharRange, replacementString);
+
+			return base.ShouldChangeText(affectedCharRange, replacementString);
+		}
+
+		public event Func<NSTextView, NSRange, string, bool>? ShouldChangeTextEvent;
+
+		// Native Changed doesn't fire when the Text Property is set in code
+		// We use this event as a way to fire changes whenever the Text changes
+		// via code or user interaction.
+		public event EventHandler? TextSetOrChanged;
+
+		public string PlaceholderText
+		{
+			get => _placeholderLabel.StringValue;
 			set
 			{
-				PlaceholderLabel.Value = value ?? "";
-				PlaceholderLabel.SizeToFit();
+				_placeholderLabel.StringValue = value;
+				_placeholderLabel.SizeToFit();
 			}
 		}
 
-		public NSColor? PlaceholderTextColor
+		public NSAttributedString AttributedPlaceholderText
 		{
-			get => PlaceholderLabel.TextColor;
-			set => PlaceholderLabel.TextColor = value ?? NSColor.Black;
+			get => _placeholderLabel.AttributedStringValue;
+			set
+			{
+				_placeholderLabel.AttributedStringValue = value;
+				_placeholderLabel.SizeToFit();
+			}
 		}
 
-		public void HidePlaceholder(bool hide)
+		public NSColor PlaceholderTextColor
 		{
-			PlaceholderLabel.Hidden = hide;
+			get => _placeholderLabel.TextColor;
+			set => _placeholderLabel.TextColor = value;
 		}
 
-		void InitPlaceholderLabel()
-		{
-			AddSubview(PlaceholderLabel);
-
-			var edgeInsets = new CGRect(TextContainerOrigin, TextContainerInset);
-			var lineFragmentPadding = TextContainer.LineFragmentPadding;
-
-			var vConstraints = NSLayoutConstraint.FromVisualFormat(
-				"V:|-" + edgeInsets.Top + "-[PlaceholderLabel]-" + edgeInsets.Bottom + "-|", 0, new NSDictionary(),
-				NSDictionary.FromObjectsAndKeys(
-					new NSObject[] { PlaceholderLabel }, new NSObject[] { new NSString("PlaceholderLabel") })
-			);
-
-			var hConstraints = NSLayoutConstraint.FromVisualFormat(
-				"H:|-" + lineFragmentPadding + "-[PlaceholderLabel]-" + lineFragmentPadding + "-|",
-				0, new NSDictionary(),
-				NSDictionary.FromObjectsAndKeys(
-					new NSObject[] { PlaceholderLabel }, new NSObject[] { new NSString("PlaceholderLabel") })
-			);
-
-			PlaceholderLabel.TranslatesAutoresizingMaskIntoConstraints = false;
-
-			AddConstraints(hConstraints);
-			AddConstraints(vConstraints);
-		}
+		public TextAlignment VerticalTextAlignment { get; set; }
 
 		public override string Value
 		{
@@ -76,25 +77,79 @@ namespace Microsoft.Maui.Platform.Mac
 				base.Value = value;
 
 				if (old != value)
-					TextPropertySet?.Invoke(this, EventArgs.Empty);
+				{
+					HidePlaceholderIfTextIsPresent(value);
+					TextSetOrChanged?.Invoke(this, EventArgs.Empty);
+				}
 			}
 		}
 
-		// TODO COCOA
-/*		public override NSAttributedString AttributedString
+		/* TODO COCOA
+		public override void LayoutSubviews()
 		{
-			get => base.AttributedString;
-			set
+			base.LayoutSubviews();
+			ShouldCenterVertically();
+		}
+		*/
+
+		NSTextField InitPlaceholderLabel()
+		{
+			var placeholderLabel = new NSTextField
 			{
-				var old = base.AttributedString;
+				BackgroundColor = NSColor.Clear,
+				TextColor = ColorExtensions.PlaceholderColor,
+				//Lines = 0
+			};
 
-				base.AttributedString = value;
+			AddSubview(placeholderLabel);
 
-				if (old?.Value != value?.Value)
-					TextPropertySet?.Invoke(this, EventArgs.Empty);
-			}
-		}*/
+			var edgeInsets = TextContainerInset;
+			var lineFragmentPadding = TextContainer.LineFragmentPadding;
 
-		public event EventHandler? TextPropertySet;
+			var vConstraints = NSLayoutConstraint.FromVisualFormat(
+				"V:|-" + edgeInsets.Height + "-[PlaceholderLabel]-" + edgeInsets.Height + "-|", 0, new NSDictionary(),
+				NSDictionary.FromObjectsAndKeys(
+					new NSObject[] { placeholderLabel }, new NSObject[] { new NSString("PlaceholderLabel") })
+			);
+
+			var hConstraints = NSLayoutConstraint.FromVisualFormat(
+				"H:|-" + lineFragmentPadding + "-[PlaceholderLabel]-" + lineFragmentPadding + "-|",
+				0, new NSDictionary(),
+				NSDictionary.FromObjectsAndKeys(
+					new NSObject[] { placeholderLabel }, new NSObject[] { new NSString("PlaceholderLabel") })
+			);
+
+			placeholderLabel.TranslatesAutoresizingMaskIntoConstraints = false;
+
+			AddConstraints(hConstraints);
+			AddConstraints(vConstraints);
+
+			return placeholderLabel;
+		}
+		/*
+		void ShouldCenterVertically()
+		{
+			var fittingSize = new CGSize(Bounds.Width, NFloat.MaxValue);
+			var sizeThatFits = SizeThatFits(fittingSize);
+			var availableSpace = (Bounds.Height - sizeThatFits.Height * ZoomScale);
+			ContentOffset = VerticalTextAlignment switch
+			{
+				Maui.TextAlignment.Center => new CGPoint(0, -Math.Max(1, availableSpace / 2)),
+				Maui.TextAlignment.End => new CGPoint(0, -Math.Max(1, availableSpace)),
+				_ => new CGPoint(0, 0),
+			};
+		}
+		*/
+
+		void HidePlaceholderIfTextIsPresent(string? value)
+		{
+			_placeholderLabel.Hidden = !string.IsNullOrEmpty(value);
+		}
+
+		void OnChanged(object? sender, EventArgs e)
+		{
+			HidePlaceholderIfTextIsPresent(Value);
+			TextSetOrChanged?.Invoke(this, EventArgs.Empty);
+		}
 	}
 }

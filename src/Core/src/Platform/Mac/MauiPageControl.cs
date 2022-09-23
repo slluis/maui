@@ -2,7 +2,7 @@
 using CoreGraphics;
 using AppKit;
 
-namespace Microsoft.Maui.Platform.iOS
+namespace Microsoft.Maui.Platform
 {
 	public class MauiPageControl : NSView
 	{

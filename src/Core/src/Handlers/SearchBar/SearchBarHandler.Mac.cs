@@ -18,7 +18,7 @@ namespace Microsoft.Maui.Handlers
 
 		public NSTextField? QueryEditor => _editor;
 
-		protected override MauiSearchBar CreateNativeView()
+		protected override MauiSearchBar CreatePlatformView()
 		{
 			var searchBar = new MauiSearchBar() {
 				ShowsCancelButton = true,
@@ -68,7 +68,7 @@ namespace Microsoft.Maui.Handlers
 
 		}
 
-		public static void MapText(SearchBarHandler handler, ISearchBar searchBar)
+		public static void MapText(ISearchBarHandler handler, ISearchBar searchBar)
 		{
 			//handler.NativeView?.UpdateText(searchBar);
 
@@ -76,39 +76,39 @@ namespace Microsoft.Maui.Handlers
 			MapFormatting(handler, searchBar);
 		}
 
-		public static void MapPlaceholder(SearchBarHandler handler, ISearchBar searchBar)
+		public static void MapPlaceholder(ISearchBarHandler handler, ISearchBar searchBar)
 		{
 			//handler.NativeView?.UpdatePlaceholder(searchBar, handler._editor);
 		}
 
-		public static void MapPlaceholderColor(SearchBarHandler handler, ISearchBar searchBar)
+		public static void MapPlaceholderColor(ISearchBarHandler handler, ISearchBar searchBar)
 		{
 			//handler.NativeView?.UpdatePlaceholder(searchBar, handler._editor);
 		}
 
-		public static void MapFont(SearchBarHandler handler, ISearchBar searchBar)
+		public static void MapFont(ISearchBarHandler handler, ISearchBar searchBar)
 		{
 			var fontManager = handler.GetRequiredService<IFontManager>();
 
 			handler.QueryEditor?.UpdateFont(searchBar, fontManager);
 		}
 
-		public static void MapHorizontalTextAlignment(SearchBarHandler handler, ISearchBar searchBar)
+		public static void MapHorizontalTextAlignment(ISearchBarHandler handler, ISearchBar searchBar)
 		{
 			handler.QueryEditor?.UpdateHorizontalTextAlignment(searchBar);
 		}
 
-		public static void MapVerticalTextAlignment(SearchBarHandler handler, ISearchBar searchBar)
+		public static void MapVerticalTextAlignment(ISearchBarHandler handler, ISearchBar searchBar)
 		{
 			//handler.NativeView?.UpdateVerticalTextAlignment(searchBar, handler?._editor);
 		}
 
-		public static void MapCharacterSpacing(SearchBarHandler handler, ISearchBar searchBar)
+		public static void MapCharacterSpacing(ISearchBarHandler handler, ISearchBar searchBar)
 		{
 			handler.QueryEditor?.UpdateCharacterSpacing(searchBar);
 		}
 
-		public static void MapFormatting(SearchBarHandler handler, ISearchBar searchBar)
+		public static void MapFormatting(ISearchBarHandler handler, ISearchBar searchBar)
 		{
 			// Update all of the attributed text formatting properties
 			handler.QueryEditor?.UpdateCharacterSpacing(searchBar);
@@ -121,23 +121,23 @@ namespace Microsoft.Maui.Handlers
 			//handler.NativeView?.UpdateMaxLength(searchBar);
 		}
 
-		public static void MapTextColor(SearchBarHandler handler, ISearchBar searchBar)
+		public static void MapTextColor(ISearchBarHandler handler, ISearchBar searchBar)
 		{
-			handler.QueryEditor?.UpdateTextColor(searchBar, handler._defaultTextColor);
+			//handler.QueryEditor?.UpdateTextColor(searchBar, handler._defaultTextColor);
 		}
 
 		[MissingMapper]
 		public static void MapIsTextPredictionEnabled(IViewHandler handler, ISearchBar searchBar) { }
 
-		public static void MapMaxLength(SearchBarHandler handler, ISearchBar searchBar)
+		public static void MapMaxLength(ISearchBarHandler handler, ISearchBar searchBar)
 		{
-			handler.NativeView?.UpdateMaxLength(searchBar);
+			handler.PlatformView?.UpdateMaxLength(searchBar);
 		}
 
 		[MissingMapper]
 		public static void MapIsReadOnly(IViewHandler handler, ISearchBar searchBar) { }
 
-		public static void MapCancelButtonColor(SearchBarHandler handler, ISearchBar searchBar)
+		public static void MapCancelButtonColor(ISearchBarHandler handler, ISearchBar searchBar)
 		{
 			//handler.NativeView?.UpdateCancelButton(searchBar,
 			//	handler._cancelButtonTextColorDefaultNormal,
@@ -150,19 +150,19 @@ namespace Microsoft.Maui.Handlers
 			if (VirtualView != null)
 				VirtualView.Text = string.Empty;
 
-			NativeView?.ResignFirstResponder();
+			PlatformView?.ResignFirstResponder();
 		}
 
 		void OnSearchButtonClicked(object? sender, EventArgs e)
 		{
 			VirtualView?.SearchButtonPressed();
-			NativeView?.ResignFirstResponder();
+			PlatformView?.ResignFirstResponder();
 		}
 
 		void OnTextPropertySet(object? sender, EventArgs e)
 		{
 			if (VirtualView != null)
-				VirtualView.UpdateText(NativeView?.Text);
+				VirtualView.UpdateText(PlatformView?.Text);
 		}
 
 		bool ShouldChangeText(MauiSearchBar searchBar, NSRange range, string text)

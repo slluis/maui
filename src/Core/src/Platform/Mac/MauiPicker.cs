@@ -5,7 +5,14 @@ using ObjCRuntime;
 using AppKit;
 using System;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
-	
+	public class MauiPicker : NSPopUpButton
+	{
+		public override bool IsFlipped => true;
+
+		public MauiPicker()
+		{
+		}
+	}
 }

@@ -21,7 +21,7 @@ namespace Microsoft.Maui.Devices.Sensors
 
 	public interface IPlatformCompass
 	{
-#if IOS || MACCATALYST
+#if IOS || MACCATALYST || MACOS
 		bool ShouldDisplayHeadingCalibration { get; set; }
 #endif
 	}
@@ -54,7 +54,7 @@ namespace Microsoft.Maui.Devices.Sensors
 		public static void Stop()
 			=> Current.Stop();
 
-#if IOS || MACCATALYST
+#if IOS || MACCATALYST || MACOS
 		public static bool ShouldDisplayHeadingCalibration
 		{
 			get
@@ -84,7 +84,7 @@ namespace Microsoft.Maui.Devices.Sensors
 
 	public static class CompassExtensions
 	{
-#if IOS || MACCATALYST
+#if IOS || MACCATALYST || MACOS
 		public static void SetShouldDisplayHeadingCalibration(this ICompass compass, bool shouldDisplay)
 		{
 			if (compass is IPlatformCompass platform)

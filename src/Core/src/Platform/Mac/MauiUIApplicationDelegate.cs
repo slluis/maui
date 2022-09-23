@@ -6,7 +6,7 @@ using Microsoft.Maui.LifecycleEvents;
 using AppKit;
 using CoreGraphics;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public abstract class MauiUIApplicationDelegate : NSApplicationDelegate, INSApplicationDelegate
 	{
@@ -38,7 +38,7 @@ namespace Microsoft.Maui
 
 			Services = mauiApp.Services;
 
-			_applicationContext = new MauiContext(Services, this);
+			_applicationContext = new MauiContext(Services);
 
 			Services?.InvokeLifecycleEvents<MacLifecycle.WillFinishLaunching>(del => del(NSApplication.SharedApplication, launchOptions));
 		}

@@ -3,7 +3,7 @@ using System.Globalization;
 using Foundation;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static class TimePickerExtensions
 	{
@@ -42,7 +42,7 @@ namespace Microsoft.Maui
 
 			mauiTimePicker.StringValue = time.ToFormattedString(format, cultureInfo);
 
-			if (timePicker.Format?.Contains('H') == true)
+			if (timePicker.Format?.Contains('H', StringComparison.Ordinal) == true)
 			{
 				var ci = new CultureInfo("de-DE");
 				NSLocale locale = new NSLocale(ci.TwoLetterISOLanguageName);
@@ -50,7 +50,7 @@ namespace Microsoft.Maui
 				if (picker != null)
 					picker.Locale = locale;
 			}
-			else if (timePicker.Format?.Contains('h') == true)
+			else if (timePicker.Format?.Contains('h', StringComparison.Ordinal) == true)
 			{
 				var ci = new CultureInfo("en-US");
 				NSLocale locale = new NSLocale(ci.TwoLetterISOLanguageName);

@@ -3,7 +3,7 @@ using System.Linq;
 using AppKit;
 using Foundation;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static class SwitchExtensions
 	{

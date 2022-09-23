@@ -1,6 +1,8 @@
 ﻿using System;
 #if IOS || MACCATALYST
 using PlatformView = Microsoft.Maui.Platform.ContentView;
+#elif MACOS
+using PlatformView = AppKit.NSView;
 #elif MONOANDROID
 using PlatformView = Microsoft.Maui.Platform.ContentViewGroup;
 #elif WINDOWS

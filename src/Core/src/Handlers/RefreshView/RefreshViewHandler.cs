@@ -1,5 +1,7 @@
-﻿#if __IOS__ || MACCATALYST
+﻿#if __IOS__ || MACCATALYST || MACOS
 using PlatformView = Microsoft.Maui.Platform.MauiRefreshView;
+#elif MACOS
+using PlatformView = AppKit.NSView;
 #elif MONOANDROID
 using PlatformView = Microsoft.Maui.Platform.MauiSwipeRefreshLayout;
 #elif WINDOWS

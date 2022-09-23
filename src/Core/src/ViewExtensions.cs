@@ -8,6 +8,9 @@ using IPlatformViewHandler = Microsoft.Maui.IViewHandler;
 #if IOS || MACCATALYST
 using PlatformView = UIKit.UIView;
 using ParentView = UIKit.UIView;
+#elif MACOS
+using PlatformView = AppKit.NSView;
+using ParentView = AppKit.NSView;
 #elif ANDROID
 using PlatformView = Android.Views.View;
 using ParentView = Android.Views.IViewParent;

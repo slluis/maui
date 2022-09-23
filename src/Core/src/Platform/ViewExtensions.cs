@@ -11,6 +11,9 @@ using IPlatformViewHandler = Microsoft.Maui.IViewHandler;
 #if IOS || MACCATALYST
 using PlatformView = UIKit.UIView;
 using ParentView = UIKit.UIView;
+#elif MACOS
+using PlatformView = AppKit.NSView;
+using ParentView = AppKit.NSView;
 #elif ANDROID
 using PlatformView = Android.Views.View;
 using ParentView = Android.Views.IViewParent;
@@ -40,8 +43,8 @@ namespace Microsoft.Maui.Platform
 
 		/// <include file="../../docs/Microsoft.Maui/ViewExtensions.xml" path="//Member[@MemberName='ToHandler']/Docs/*" />
 
-		public static IPlatformViewHandler ToHandler(this IView view, IMauiContext context) =>
-			(IPlatformViewHandler)ElementExtensions.ToHandler(view, context);
+		public static IViewHandler ToHandler(this IView view, IMauiContext context) =>
+			(IViewHandler)ElementExtensions.ToHandler(view, context);
 
 		internal static T? GetParentOfType<T>(this ParentView? view)
 			where T : class

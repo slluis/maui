@@ -5,8 +5,12 @@ using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Handlers;
 using AppKit;
 using static Microsoft.Maui.Primitives.Dimension;
+using System.Threading.Tasks;
+using CoreGraphics;
+using Foundation;
+using System.Numerics;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static partial class ViewExtensions
 	{
@@ -20,11 +24,24 @@ namespace Microsoft.Maui
 			uiControl.Enabled = view.IsEnabled;
 		}
 
-		public static void UpdateVisibility(this NSView nativeView, IView view)
+		public static void Focus(this NSView platformView, FocusRequest request)
+		{
+			request.IsFocused = platformView.BecomeFirstResponder();
+		}
+
+		public static void Unfocus(this NSView platformView, IView view)
+		{
+			platformView.ResignFirstResponder();
+		}
+
+		public static void UpdateVisibility(this NSView platformView, IView view) =>
+			ViewExtensions.UpdateVisibility(platformView, view.Visibility);
+
+		public static void UpdateVisibility(this NSView nativeView, Visibility visibility)
 		{
 			var shouldLayout = false;
 
-			switch (view.Visibility)
+			switch (visibility)
 			{
 				case Visibility.Visible:
 					shouldLayout = nativeView.Inflate();
@@ -54,71 +71,98 @@ namespace Microsoft.Maui
 			}
 		}
 
-		public static void UpdateBackground(this ContentView nativeView, IBorder border)
+		public static void UpdateBackground(this ContentView nativeView, IBorderStroke border)
 		{
-			bool hasBorder = border.Shape != null && border.Stroke != null;
+			bool hasShape = border.Shape != null;
 
-			if (hasBorder)
+			if (hasShape)
 			{
 				nativeView.UpdateMauiCALayer(border);
 			}
 		}
 
-		public static void UpdateBackground(this NSView nativeView, IView view)
+		public static void UpdateBackground(this NSView platformView, IView view)
+		{
+			platformView.UpdateBackground(view.Background, view as IButtonStroke);
+		}
+
+		public static void UpdateBackground(this NSView platformView, Paint? paint, IButtonStroke? stroke = null)
 		{
 			// Remove previous background gradient layer if any
-			nativeView.RemoveBackgroundLayer();
-
-			var paint = view.Background;
+			platformView.RemoveBackgroundLayer();
 
 			if (paint.IsNullOrEmpty())
-				return;
+			{
+				if (platformView is LayoutView)
+					platformView.SetBackground(null);
+				else
+					return;
+			}
 
-/*			if (paint is SolidPaint solidPaint)
+
+			if (paint is SolidPaint solidPaint)
 			{
 				Color backgroundColor = solidPaint.Color;
 
-				//TODO: To implement
-				//if (backgroundColor == null)
-				//	nativeView.BackgroundColor = ColorExtensions.BackgroundColor;
-				//else
-				//	nativeView.BackgroundColor = backgroundColor.ToNative();
+				if (backgroundColor == null)
+					platformView.SetBackground(ColorExtensions.BackgroundColor);
+				else
+					platformView.SetBackground(backgroundColor.ToPlatform());
 
 				return;
 			}
 			else if (paint is GradientPaint gradientPaint)
 			{
-				//TODO: To implement
-				//var backgroundLayer = gradientPaint?.ToCALayer(nativeView.Bounds);
+				var backgroundLayer = gradientPaint?.ToCALayer(platformView.Bounds);
 
-				//if (backgroundLayer != null)
-				//{
-				//	backgroundLayer.Name = BackgroundLayerName;
-				//	nativeView.BackgroundColor = NSColor.Clear;
-				//	nativeView.InsertBackgroundLayer(backgroundLayer, 0);
-				//}
-			}*/
+				if (backgroundLayer != null)
+				{
+					backgroundLayer.Name = BackgroundLayerName;
+					platformView.SetBackground(NSColor.Clear);
+
+					backgroundLayer.UpdateLayerBorder(stroke);
+
+					platformView.InsertBackgroundLayer(backgroundLayer, 0);
+				}
+			}
 		}
 
-		public static void UpdateFlowDirection(this NSView nativeView, IView view)
+		public static void SetBackground(this NSView platformView, NSColor? color)
+		{
+			// TODO COCOA
+		}
+
+		public static void UpdateFlowDirection(this NSView platformView, IView view)
 		{
 			// TODO COCOA
 			/*
-			UISemanticContentAttribute updateValue = nativeView.SemanticContentAttribute;
+			NSSemanticContentAttribute updateValue = platformView.SemanticContentAttribute;
 
-			if (view.FlowDirection == view.Handler?.MauiContext?.GetFlowDirection() ||
-				view.FlowDirection == FlowDirection.MatchParent)
+			switch (view.FlowDirection)
 			{
-				updateValue = UISemanticContentAttribute.Unspecified;
+				case FlowDirection.MatchParent:
+					updateValue = GetParentMatchingSemanticContentAttribute(view);
+					break;
+				case FlowDirection.LeftToRight:
+					updateValue = UISemanticContentAttribute.ForceLeftToRight;
+					break;
+				case FlowDirection.RightToLeft:
+					updateValue = UISemanticContentAttribute.ForceRightToLeft;
+					break;
 			}
-			else if (view.FlowDirection == FlowDirection.RightToLeft)
-				updateValue = UISemanticContentAttribute.ForceRightToLeft;
-			else if (view.FlowDirection == FlowDirection.LeftToRight)
-				updateValue = UISemanticContentAttribute.ForceLeftToRight;
 
-			if (updateValue != nativeView.SemanticContentAttribute)
-				nativeView.SemanticContentAttribute = updateValue;
-			*/
+			if (updateValue != platformView.SemanticContentAttribute)
+			{
+				platformView.SemanticContentAttribute = updateValue;
+
+				if (view is ITextAlignment)
+				{
+					// A change in flow direction may mean a change in text alignment
+					view.Handler?.UpdateValue(nameof(ITextAlignment.HorizontalTextAlignment));
+				}
+
+				PropagateFlowDirection(updateValue, view);
+			}*/
 		}
 
 		public static void UpdateOpacity(this NSView nativeView, IView view)
@@ -156,6 +200,12 @@ namespace Microsoft.Maui
 				if (nativeView is WrapperView wrapperView)
 					wrapperView.Shadow = view.Shadow;
 			}*/
+		}
+		public static void UpdateBorder(this NSView platformView, IView view)
+		{
+			var border = (view as IBorder)?.Border;
+			if (platformView is WrapperView wrapperView)
+				wrapperView.Border = border;
 		}
 
 		public static T? FindDescendantView<T>(this NSView view) where T : NSView
@@ -249,6 +299,24 @@ namespace Microsoft.Maui
 			nativeView.Frame = new CoreGraphics.CGRect(currentFrame.X, currentFrame.Y, view.Width, view.Height);
 		}
 
+		public static async Task UpdateBackgroundImageSourceAsync(this NSView platformView, IImageSource? imageSource, IImageSourceServiceProvider? provider)
+		{
+			if (provider == null)
+				return;
+
+			if (imageSource != null)
+			{
+				var service = provider.GetRequiredImageSourceService(imageSource);
+				var result = await service.GetImageAsync(imageSource);
+				var backgroundImage = result?.Value;
+
+				if (backgroundImage == null)
+					return;
+
+				platformView.SetBackground(NSColor.FromPatternImage(backgroundImage));
+			}
+		}
+
 		public static int IndexOfSubview(this NSView nativeView, NSView subview)
 		{
 			if (nativeView.Subviews.Length == 0)
@@ -332,6 +400,237 @@ namespace Microsoft.Maui
 			{
 				view.Subviews[n].RemoveFromSuperview();
 			}
+		}
+
+		internal static Rect GetPlatformViewBounds(this IView view)
+		{
+			var platformView = view?.ToPlatform();
+			if (platformView == null)
+			{
+				return new Rect();
+			}
+
+			return platformView.GetPlatformViewBounds();
+		}
+
+		internal static Rect GetPlatformViewBounds(this NSView platformView)
+		{
+			if (platformView == null)
+				return new Rect();
+
+			var superview = platformView;
+			while (superview.Superview is not null)
+			{
+				superview = superview.Superview;
+			}
+
+			var convertPoint = platformView.ConvertRectToView(platformView.Bounds, superview);
+
+			var X = convertPoint.X;
+			var Y = convertPoint.Y;
+			var Width = convertPoint.Width;
+			var Height = convertPoint.Height;
+
+			return new Rect(X, Y, Width, Height);
+		}
+
+		internal static Matrix4x4 GetViewTransform(this IView view)
+		{
+			var platformView = view?.ToPlatform();
+			if (platformView?.Layer == null)
+				return new Matrix4x4();
+			return platformView.Layer.GetViewTransform();
+		}
+
+		internal static Matrix4x4 GetViewTransform(this NSView view)
+			=> view.Layer?.GetViewTransform() ?? new Matrix4x4();
+
+		internal static Point GetLocationOnScreen(this NSView view) =>
+			view.GetPlatformViewBounds().Location;
+
+		internal static Point? GetLocationOnScreen(this IElement element)
+		{
+			if (element.Handler?.MauiContext == null)
+				return null;
+
+			return (element.ToPlatform())?.GetLocationOnScreen();
+		}
+
+		internal static Graphics.Rect GetBoundingBox(this IView view)
+			=> view.ToPlatform().GetBoundingBox();
+
+		internal static Graphics.Rect GetBoundingBox(this NSView? platformView)
+		{
+			if (platformView == null)
+				return new Rect();
+			var nvb = platformView.GetPlatformViewBounds();
+			var transform = platformView.GetViewTransform();
+			var radians = transform.ExtractAngleInRadians();
+			var rotation = CoreGraphics.CGAffineTransform.MakeRotation((nfloat)radians);
+			CGAffineTransform.CGRectApplyAffineTransform(nvb, rotation);
+			return new Rect(nvb.X, nvb.Y, nvb.Width, nvb.Height);
+		}
+
+		internal static NSView? GetParent(this NSView? view)
+		{
+			return view?.Superview;
+		}
+
+		internal static Size LayoutToMeasuredSize(this IView view, double width, double height)
+		{
+			var size = view.Measure(width, height);
+			var platformFrame = new CGRect(0, 0, size.Width, size.Height);
+
+			if (view.Handler is IPlatformViewHandler viewHandler && viewHandler.PlatformView != null)
+				viewHandler.PlatformView.Frame = platformFrame;
+
+			view.Arrange(platformFrame.ToRectangle());
+			return size;
+		}
+
+		public static void UpdateInputTransparent(this NSView platformView, IViewHandler handler, IView view)
+		{
+			if (view is ITextInput textInput)
+			{
+				platformView.UpdateInputTransparent(textInput.IsReadOnly, view.InputTransparent);
+				return;
+			}
+
+			// TODO COCOA
+			//platformView.UserInteractionEnabled = !view.InputTransparent;
+		}
+
+		public static void UpdateInputTransparent(this NSView platformView, bool isReadOnly, bool inputTransparent)
+		{
+			// TODO COCOA
+			//platformView.UserInteractionEnabled = !(isReadOnly || inputTransparent);
+		}
+
+		public static void UpdateToolTip(this NSView platformView, ToolTip? tooltip)
+		{
+			// TODO COCOA
+		}
+
+		internal static bool IsLoaded(this NSView uiView)
+		{
+			if (uiView == null)
+				return false;
+
+			return uiView.Window != null;
+		}
+
+		internal static IDisposable OnLoaded(this NSView uiView, Action action)
+		{
+			if (uiView.IsLoaded())
+			{
+				action();
+				return new ActionDisposable(() => { });
+			}
+
+			Dictionary<NSString, NSObject> observers = new Dictionary<NSString, NSObject>();
+			ActionDisposable? disposable = null;
+			disposable = new ActionDisposable(() =>
+			{
+				disposable = null;
+				foreach (var observer in observers)
+				{
+					uiView.Layer!.RemoveObserver(observer.Value, observer.Key);
+					observers.Remove(observer.Key);
+				}
+			});
+
+			// Ideally we could wire into UIView.MovedToWindow but there's no way to do that without just inheriting from every single
+			// UIView. So we just make our best attempt by observering some properties that are going to fire once UIView is attached to a window.			
+			observers.Add(new NSString("bounds"), (NSObject)uiView.Layer!.AddObserver("bounds", Foundation.NSKeyValueObservingOptions.OldNew, (oc) => OnLoadedCheck(oc)));
+			observers.Add(new NSString("frame"), (NSObject)uiView.Layer.AddObserver("frame", Foundation.NSKeyValueObservingOptions.OldNew, (oc) => OnLoadedCheck(oc)));
+
+			// OnLoaded is called at the point in time where the xplat view knows it's going to be attached to the window.
+			// So this just serves as a way to queue a call on the UI Thread to see if that's enough time for the window
+			// to get attached.
+			uiView.BeginInvokeOnMainThread(() => OnLoadedCheck(null));
+
+			void OnLoadedCheck(NSObservedChange? nSObservedChange = null)
+			{
+				if (disposable != null)
+				{
+					if (uiView.IsLoaded())
+					{
+						disposable.Dispose();
+						disposable = null;
+						action();
+					}
+					else if (nSObservedChange != null)
+					{
+						// In some cases (FlyoutPage) the arrange and measure all take place before
+						// the view is added to the screen so this queues up a second check that
+						// hopefully will fire loaded once the view is added to the window.
+						// None of this code is great but I haven't found a better way
+						// for an outside observer to know when a subview is added to a window
+						uiView.BeginInvokeOnMainThread(() => OnLoadedCheck(null));
+					}
+				}
+			};
+
+			return disposable;
+		}
+
+		internal static IDisposable OnUnloaded(this NSView uiView, Action action)
+		{
+
+			if (!uiView.IsLoaded())
+			{
+				action();
+				return new ActionDisposable(() => { });
+			}
+
+			Dictionary<NSString, NSObject> observers = new Dictionary<NSString, NSObject>();
+			ActionDisposable? disposable = null;
+			disposable = new ActionDisposable(() =>
+			{
+				disposable = null;
+				foreach (var observer in observers)
+				{
+					uiView.Layer!.RemoveObserver(observer.Value, observer.Key);
+					observers.Remove(observer.Key);
+				}
+			});
+
+			// Ideally we could wire into UIView.MovedToWindow but there's no way to do that without just inheriting from every single
+			// UIView. So we just make our best attempt by observering some properties that are going to fire once UIView is attached to a window.	
+			observers.Add(new NSString("bounds"), (NSObject)uiView.Layer!.AddObserver("bounds", Foundation.NSKeyValueObservingOptions.OldNew, (_) => UnLoadedCheck()));
+			observers.Add(new NSString("frame"), (NSObject)uiView.Layer.AddObserver("frame", Foundation.NSKeyValueObservingOptions.OldNew, (_) => UnLoadedCheck()));
+
+			// OnUnloaded is called at the point in time where the xplat view knows it's going to be detached from the window.
+			// So this just serves as a way to queue a call on the UI Thread to see if that's enough time for the window
+			// to get detached.
+			uiView.BeginInvokeOnMainThread(UnLoadedCheck);
+
+			void UnLoadedCheck()
+			{
+				if (!uiView.IsLoaded() && disposable != null)
+				{
+					disposable.Dispose();
+					disposable = null;
+					action();
+				}
+			};
+
+			return disposable;
+		}
+
+		internal static void UpdateLayerBorder(this CoreAnimation.CALayer layer, IButtonStroke? stroke)
+		{
+			if (stroke == null)
+				return;
+
+			if (stroke.StrokeColor != null)
+				layer.BorderColor = stroke.StrokeColor.ToCGColor();
+
+			if (stroke.StrokeThickness >= 0)
+				layer.BorderWidth = (float)stroke.StrokeThickness;
+
+			if (stroke.CornerRadius >= 0)
+				layer.CornerRadius = stroke.CornerRadius;
 		}
 	}
 }

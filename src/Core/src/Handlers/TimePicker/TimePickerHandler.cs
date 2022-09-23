@@ -2,6 +2,8 @@
 using PlatformView = Microsoft.Maui.Platform.MauiTimePicker;
 #elif MACCATALYST
 using PlatformView = UIKit.UIDatePicker;
+#elif MACOS
+using PlatformView = Microsoft.Maui.Platform.MauiTimePicker;
 #elif ANDROID
 using PlatformView = Microsoft.Maui.Platform.MauiTimePicker;
 #elif WINDOWS

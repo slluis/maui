@@ -3,7 +3,7 @@ using Foundation;
 using AppKit;
 using RectangleF = CoreGraphics.CGRect;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public class MauiTimePicker : NoCaretField
 	{

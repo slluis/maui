@@ -1,4 +1,4 @@
-﻿#if __IOS__ || MACCATALYST
+﻿#if __IOS__ || MACCATALYST || MACOS
 using PlatformView = Microsoft.Maui.Platform.MauiActivityIndicator;
 #elif MONOANDROID
 using PlatformView = Android.Widget.ProgressBar;

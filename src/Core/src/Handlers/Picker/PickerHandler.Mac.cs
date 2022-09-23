@@ -6,23 +6,23 @@ using RectangleF = CoreGraphics.CGRect;
 
 namespace Microsoft.Maui.Handlers
 {
-	public partial class PickerHandler : ViewHandler<IPicker, MauiPopUpButton>
+	public partial class PickerHandler : ViewHandler<IPicker, MauiPicker>
 	{
-		MauiPopUpButton? _pickerView;
+		MauiPicker? _pickerView;
 
-		protected override MauiPopUpButton CreateNativeView()
+		protected override MauiPicker CreatePlatformView()
 		{
-			_pickerView = new MauiPopUpButton();
+			_pickerView = new MauiPicker();
 			return _pickerView;
 		}
 
-		protected override void ConnectHandler(MauiPopUpButton nativeView)
+		protected override void ConnectHandler(MauiPicker nativeView)
 		{
 			nativeView.Activated += OnControlSelectionChanged;
 			base.ConnectHandler(nativeView);
 		}
 
-		protected override void DisconnectHandler(MauiPopUpButton nativeView)
+		protected override void DisconnectHandler(MauiPicker nativeView)
 		{
 			nativeView.Activated -= OnControlSelectionChanged;
 			
@@ -31,45 +31,42 @@ namespace Microsoft.Maui.Handlers
 
 		void OnControlSelectionChanged(object? sender, EventArgs e)
 		{
-			if (VirtualView != null && NativeView != null)
-				VirtualView.SelectedIndex = (int) NativeView.IndexOfSelectedItem;
+			if (VirtualView != null && PlatformView != null)
+				VirtualView.SelectedIndex = (int)PlatformView.IndexOfSelectedItem;
 		}
 
-		void Reload()
+		static void Reload(IPickerHandler handler)
 		{
-			if (VirtualView == null || NativeView == null)
-				return;
-
-			NativeView?.UpdatePicker(VirtualView);
+			handler.PlatformView.UpdatePicker(handler.VirtualView);
 		}
 
-		public static void MapReload(PickerHandler handler, IPicker picker, object? args) => handler.Reload();
+		public static void MapReload(PickerHandler handler, IPicker picker, object? args) => Reload(handler);
 
 		public static void MapTitle(PickerHandler handler, IPicker picker)
 		{
-			handler.NativeView?.UpdateTitle(picker);
+			handler.PlatformView?.UpdateTitle(picker);
 		}
 
 		public static void MapTitleColor(PickerHandler handler, IPicker picker)
 		{
-			handler.NativeView?.UpdateTitleColor(picker);
+			handler.PlatformView?.UpdateTitleColor(picker);
 		}
 
 		public static void MapSelectedIndex(PickerHandler handler, IPicker picker)
 		{
-			handler.NativeView?.UpdateSelectedIndex(picker);
+			handler.PlatformView?.UpdateSelectedIndex(picker);
 		}
 
 		public static void MapCharacterSpacing(PickerHandler handler, IPicker picker)
 		{
-			handler.NativeView?.UpdateCharacterSpacing(picker);
+			handler.PlatformView?.UpdateCharacterSpacing(picker);
 		}
 
 		public static void MapFont(PickerHandler handler, IPicker picker)
 		{
 			var fontManager = handler.GetRequiredService<IFontManager>();
 
-			handler.NativeView?.UpdateFont(picker, fontManager);
+			handler.PlatformView?.UpdateFont(picker, fontManager);
 		}
 
 		public static void MapHorizontalTextAlignment(PickerHandler handler, IPicker picker)
@@ -79,12 +76,14 @@ namespace Microsoft.Maui.Handlers
 
 		public static void MapTextColor(PickerHandler handler, IPicker picker)
 		{
-			handler.NativeView?.UpdateTextColor(picker);
+			handler.PlatformView?.UpdateTextColor(picker);
 		}
 
 		public static void MapVerticalTextAlignment(PickerHandler handler, IPicker picker)
 		{
 			//handler.NativeView?.UpdateVerticalTextAlignment(picker);
 		}
+
+		internal static void MapItems(IPickerHandler handler, IPicker picker) => Reload(handler);
 	}
 }

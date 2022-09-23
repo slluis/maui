@@ -1,62 +1,68 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using AppKit;
 
 namespace Microsoft.Maui.Handlers
 {
-	// TODO COCOA
-	public partial class ImageButtonHandler : ViewHandler<IImageButton, NSButton>
+	public partial class ImageButtonHandler : ViewHandler<IImageButton, MauiButton>
 	{
-		AppKit.NSImageView dummy = new NSImageView();
-
-		protected override NSButton CreateNativeView()
+		protected override MauiButton CreatePlatformView()
 		{
-			throw new NotImplementedException();
-//			return new UIButton(UIButtonType.System);
+			var platformView = new MauiButton();
+			return platformView;
 		}
 
 		void OnSetImageSource(NSImage? obj)
 		{
-/*			NativeView.SetImage(obj?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal), UIControlState.Normal);
-			NativeView.HorizontalAlignment = UIControlContentHorizontalAlignment.Fill;
-			NativeView.VerticalAlignment = UIControlContentVerticalAlignment.Fill;*/
+			PlatformView.Image = obj;
 		}
 
-		protected override void ConnectHandler(NSButton nativeView)
+		protected override void ConnectHandler(MauiButton platformView)
 		{
-/*			nativeView.TouchUpInside += OnButtonTouchUpInside;
-			nativeView.TouchUpOutside += OnButtonTouchUpOutside;
-			nativeView.TouchDown += OnButtonTouchDown;*/
-			base.ConnectHandler(nativeView);
+			platformView.MouseLeftDown += PlatformView_MouseLeftDown;
+			platformView.MouseLeftUp += PlatformView_MouseLeftUp;
+
+			base.ConnectHandler(platformView);
 		}
 
-		protected override void DisconnectHandler(NSButton nativeView)
+		protected override void DisconnectHandler(MauiButton platformView)
 		{
-/*			nativeView.TouchUpInside -= OnButtonTouchUpInside;
-			nativeView.TouchUpOutside -= OnButtonTouchUpOutside;
-			nativeView.TouchDown -= OnButtonTouchDown;*/
-			base.DisconnectHandler(nativeView);
+			platformView.MouseLeftDown -= PlatformView_MouseLeftDown;
+			platformView.MouseLeftUp -= PlatformView_MouseLeftUp;
+
+			base.DisconnectHandler(platformView);
+
 			SourceLoader.Reset();
 		}
 
-		void OnButtonTouchUpInside(object? sender, EventArgs e)
+		public static void MapStrokeColor(IImageButtonHandler handler, IButtonStroke buttonStroke)
+		{
+			handler.PlatformView?.UpdateStrokeColor(buttonStroke);
+		}
+
+		public static void MapStrokeThickness(IImageButtonHandler handler, IButtonStroke buttonStroke)
+		{
+			handler.PlatformView?.UpdateStrokeThickness(buttonStroke);
+		}
+
+		public static void MapCornerRadius(IImageButtonHandler handler, IButtonStroke buttonStroke)
+		{
+			handler.PlatformView?.UpdateCornerRadius(buttonStroke);
+		}
+
+		public static void MapPadding(IImageButtonHandler handler, IImageButton imageButton)
+		{
+			(handler.PlatformView as NSButton)?.UpdatePadding(imageButton);
+		}
+
+		private void PlatformView_MouseLeftUp(object? sender, EventArgs e)
 		{
 			VirtualView?.Released();
 			VirtualView?.Clicked();
 		}
 
-		void OnButtonTouchUpOutside(object? sender, EventArgs e)
-		{
-			VirtualView?.Released();
-		}
-
-		void OnButtonTouchDown(object? sender, EventArgs e)
+		private void PlatformView_MouseLeftDown(object? sender, EventArgs e)
 		{
 			VirtualView?.Pressed();
 		}
-
-		// TODO COCOA
-		AppKit.NSImageView IImageHandler.TypedNativeView => dummy;
 	}
 }

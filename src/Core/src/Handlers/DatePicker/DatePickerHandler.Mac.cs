@@ -10,7 +10,7 @@ namespace Microsoft.Maui.Handlers
 		NSColor? _defaultTextColor;
 		NSDatePicker? _picker;
 
-		protected override MauiDatePicker CreateNativeView()
+		protected override MauiDatePicker CreatePlatformView()
 		{
 			MauiDatePicker nativeDatePicker = new MauiDatePicker();
 
@@ -71,41 +71,41 @@ namespace Microsoft.Maui.Handlers
 			_defaultTextColor = nativeView.TextColor;
 		}
 
-		public static void MapFormat(DatePickerHandler handler, IDatePicker datePicker)
+		public static void MapFormat(IDatePickerHandler handler, IDatePicker datePicker)
 		{
-			handler.NativeView?.UpdateFormat(datePicker);
+			handler.PlatformView?.UpdateFormat(datePicker);
 		}
 
-		public static void MapDate(DatePickerHandler handler, IDatePicker datePicker)
+		public static void MapDate(IDatePickerHandler handler, IDatePicker datePicker)
 		{
-			handler.NativeView?.UpdateDate(datePicker);
+			handler.PlatformView?.UpdateDate(datePicker);
 		}
 
-		public static void MapMinimumDate(DatePickerHandler handler, IDatePicker datePicker)
+		public static void MapMinimumDate(IDatePickerHandler handler, IDatePicker datePicker)
 		{
-			handler.NativeView?.UpdateMinimumDate(datePicker, handler._picker);
+			handler.PlatformView?.UpdateMinimumDate(datePicker, ((DatePickerHandler)handler)._picker);
 		}
 
-		public static void MapMaximumDate(DatePickerHandler handler, IDatePicker datePicker)
+		public static void MapMaximumDate(IDatePickerHandler handler, IDatePicker datePicker)
 		{
-			handler.NativeView?.UpdateMaximumDate(datePicker, handler._picker);
+			handler.PlatformView?.UpdateMaximumDate(datePicker, ((DatePickerHandler)handler)._picker);
 		}
 
-		public static void MapCharacterSpacing(DatePickerHandler handler, IDatePicker datePicker)
+		public static void MapCharacterSpacing(IDatePickerHandler handler, IDatePicker datePicker)
 		{
-			handler.NativeView?.UpdateCharacterSpacing(datePicker);
+			handler.PlatformView?.UpdateCharacterSpacing(datePicker);
 		}
 
-		public static void MapFont(DatePickerHandler handler, IDatePicker datePicker)
+		public static void MapFont(IDatePickerHandler handler, IDatePicker datePicker)
 		{
 			var fontManager = handler.GetRequiredService<IFontManager>();
 
-			handler.NativeView?.UpdateFont(datePicker, fontManager);
+			handler.PlatformView?.UpdateFont(datePicker, fontManager);
 		}
 
-		public static void MapTextColor(DatePickerHandler handler, IDatePicker datePicker)
+		public static void MapTextColor(IDatePickerHandler handler, IDatePicker datePicker)
 		{
-			handler.NativeView?.UpdateTextColor(datePicker, handler._defaultTextColor);
+			handler.PlatformView?.UpdateTextColor(datePicker, ((DatePickerHandler)handler)._defaultTextColor);
 		}
 
 		void OnValueChanged(object? sender, EventArgs? e)

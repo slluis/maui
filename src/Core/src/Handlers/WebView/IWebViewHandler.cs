@@ -1,4 +1,4 @@
-﻿#if __IOS__ || MACCATALYST
+﻿#if __IOS__ || MACCATALYST || MACOS
 using PlatformView = WebKit.WKWebView;
 #elif MONOANDROID
 using PlatformView = Android.Webkit.WebView;

@@ -12,6 +12,8 @@ namespace Microsoft.Maui.Animations
 
 		public override void Start()
 		{
+			// TODO COCOA: Does this work?
+
 			if (_link != null)
 				return;
 

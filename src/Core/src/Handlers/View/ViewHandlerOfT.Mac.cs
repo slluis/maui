@@ -5,11 +5,8 @@ using System;
 
 namespace Microsoft.Maui.Handlers
 {
-	public partial class ViewHandler<TVirtualView, TNativeView> : INativeViewHandler
+	public partial class ViewHandler<TVirtualView, TPlatformView> : IPlatformViewHandler
 	{
-		NSView? INativeViewHandler.NativeView => this.GetWrappedNativeView();
-		NSView? INativeViewHandler.ContainerView => ContainerView;
-
 		public new WrapperView? ContainerView
 		{
 			get => (WrapperView?)base.ContainerView;
@@ -18,9 +15,9 @@ namespace Microsoft.Maui.Handlers
 
 		public NSViewController? ViewController { get; set; }
 
-		public override void NativeArrange(Rectangle rect)
+		public override void PlatformArrange(Rect rect)
 		{
-			var nativeView = this.GetWrappedNativeView();
+			var nativeView = this.ToPlatform();
 
 			if (nativeView == null)
 				return;
@@ -40,7 +37,7 @@ namespace Microsoft.Maui.Handlers
 
 		public override Size GetDesiredSize(double widthConstraint, double heightConstraint)
 		{
-			var nativeView = this.GetWrappedNativeView();
+			var nativeView = this.ToPlatform();
 
 			if (nativeView == null)
 			{
@@ -98,16 +95,16 @@ namespace Microsoft.Maui.Handlers
 
 		protected override void SetupContainer()
 		{
-			if (NativeView == null || ContainerView != null)
+			if (PlatformView == null || ContainerView != null)
 				return;
 
-			var oldParent = NativeView.Superview;
+			var oldParent = PlatformView.Superview;
 
-			var oldIndex = oldParent?.IndexOfSubview(NativeView);
-			NativeView.RemoveFromSuperview();
+			var oldIndex = oldParent?.IndexOfSubview(PlatformView);
+			PlatformView.RemoveFromSuperview();
 
-			ContainerView ??= new WrapperView(NativeView.Bounds);
-			ContainerView.AddSubview(NativeView);
+			ContainerView ??= new WrapperView(PlatformView.Bounds);
+			ContainerView.AddSubview(PlatformView);
 
 			if (oldParent != null)
 			{
@@ -120,7 +117,7 @@ namespace Microsoft.Maui.Handlers
 
 		protected override void RemoveContainer()
 		{
-			if (NativeView == null || ContainerView == null || NativeView.Superview != ContainerView)
+			if (PlatformView == null || ContainerView == null || PlatformView.Superview != ContainerView)
 				return;
 
 			var oldParent = ContainerView.Superview;
@@ -133,9 +130,9 @@ namespace Microsoft.Maui.Handlers
 			if (oldParent != null)
 			{
 				if (oldIndex is int idx && idx >= 0)
-					oldParent.Subviews.Insert(idx, NativeView);
+					oldParent.Subviews.Insert(idx, PlatformView);
 				else
-					oldParent.AddSubview(NativeView);
+					oldParent.AddSubview(PlatformView);
 			}
 		}
 	}

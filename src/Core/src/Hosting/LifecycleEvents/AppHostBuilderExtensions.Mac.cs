@@ -9,6 +9,9 @@ namespace Microsoft.Maui.LifecycleEvents
 		internal static MauiAppBuilder ConfigureCrossPlatformLifecycleEvents(this MauiAppBuilder builder) =>
 			builder.ConfigureLifecycleEvents(events => events.AddMac(OnConfigureLifeCycle));
 
+		internal static MauiAppBuilder ConfigureWindowEvents(this MauiAppBuilder builder) =>
+			builder.ConfigureLifecycleEvents(events => events.AddMac(OnConfigureWindow));
+
 		static void OnConfigureLifeCycle(IMacLifecycleBuilder macos)
 		{
 			macos
@@ -37,6 +40,11 @@ namespace Microsoft.Maui.LifecycleEvents
 				{
 					app.GetWindow()?.Destroying();
 				});
+		}
+
+		static void OnConfigureWindow(IMacLifecycleBuilder macos)
+		{
+			// TODO COCOA
 		}
 	}
 }

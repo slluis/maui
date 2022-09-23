@@ -5,7 +5,7 @@ using PlatformView = UIKit.UIButton;
 #elif __MACOS__
 using PlatformImage = AppKit.NSImage;
 using PlatformImageView = AppKit.NSImageView;
-using PlatformView = AppKit.NSButton;
+using PlatformView = Microsoft.Maui.Platform.MauiButton;
 #elif MONOANDROID
 using PlatformImage = Android.Graphics.Drawables.Drawable;
 using PlatformImageView = Android.Widget.ImageView;
@@ -63,10 +63,8 @@ namespace Microsoft.Maui.Handlers
 		IImage IImageHandler.VirtualView => VirtualView;
 
 		PlatformImageView IImageHandler.PlatformView =>
-#if __IOS__
+#if __IOS__ || MACOS
 			PlatformView.ImageView;
-#elif MACOS
-			null; // TODO
 #elif WINDOWS
 			PlatformView.GetContent<PlatformImageView>() ?? throw new InvalidOperationException("ImageButton did not contain an Image element.");
 #else

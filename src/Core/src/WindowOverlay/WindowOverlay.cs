@@ -5,6 +5,8 @@ using Microsoft.Maui.Graphics;
 
 #if __IOS__ || MACCATALYST
 using PlatformView = UIKit.UIView;
+#elif MACOS
+using PlatformView = AppKit.NSView;
 #elif __ANDROID__
 using PlatformView = Android.Views.View;
 #elif WINDOWS

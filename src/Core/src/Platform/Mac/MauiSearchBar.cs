@@ -4,7 +4,7 @@ using CoreGraphics;
 using Foundation;
 using AppKit;
 
-namespace Microsoft.Maui.Handlers
+namespace Microsoft.Maui.Platform
 {
 	public class MauiSearchBar : NSView
 	{

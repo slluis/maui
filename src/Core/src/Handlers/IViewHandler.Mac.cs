@@ -2,9 +2,9 @@ using AppKit;
 
 namespace Microsoft.Maui
 {
-	public interface INativeViewHandler : IViewHandler
+	public interface IPlatformViewHandler : IViewHandler
 	{
-		new NSView? NativeView { get; }
+		new NSView? PlatformView { get; }
 		new NSView? ContainerView { get; }
 		NSViewController? ViewController { get; }
 	}

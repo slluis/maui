@@ -3,19 +3,19 @@ using System;
 using Foundation;
 using Microsoft.Maui.Handlers;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static class PickerExtensions
 	{
-		public static void UpdateTitle(this MauiPopUpButton nativePicker, IPicker picker) =>
+		public static void UpdateTitle(this MauiPicker nativePicker, IPicker picker) =>
 			nativePicker.UpdatePicker(picker);
 
-		public static void UpdateTitleColor(this MauiPopUpButton nativePicker, IPicker picker) =>
+		public static void UpdateTitleColor(this MauiPicker nativePicker, IPicker picker) =>
  			nativePicker.SetTitleColor(picker);
 
-		public static void UpdateTextColor(this MauiPopUpButton nativePicker, IPicker picker)
+		public static void UpdateTextColor(this MauiPicker nativePicker, IPicker picker)
 		{
-			var color = picker.TextColor?.ToNative();
+			var color = picker.TextColor?.ToPlatform();
 			if (color != null)
 			{
 				var attributedValue = nativePicker.AttributedStringValue?.WithColor(color);
@@ -26,10 +26,10 @@ namespace Microsoft.Maui
 			}
 		}
 
-		public static void UpdateSelectedIndex(this MauiPopUpButton nativePicker, IPicker picker) =>
+		public static void UpdateSelectedIndex(this MauiPicker nativePicker, IPicker picker) =>
 			nativePicker.SetSelectedIndex(picker, picker.SelectedIndex);
 
-		internal static void SetTitleColor(this MauiPopUpButton nativePicker, IPicker picker)
+		internal static void SetTitleColor(this MauiPicker nativePicker, IPicker picker)
 		{
 			var title = picker.Title;
 
@@ -41,15 +41,15 @@ namespace Microsoft.Maui
 			if (titleColor == null)
 				return;
 
-			nativePicker.UpdateAttributedPlaceholder(new NSAttributedString(title, null, titleColor.ToNative()));
+			nativePicker.UpdateAttributedPlaceholder(new NSAttributedString(title, null, titleColor.ToPlatform()));
 		}
 
-		internal static void UpdateAttributedPlaceholder(this MauiPopUpButton nativePicker, NSAttributedString nsAttributedString)
+		internal static void UpdateAttributedPlaceholder(this MauiPicker nativePicker, NSAttributedString nsAttributedString)
 		{
 			//nativePicker.place = nsAttributedString;
 		}
 
-		internal static void UpdatePicker(this MauiPopUpButton nativePicker, IPicker picker)
+		internal static void UpdatePicker(this MauiPicker nativePicker, IPicker picker)
 		{
 			var selectedIndex = picker.SelectedIndex;
 
@@ -62,7 +62,7 @@ namespace Microsoft.Maui
 			nativePicker.SetSelectedIndex(picker, selectedIndex);
 		}
 
-		internal static void SetSelectedIndex(this MauiPopUpButton nativePicker, IPicker picker, int selectedIndex = 0)
+		internal static void SetSelectedIndex(this MauiPicker nativePicker, IPicker picker, int selectedIndex = 0)
 		{
 			if (selectedIndex > nativePicker.ItemCount - 1)
 				return;

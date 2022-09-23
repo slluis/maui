@@ -1,7 +1,7 @@
 ﻿using System;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
     public class MauiButton : NSButton
     {
@@ -25,6 +25,14 @@ namespace Microsoft.Maui
         {
             base.MouseUp(theEvent);
             MouseLeftUp?.Invoke(this, EventArgs.Empty);
+        }
+
+        public NSImageView ImageView
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

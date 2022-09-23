@@ -10,14 +10,22 @@ namespace Microsoft.Maui.Handlers
 	{
 		public static void MapTerminate(ApplicationHandler handler, IApplication application, object? args)
 		{
-#if __MACCATALYST__ || __MACOS__
 			NSApplication.SharedApplication.Terminate();
-#else
-			handler.Logger?.LogWarning("iOS does not support programmatically terminating the app.");
-#endif
 		}
 
-#if __MACCATALYST__ || __MACOS__
+		public static void MapOpenWindow(ApplicationHandler handler, IApplication application, object? args)
+		{
+			// TODO COCOA
+		}
+
+		public static void MapCloseWindow(ApplicationHandler handler, IApplication application, object? args)
+		{
+			if (args is IWindow window)
+			{
+				// TODO COCOA
+			}
+		}
+
 		class NSApplication
 		{
 			static IntPtr ClassHandle => ObjCRuntime.Class.GetHandle("NSApplication");
@@ -43,6 +51,5 @@ namespace Microsoft.Maui.Handlers
 			[DllImport(ObjCRuntime.Constants.ObjectiveCLibrary, EntryPoint = "objc_msgSend")]
 			static extern void void_objc_msgSend_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1);
 		}
-#endif
 	}
 }

@@ -1,10 +1,10 @@
 ﻿using CoreAnimation;
 using CoreGraphics;
 using Microsoft.Maui.Graphics;
-using Microsoft.Maui.Graphics.Native;
+using Microsoft.Maui.Graphics.Platform;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public partial class WrapperView : NSView
 	{
@@ -110,7 +110,7 @@ namespace Microsoft.Maui
 
 			mask ??= MaskLayer = new CAShapeLayer();
 			var frame = Frame;
-			var bounds = new RectangleF(0, 0, (float)frame.Width, (float)frame.Height);
+			var bounds = new Rect(0, 0, (float)frame.Width, (float)frame.Height);
 
 			var path = _clip?.PathForBounds(bounds);
 			var nativePath = path?.AsCGPath();
@@ -127,7 +127,7 @@ namespace Microsoft.Maui
 			shadowLayer ??= ShadowLayer = new CAShapeLayer();
 
 			var frame = Frame;
-			var bounds = new RectangleF(0, 0, (float)frame.Width, (float)frame.Height);
+			var bounds = new Rect(0, 0, (float)frame.Width, (float)frame.Height);
 
 			shadowLayer.FillColor = new CGColor(0, 0, 0, 1);
 

@@ -2,7 +2,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 #if __IOS__ || MACCATALYST
 using PlatformView = UIKit.UIWindow;
-#elif __MACOS__
+#elif MACOS
 using PlatformView = AppKit.NSWindow;
 #elif MONOANDROID
 using PlatformView = Android.App.Activity;

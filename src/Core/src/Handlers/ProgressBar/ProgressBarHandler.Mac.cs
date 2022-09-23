@@ -4,7 +4,7 @@ namespace Microsoft.Maui.Handlers
 {
 	public partial class ProgressBarHandler : ViewHandler<IProgress, NSProgressIndicator>
 	{
-		protected override NSProgressIndicator CreateNativeView()
+		protected override NSProgressIndicator CreatePlatformView()
 		{
 			return new NSProgressIndicator();
 		}

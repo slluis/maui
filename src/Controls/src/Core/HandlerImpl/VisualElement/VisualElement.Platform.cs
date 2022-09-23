@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 #if IOS || MACCATALYST
 using PlatformView = UIKit.UIView;
+#elif MACOS
+using PlatformView = AppKit.NSView;
 #elif MONOANDROID
 using PlatformView = Android.Views.View;
 #elif WINDOWS

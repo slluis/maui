@@ -3,11 +3,11 @@ using CoreAnimation;
 using Microsoft.Maui.Graphics;
 using AppKit;
 
-namespace Microsoft.Maui
+namespace Microsoft.Maui.Platform
 {
 	public static class StrokeExtensions
 	{
-		public static void UpdateStrokeShape(this NSView nativeView, IBorder border)
+		public static void UpdateStrokeShape(this NSView nativeView, IBorderStroke border)
 		{
 			var borderShape = border.Shape;
 			CALayer? backgroundLayer = nativeView.Layer as MauiCALayer;
@@ -18,7 +18,7 @@ namespace Microsoft.Maui
 			nativeView.UpdateMauiCALayer(border);
 		}
 
-		public static void UpdateStroke(this NSView nativeView, IBorder border)
+		public static void UpdateStroke(this NSView nativeView, IBorderStroke border)
 		{
 			var borderBrush = border.Stroke;
 			CALayer? backgroundLayer = nativeView.Layer as MauiCALayer;
@@ -29,7 +29,7 @@ namespace Microsoft.Maui
 			nativeView.UpdateMauiCALayer(border);
 		}
 
-		public static void UpdateStrokeThickness(this NSView nativeView, IBorder border)
+		public static void UpdateStrokeThickness(this NSView nativeView, IBorderStroke border)
 		{
 			CALayer? backgroundLayer = nativeView.Layer as MauiCALayer;
 
@@ -41,7 +41,7 @@ namespace Microsoft.Maui
 			nativeView.UpdateMauiCALayer(border);
 		}
 
-		public static void UpdateStrokeDashPattern(this NSView nativeView, IBorder border)
+		public static void UpdateStrokeDashPattern(this NSView nativeView, IBorderStroke border)
 		{
 			CALayer? backgroundLayer = nativeView.Layer as MauiCALayer;
 
@@ -53,7 +53,7 @@ namespace Microsoft.Maui
 			nativeView.UpdateMauiCALayer(border);
 		}
 
-		public static void UpdateStrokeDashOffset(this NSView nativeView, IBorder border)
+		public static void UpdateStrokeDashOffset(this NSView nativeView, IBorderStroke border)
 		{
 			var strokeDashPattern = border.StrokeDashPattern;
 			CALayer? backgroundLayer = nativeView.Layer as MauiCALayer;
@@ -66,7 +66,7 @@ namespace Microsoft.Maui
 			nativeView.UpdateMauiCALayer(border);
 		}
 
-		public static void UpdateStrokeMiterLimit(this NSView nativeView, IBorder border)
+		public static void UpdateStrokeMiterLimit(this NSView nativeView, IBorderView border)
 		{
 			CALayer? backgroundLayer = nativeView.Layer as MauiCALayer;
 
@@ -78,7 +78,7 @@ namespace Microsoft.Maui
 			nativeView.UpdateMauiCALayer(border);
 		}
 
-		public static void UpdateStrokeLineCap(this NSView nativeView, IBorder border)
+		public static void UpdateStrokeLineCap(this NSView nativeView, IBorderStroke border)
 		{
 			CALayer? backgroundLayer = nativeView.Layer as MauiCALayer;
 			bool hasBorder = border.Shape != null && border.Stroke != null;
@@ -89,7 +89,7 @@ namespace Microsoft.Maui
 			nativeView.UpdateMauiCALayer(border);
 		}
 
-		public static void UpdateStrokeLineJoin(this NSView nativeView, IBorder border)
+		public static void UpdateStrokeLineJoin(this NSView nativeView, IBorderStroke border)
 		{
 			CALayer? backgroundLayer = nativeView.Layer as MauiCALayer;
 			bool hasBorder = border.Shape != null && border.Stroke != null;
@@ -100,7 +100,7 @@ namespace Microsoft.Maui
 			nativeView.UpdateMauiCALayer(border);
 		}
 
-		internal static void UpdateMauiCALayer(this NSView nativeView, IBorder border)
+		internal static void UpdateMauiCALayer(this NSView nativeView, IBorderStroke border)
 		{
 			CALayer? backgroundLayer = nativeView.Layer as MauiCALayer;
 
@@ -124,7 +124,6 @@ namespace Microsoft.Maui
 
 			if (backgroundLayer is MauiCALayer mauiCALayer)
 			{
-				mauiCALayer.SetBackground(border.Background);
 				mauiCALayer.SetBorderBrush(border.Stroke);
 				mauiCALayer.SetBorderWidth(border.StrokeThickness);
 				mauiCALayer.SetBorderDash(border.StrokeDashPattern, border.StrokeDashOffset);
