@@ -4,12 +4,12 @@ using System.IO;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.FileProviders;
-using WebKit;
+//using WebKit;
 
 namespace Microsoft.AspNetCore.Components.WebView.Maui
 {
 	/// <summary>
-	/// An implementation of <see cref="WebViewManager"/> that uses the <see cref="WKWebView"/> browser control
+	/// An implementation of <see cref="WebViewManager"/> that uses the WKWebView browser control
 	/// to render web content.
 	/// </summary>
 	public class MacOSWebViewManager : WebViewManager

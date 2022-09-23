@@ -6,7 +6,7 @@ using Microsoft.Maui.LifecycleEvents;
 using AppKit;
 using CoreGraphics;
 
-namespace Microsoft.Maui.Platform
+namespace Microsoft.Maui
 {
 	public abstract class MauiUIApplicationDelegate : NSApplicationDelegate, INSApplicationDelegate
 	{

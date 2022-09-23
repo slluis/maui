@@ -62,18 +62,18 @@ namespace Microsoft.Maui.Controls.Compatibility.Hosting
 		{
 			Controls.Hosting.CompatibilityCheck.UseCompatibility();
 
-#if PLATFORM
+#if PLATFORM && !MACOS
 			// initialize compatibility DependencyService
 			DependencyService.SetToInitialized();
 			DependencyService.Register<NativeBindingService>();
 			DependencyService.Register<NativeValueConverterService>();
-#endif
 
 			builder.ConfigureCompatibilityLifecycleEvents();
+#endif
 			builder
 				.ConfigureMauiHandlers(handlers =>
 				{
-#if PLATFORM
+#if PLATFORM && !MACOS
 
 #if !WINDOWS
 #if !(MACCATALYST || MACOS)
@@ -110,9 +110,6 @@ namespace Microsoft.Maui.Controls.Compatibility.Hosting
 					Internals.Registrar.RegisterEffect("Xamarin", "ShadowEffect", typeof(ShadowEffect));
 #endif
 
-#if __MACOS__
-					DependencyService.Register<Microsoft.Maui.Controls.Compatibility.Platform.MacOS.ResourcesProvider>();
-#endif
 				});
 
 #if WINDOWS

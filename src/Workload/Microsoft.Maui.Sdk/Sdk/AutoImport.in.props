@@ -125,6 +125,41 @@
     />
   </ItemGroup>
 
+  <!-- Mac -->
+  <ItemGroup Condition=" '$(EnableDefaultMauiItems)' == 'true' and '$(SingleProject)' == 'true' and '$(TargetPlatformIdentifier)' == 'macos' and '$(MacProjectFolder)' != '' and $([MSBuild]::VersionEquals($(TargetFrameworkVersion), '@MAUI_DOTNET_VERSION@')) ">
+    <None
+        Include="$(MacProjectFolder)Info.plist"
+        Condition="Exists('$(MacProjectFolder)Info.plist')"
+        Exclude="$(_SingleProjectMacExcludes)"
+        LogicalName="Info.plist"
+        IsDefaultItem="true"
+    />
+    <BundleResource
+        Include="$(MacProjectFolder)Resources\**"
+        Exclude="$(_SingleProjectMacExcludes)"
+        IsDefaultItem="true"
+    />
+    <ImageAsset
+        Include="$(MacProjectFolder)**/*.xcassets/**/*.*"
+        Exclude="$(_SingleProjectMacExcludes)"
+        Link="%(RecursiveDir)%(FileName)%(Extension)"
+        Visible="false"
+        IsDefaultItem="true"
+    />
+    <SceneKitAsset
+        Include="$(MacProjectFolder)**/*.scnassets/*"
+        Exclude="$(_SingleProjectMacExcludes)"
+        Link="%(RecursiveDir)%(FileName)%(Extension)"
+        IsDefaultItem="true"
+    />
+    <InterfaceDefinition
+        Include="$(MacProjectFolder)**/*.storyboard;$(MacProjectFolder)**/*.xib"
+        Exclude="$(_SingleProjectMacExcludes)"
+        Link="%(RecursiveDir)%(FileName)%(Extension)"
+        IsDefaultItem="true"
+    />
+  </ItemGroup>
+
   <!-- Windows -->
   <ItemGroup Condition=" '$(EnableDefaultMauiItems)' == 'true' and '$(SingleProject)' == 'true' and '$(TargetPlatformIdentifier)' == 'windows' and '$(WindowsProjectFolder)' != '' and $([MSBuild]::VersionEquals($(TargetFrameworkVersion), '@MAUI_DOTNET_VERSION@')) ">
     <Manifest

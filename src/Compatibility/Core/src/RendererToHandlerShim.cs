@@ -19,7 +19,7 @@ using PlatformView = UIKit.UIView;
 using Microsoft.Maui.Controls.Compatibility.Platform.iOS;
 using ViewHandler = Microsoft.Maui.Handlers.ViewHandler<Microsoft.Maui.IView, UIKit.UIView>;
 #elif __MACOS__
-using NativeView = AppKit.NSView;
+using PlatformView = AppKit.NSView;
 using ViewHandler = Microsoft.Maui.Handlers.ViewHandler<Microsoft.Maui.IView, AppKit.NSView>;
 #elif TIZEN
 #pragma warning disable CS0612 // Type or member is obsolete
@@ -73,7 +73,7 @@ namespace Microsoft.Maui.Controls.Compatibility
 			Hosting.MauiAppBuilderExtensions.CheckForCompatibility();
 		}
 
-#if PLATFORM
+#if PLATFORM && !MACOS
 		internal IVisualElementRenderer? VisualElementRenderer { get; private set; }
 		new IView? VirtualView => (this as IViewHandler).VirtualView;
 

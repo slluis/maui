@@ -68,6 +68,11 @@ namespace Microsoft.AspNetCore.Components.WebView.Maui
 			//};
 		}
 
+		internal IFileProvider CreateFileProvider(string contentRootDir)
+		{
+			return new MacOSMauiAssetFileProvider(contentRootDir);
+		}
+
 		private void MessageReceived(Uri uri, string message)
 		{
 			//_webviewManager?.MessageReceivedInternal(uri, message);
