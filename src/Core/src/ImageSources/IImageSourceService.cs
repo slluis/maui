@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,10 +21,14 @@ namespace Microsoft.Maui
 			IImageSource imageSource,
 			float scale = 1,
 			CancellationToken cancellationToken = default);
-#elif TIZEN || __TIZEN__
-		Task<IImageSourceServiceResult<Tizen.UIExtensions.ElmSharp.Image>?> GetImageAsync(
+#elif __MACOS__
+		Task<IImageSourceServiceResult<AppKit.NSImage>?> GetImageAsync(
 			IImageSource imageSource,
-			Tizen.UIExtensions.ElmSharp.Image image,
+			float scale = 1,
+			CancellationToken cancellationToken = default);
+#elif TIZEN || __TIZEN__
+		Task<IImageSourceServiceResult<MauiImageSource>?> GetImageAsync(
+			IImageSource imageSource,
 			CancellationToken cancellationToken = default);
 #elif WINDOWS
 		Task<IImageSourceServiceResult<UI.Xaml.Media.ImageSource>?> GetImageSourceAsync(

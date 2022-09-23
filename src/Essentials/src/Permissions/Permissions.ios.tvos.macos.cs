@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
+using Foundation;
 using Photos;
 
 namespace Microsoft.Maui.ApplicationModel
@@ -35,10 +36,12 @@ namespace Microsoft.Maui.ApplicationModel
 				}
 				else if (OperatingSystem.IsIOSVersionAtLeast(14) && status == PermissionStatus.Limited)
 				{
+#if IOS
 					PhotosUI.PHPhotoLibrary_PhotosUISupport.PresentLimitedLibraryPicker(
 						PHPhotoLibrary.SharedPhotoLibrary,
 						WindowStateManager.Default.GetCurrentUIViewController());
 					return status;
+#endif
 				}
 
 				EnsureMainThread();

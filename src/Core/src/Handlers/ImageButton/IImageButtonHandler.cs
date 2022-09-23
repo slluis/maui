@@ -1,5 +1,7 @@
 ﻿#if __IOS__ || MACCATALYST
 using PlatformView = UIKit.UIButton;
+#elif MACOS
+using PlatformView = Microsoft.Maui.Platform.MauiButton;
 #elif MONOANDROID
 using PlatformView = Google.Android.Material.ImageView.ShapeableImageView;
 #elif WINDOWS

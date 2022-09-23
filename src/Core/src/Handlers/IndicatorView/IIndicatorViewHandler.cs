@@ -1,11 +1,11 @@
-﻿#if __IOS__ || MACCATALYST
+﻿#if __IOS__ || MACCATALYST || MACOS
 using PlatformView = Microsoft.Maui.Platform.MauiPageControl;
 #elif MONOANDROID
 using PlatformView = Microsoft.Maui.Platform.MauiPageControl;
 #elif WINDOWS
 using PlatformView = Microsoft.Maui.Platform.MauiPageControl;
 #elif TIZEN
-using PlatformView = Tizen.UIExtensions.ElmSharp.IndicatorView;
+using PlatformView = Microsoft.Maui.Platform.MauiPageControl;
 #elif (NETSTANDARD || !PLATFORM) || (NET6_0_OR_GREATER && !IOS && !ANDROID && !TIZEN)
 using PlatformView = System.Object;
 #endif

@@ -1,11 +1,11 @@
-#if __IOS__ || MACCATALYST
+#if __IOS__ || MACCATALYST || MACOS
 using PlatformView = Microsoft.Maui.Platform.LayoutView;
 #elif MONOANDROID
 using PlatformView = Microsoft.Maui.Platform.LayoutViewGroup;
 #elif WINDOWS
 using PlatformView = Microsoft.Maui.Platform.LayoutPanel;
 #elif TIZEN
-using PlatformView = Microsoft.Maui.Platform.LayoutCanvas;
+using PlatformView = Microsoft.Maui.Platform.LayoutViewGroup;
 #elif (NETSTANDARD || !PLATFORM) || (NET6_0_OR_GREATER && !IOS && !ANDROID && !TIZEN)
 using PlatformView = System.Object;
 #endif

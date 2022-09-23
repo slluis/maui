@@ -2,12 +2,14 @@
 using System;
 #if __IOS__ || MACCATALYST
 using PlatformView = UIKit.UIImage;
+#elif __MACOS__
+using PlatformView = AppKit.NSImage;
 #elif ANDROID
 using PlatformView = Android.Graphics.Drawables.Drawable;
 #elif WINDOWS
 using PlatformView = Microsoft.UI.Xaml.Media.ImageSource;
 #elif TIZEN
-using PlatformView = Tizen.UIExtensions.ElmSharp.Image;
+using PlatformView = Microsoft.Maui.Platform.MauiImageSource;
 #elif (NETSTANDARD || !PLATFORM) || (NET6_0_OR_GREATER && !IOS && !ANDROID && !TIZEN)
 using PlatformView = System.Object;
 #endif

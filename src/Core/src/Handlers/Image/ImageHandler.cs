@@ -2,12 +2,14 @@
 using System.Threading;
 #if __IOS__ || MACCATALYST
 using PlatformView = UIKit.UIImageView;
+#elif __MACOS__
+using PlatformView = AppKit.NSImageView;
 #elif MONOANDROID
 using PlatformView = Android.Widget.ImageView;
 #elif WINDOWS
 using PlatformView = Microsoft.UI.Xaml.Controls.Image;
 #elif TIZEN
-using PlatformView = Tizen.UIExtensions.ElmSharp.Image;
+using PlatformView = Tizen.UIExtensions.NUI.Image;
 #elif (NETSTANDARD || !PLATFORM) || (NET6_0_OR_GREATER && !IOS && !ANDROID && !TIZEN)
 using PlatformView = System.Object;
 #endif

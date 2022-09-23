@@ -1,11 +1,13 @@
 #if IOS || MACCATALYST
 using PlatformView = Microsoft.Maui.Platform.MauiSwipeView;
+#elif MACOS
+using PlatformView = AppKit.NSView;
 #elif ANDROID
 using PlatformView = Microsoft.Maui.Platform.MauiSwipeView;
 #elif WINDOWS
 using PlatformView = Microsoft.UI.Xaml.Controls.SwipeControl;
 #elif TIZEN
-using PlatformView = ElmSharp.EvasObject;
+using PlatformView = Microsoft.Maui.Platform.MauiSwipeView;
 #elif (NETSTANDARD || !PLATFORM) || (NET6_0_OR_GREATER && !IOS && !ANDROID && !TIZEN)
 using PlatformView = System.Object;
 #endif
@@ -22,7 +24,7 @@ namespace Microsoft.Maui.Handlers
 			[nameof(ISwipeView.TopItems)] = MapTopItems,
 			[nameof(ISwipeView.RightItems)] = MapRightItems,
 			[nameof(ISwipeView.BottomItems)] = MapBottomItems,
-#if ANDROID || IOS
+#if ANDROID || IOS || TIZEN
 			[nameof(IView.IsEnabled)] = MapIsEnabled,
 #endif
 #if ANDROID

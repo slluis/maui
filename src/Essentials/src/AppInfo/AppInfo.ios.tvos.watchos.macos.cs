@@ -36,7 +36,7 @@ namespace Microsoft.Maui.ApplicationModel
 		{
 			MainThread.BeginInvokeOnMainThread(() =>
 			{
-				var prefsApp = ScriptingBridge.SBApplication.FromBundleIdentifier("com.apple.systempreferences");
+				var prefsApp = ScriptingBridge.SBApplication.GetApplication("com.apple.systempreferences");
 				prefsApp.SendMode = ScriptingBridge.AESendMode.NoReply;
 				prefsApp.Activate();
 			});
@@ -110,8 +110,8 @@ namespace Microsoft.Maui.ApplicationModel
 			}
 		}
 #elif __MACOS__
-		public bool IsDeviceUILayoutDirectionRightToLeft => 
-			NSApplication.SharedApplication.UserInterfaceLayoutDirection == NSApplicationLayoutDirection.RightToLeft;
+		public LayoutDirection RequestedLayoutDirection =>
+			NSApplication.SharedApplication.UserInterfaceLayoutDirection == NSUserInterfaceLayoutDirection.RightToLeft ? LayoutDirection.RightToLeft : LayoutDirection.LeftToRight;
 #endif
 
 		internal static bool VerifyHasUrlScheme(string scheme)

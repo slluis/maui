@@ -58,12 +58,12 @@ namespace Microsoft.Maui.ApplicationModel
 #else
 			var address = new NSMutableDictionary
 			{
-				[CNPostalAddressKey.City] = new NSString(placemark.Locality ?? string.Empty),
-				[CNPostalAddressKey.Country] = new NSString(placemark.CountryName ?? string.Empty),
-				[CNPostalAddressKey.State] = new NSString(placemark.AdminArea ?? string.Empty),
-				[CNPostalAddressKey.Street] = new NSString(placemark.Thoroughfare ?? string.Empty),
-				[CNPostalAddressKey.PostalCode] = new NSString(placemark.PostalCode ?? string.Empty),
-				[CNPostalAddressKey.IsoCountryCode] = new NSString(placemark.CountryCode ?? string.Empty)
+				[CNPostalAddressKeyOption.City.GetConstant()] = new NSString(placemark.Locality ?? string.Empty),
+				[CNPostalAddressKeyOption.Country.GetConstant()] = new NSString(placemark.CountryName ?? string.Empty),
+				[CNPostalAddressKeyOption.State.GetConstant()] = new NSString(placemark.AdminArea ?? string.Empty),
+				[CNPostalAddressKeyOption.Street.GetConstant()] = new NSString(placemark.Thoroughfare ?? string.Empty),
+				[CNPostalAddressKeyOption.PostalCode.GetConstant()] = new NSString(placemark.PostalCode ?? string.Empty),
+				[CNPostalAddressKeyOption.IsoCountryCode.GetConstant()] = new NSString(placemark.CountryCode ?? string.Empty)
 			};
 #endif
 

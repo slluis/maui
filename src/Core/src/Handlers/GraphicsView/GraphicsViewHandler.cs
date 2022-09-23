@@ -1,5 +1,5 @@
 ﻿#nullable enable
-#if __IOS__ || MACCATALYST || MONOANDROID || WINDOWS || TIZEN
+#if __IOS__ || MACCATALYST || MONOANDROID || WINDOWS || TIZEN || MACOS
 #define PLATFORM
 using PlatformView = Microsoft.Maui.Platform.PlatformTouchGraphicsView;
 #else

@@ -126,7 +126,7 @@ namespace Microsoft.Maui.ApplicationModel
 				if (!CLLocationManager.LocationServicesEnabled)
 					return PermissionStatus.Disabled;
 
-				var status = CLLocationManager.Status;
+				var status = OperatingSystem.IsMacOSVersionAtLeast(11) ? new CLLocationManager().AuthorizationStatus : CLLocationManager.Status;
 
 				return status switch
 				{
@@ -146,7 +146,7 @@ namespace Microsoft.Maui.ApplicationModel
 
 				var tcs = new TaskCompletionSource<PermissionStatus>(locationManager);
 
-				var previousState = CLLocationManager.Status;
+				var previousState = OperatingSystem.IsMacOSVersionAtLeast(11) ? new CLLocationManager().AuthorizationStatus : CLLocationManager.Status;
 
 				locationManager.AuthorizationChanged += LocationAuthCallback;
 				locationManager.StartUpdatingLocation();

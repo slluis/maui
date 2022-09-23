@@ -3,10 +3,11 @@ using System;
 using AppKit;
 using CoreVideo;
 using Foundation;
+using Microsoft.Maui.ApplicationModel;
 
 namespace Microsoft.Maui.Devices
 {
-	class DeviceDisplayImplementation : IDeviceDisplay
+	partial class DeviceDisplayImplementation : IDeviceDisplay
 	{
 		uint keepScreenOnId = 0;
 		NSObject? screenMetricsObserver;
@@ -15,7 +16,7 @@ namespace Microsoft.Maui.Devices
 
 		protected override void SetKeepScreenOn(bool keepScreenOn)
 		{
-			if (KeepScreenOn == value)
+			if (KeepScreenOn == keepScreenOn)
 				return;
 
 			if (keepScreenOn)

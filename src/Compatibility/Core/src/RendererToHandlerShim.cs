@@ -18,13 +18,15 @@ using static Microsoft.Maui.Controls.Compatibility.Platform.iOS.Platform;
 using PlatformView = UIKit.UIView;
 using Microsoft.Maui.Controls.Compatibility.Platform.iOS;
 using ViewHandler = Microsoft.Maui.Handlers.ViewHandler<Microsoft.Maui.IView, UIKit.UIView>;
+#elif __MACOS__
+using PlatformView = AppKit.NSView;
+using ViewHandler = Microsoft.Maui.Handlers.ViewHandler<Microsoft.Maui.IView, AppKit.NSView>;
 #elif TIZEN
 #pragma warning disable CS0612 // Type or member is obsolete
 using static Microsoft.Maui.Controls.Compatibility.Platform.Tizen.Platform;
-#pragma warning disable CS0612 // Type or member is obsolete
-using PlatformView = ElmSharp.EvasObject;
+using PlatformView = Tizen.NUI.BaseComponents.View;
 using Microsoft.Maui.Controls.Compatibility.Platform.Tizen;
-using ViewHandler = Microsoft.Maui.Handlers.ViewHandler<Microsoft.Maui.IView, ElmSharp.EvasObject>;
+using ViewHandler = Microsoft.Maui.Handlers.ViewHandler<Microsoft.Maui.IView, Tizen.NUI.BaseComponents.View>;
 #elif (NETSTANDARD || !PLATFORM)
 using PlatformView = System.Object;
 using ViewHandler = Microsoft.Maui.Handlers.ViewHandler<Microsoft.Maui.IView, System.Object>;
@@ -71,7 +73,7 @@ namespace Microsoft.Maui.Controls.Compatibility
 			Hosting.MauiAppBuilderExtensions.CheckForCompatibility();
 		}
 
-#if PLATFORM
+#if PLATFORM && !MACOS
 		internal IVisualElementRenderer? VisualElementRenderer { get; private set; }
 		new IView? VirtualView => (this as IViewHandler).VirtualView;
 

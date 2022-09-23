@@ -8,6 +8,9 @@
     <SingleProject>true</SingleProject>
     <IsPackable>false</IsPackable>
     <NoWarn>$(NoWarn),CA1416</NoWarn>
+    <_RunAotCompiler>false</_RunAotCompiler>
+    <EnableCodeSigning>false</EnableCodeSigning>
+    <UseSGen>false</UseSGen>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -2,6 +2,9 @@
 #if __IOS__ || MACCATALYST
 using UIKit;
 using PlatformView = UIKit.UIView;
+#elif MACOS
+using AppKit;
+using PlatformView = AppKit.NSView;
 #elif __ANDROID__
 using Android.Text;
 using Android.Views;
@@ -10,9 +13,7 @@ using PlatformView = Android.Views.View;
 #elif WINDOWS
 using PlatformView = Microsoft.UI.Xaml.FrameworkElement;
 #elif TIZEN
-using ElmSharp;
-using ElmSharp.Accessible;
-using PlatformView = ElmSharp.EvasObject;
+using PlatformView = Tizen.NUI.BaseComponents.View;
 #elif (NETSTANDARD || !PLATFORM)
 using PlatformView = System.Object;
 #endif
@@ -30,8 +31,8 @@ namespace Microsoft.Maui
 			platformView.SendAccessibilityEvent(EventTypes.ViewHoverEnter);
 #elif __IOS__ || MACCATALYST
 			UIAccessibility.PostNotification(UIAccessibilityPostNotification.LayoutChanged, platformView);
-#elif TIZEN
-			(platformView as IAccessibleObject)?.Highlight();
+#else
+			// TODO Cocoa
 #endif
 		}
 	}

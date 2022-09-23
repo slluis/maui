@@ -1,7 +1,11 @@
-﻿#if __IOS__ || MACCATALYST
+#if __IOS__ || MACCATALYST
 using PlatformImage = UIKit.UIImage;
 using PlatformImageView = UIKit.UIImageView;
 using PlatformView = UIKit.UIButton;
+#elif __MACOS__
+using PlatformImage = AppKit.NSImage;
+using PlatformImageView = AppKit.NSImageView;
+using PlatformView = Microsoft.Maui.Platform.MauiButton;
 #elif MONOANDROID
 using PlatformImage = Android.Graphics.Drawables.Drawable;
 using PlatformImageView = Android.Widget.ImageView;
@@ -12,8 +16,8 @@ using PlatformImage = Microsoft.UI.Xaml.Media.ImageSource;
 using PlatformImageView = Microsoft.UI.Xaml.Controls.Image;
 using PlatformView = Microsoft.UI.Xaml.Controls.Button;
 #elif TIZEN
-using PlatformImage = Tizen.UIExtensions.ElmSharp.Image;
-using PlatformImageView = Tizen.UIExtensions.ElmSharp.Image;
+using PlatformImage = Microsoft.Maui.Platform.MauiImageSource;
+using PlatformImageView = Tizen.UIExtensions.NUI.Image;
 using PlatformView = Microsoft.Maui.Platform.MauiImageButton;
 #elif (NETSTANDARD || !PLATFORM) || (NET6_0_OR_GREATER && !IOS && !ANDROID && !TIZEN)
 using PlatformImage = System.Object;
@@ -59,7 +63,7 @@ namespace Microsoft.Maui.Handlers
 		IImage IImageHandler.VirtualView => VirtualView;
 
 		PlatformImageView IImageHandler.PlatformView =>
-#if __IOS__ || TIZEN
+#if __IOS__ || MACOS
 			PlatformView.ImageView;
 #elif WINDOWS
 			PlatformView.GetContent<PlatformImageView>() ?? throw new InvalidOperationException("ImageButton did not contain an Image element.");

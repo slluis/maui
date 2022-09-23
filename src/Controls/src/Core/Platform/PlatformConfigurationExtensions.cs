@@ -1,5 +1,7 @@
 #if __IOS__ || MACCATALYST
 using CurrentPlatform = Microsoft.Maui.Controls.PlatformConfiguration.iOS;
+#elif __MACOS__
+using CurrentPlatform = Microsoft.Maui.Controls.PlatformConfiguration.macOS;
 #elif __ANDROID__
 using CurrentPlatform = Microsoft.Maui.Controls.PlatformConfiguration.Android;
 #elif WINDOWS

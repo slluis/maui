@@ -18,6 +18,10 @@
     <EnableDefaultMacCatalystItems>false</EnableDefaultMacCatalystItems>
     <MacCatalystProjectFolder Condition=" '$(MacCatalystProjectFolder)' == '' ">$(PlatformsProjectFolder)MacCatalyst\</MacCatalystProjectFolder>
     <MacCatalystProjectFolder>$([MSBuild]::EnsureTrailingSlash('$(MacCatalystProjectFolder)'))</MacCatalystProjectFolder>
+    <!-- Mac -->
+    <EnableDefaultMacItems>false</EnableDefaultMacItems>
+    <MacProjectFolder Condition=" '$(MacProjectFolder)' == '' ">$(PlatformsProjectFolder)Mac\</MacProjectFolder>
+    <MacProjectFolder>$([MSBuild]::EnsureTrailingSlash('$(MacProjectFolder)'))</MacProjectFolder>
     <!-- Windows -->
     <EnableDefaultWindowsItems>false</EnableDefaultWindowsItems>
     <WindowsProjectFolder Condition=" '$(WindowsProjectFolder)' == '' ">$(PlatformsProjectFolder)Windows\</WindowsProjectFolder>
@@ -32,6 +36,7 @@
     <MauiPlatformSpecificFolder Include="$(AndroidProjectFolder)" TargetPlatformIdentifier="android" />
     <MauiPlatformSpecificFolder Include="$(iOSProjectFolder)" TargetPlatformIdentifier="ios" />
     <MauiPlatformSpecificFolder Include="$(MacCatalystProjectFolder)" TargetPlatformIdentifier="maccatalyst" />
+    <MauiPlatformSpecificFolder Include="$(MacProjectFolder)" TargetPlatformIdentifier="macOS" />
     <MauiPlatformSpecificFolder Include="$(WindowsProjectFolder)" TargetPlatformIdentifier="windows" />
     <MauiPlatformSpecificFolder Include="$(TizenProjectFolder)" TargetPlatformIdentifier="tizen" />
   </ItemGroup>
@@ -52,6 +57,12 @@
     <IPhoneResourcePrefix>$(MacCatalystProjectFolder)Resources</IPhoneResourcePrefix>
     <CodesignEntitlements Condition=" Exists('$(MacCatalystProjectFolder)Entitlements.plist') ">$(MacCatalystProjectFolder)Entitlements.plist</CodesignEntitlements>
     <_SingleProjectMacCatalystExcludes>$(MacCatalystProjectFolder)/**/.*/**</_SingleProjectMacCatalystExcludes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(SingleProject)' == 'true' and '$([MSBuild]::GetTargetPlatformIdentifier($(TargetFramework)))' == 'macos' ">
+    <IPhoneResourcePrefix>$(MacProjectFolder)Resources</IPhoneResourcePrefix>
+    <CodesignEntitlements Condition=" Exists('$(MacProjectFolder)Entitlements.plist') ">$(MacProjectFolder)Entitlements.plist</CodesignEntitlements>
+    <_SingleProjectMacExcludes>$(MacProjectFolder)/**/.*/**</_SingleProjectMacExcludes>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(SingleProject)' == 'true' and '$([MSBuild]::GetTargetPlatformIdentifier($(TargetFramework)))' == 'windows' ">
@@ -91,6 +102,11 @@
       <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
     </Compile>
     <Compile
+        Condition=" '$(TargetPlatformIdentifier)' == 'macos' "
+        Update="$(MacProjectFolder)**/*$(DefaultLanguageSourceExtension)">
+      <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
+    </Compile>
+    <Compile
         Condition=" '$(TargetPlatformIdentifier)' == 'windows' "
         Update="$(WindowsProjectFolder)**/*$(DefaultLanguageSourceExtension)">
       <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
@@ -111,7 +127,7 @@
           BeforeTargets="_MauiInjectXamlCssAdditionalFiles;GenerateMSBuildEditorConfigFileShouldRun"
           Condition=" '$(EnableDefaultItems)' == 'true' and '$(SingleProject)' == 'true' ">
 
-    <!-- Removals -->
+  <!-- Removals -->
     <ItemGroup>
       <!-- Remove everything that isn't part of this platform -->
       <Compile

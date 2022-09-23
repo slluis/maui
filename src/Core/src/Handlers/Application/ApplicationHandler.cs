@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 #if __IOS__ || MACCATALYST
 using PlatformView = UIKit.IUIApplicationDelegate;
+#elif __MACOS__
+using PlatformView = AppKit.NSApplicationDelegate;
 #elif MONOANDROID
 using PlatformView = Android.App.Application;
 #elif WINDOWS

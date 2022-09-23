@@ -22,7 +22,7 @@ namespace Microsoft.Maui.Platform
 			}
 		}
 
-#if WINDOWS
+#if WINDOWS || MACOS
 		public new IShadow? Shadow
 #else
 		public IShadow? Shadow
